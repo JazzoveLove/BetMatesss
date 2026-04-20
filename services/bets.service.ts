@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import { calcOdds, parseStakeAmount } from '../utils/odds'
+import { calcOdds, parseStakeAmount, toStakeNumber } from '../utils/odds'
 import { createSettlements, getSettlements, markSettlementPaid } from './settlements.service'
 import { getBetInviteCodeFromBetId, parseBetIdFromInviteCode } from '../lib/bet-invite-url'
 import { getAcceptedFriendsList, loadNicksByIds } from './friends.service'
@@ -45,6 +45,21 @@ function normalizeUsersNick(raw: unknown): string | null {
 async function createBet(
   params: CreateBetParams,
 ): Promise<{ betId: string } | { error: string }> {
+  console.log('[createBet] input params', {
+    creatorId: params.creatorId,
+    gameTemplate: params.gameTemplate,
+    format: params.format,
+    stakeMode: params.stakeMode,
+    globalStake: params.globalStake,
+    globalStakeType: typeof params.globalStake,
+    participants: params.participants.map(p => ({
+      id: p.id,
+      nick: p.nick,
+      customStake: p.customStake,
+      customStakeParsed: toStakeNumber(p.customStake),
+    })),
+  })
+
   const { data: bet, error: betError } = await supabase
     .from('bets')
     .insert({
@@ -61,11 +76,11 @@ async function createBet(
     return { error: betError?.message ?? 'Nie udało się utworzyć zakładu.' }
   }
 
-  const globalParsed = parseStakeAmount(params.globalStake)
+  const globalParsed = toStakeNumber(params.globalStake)
   const rows = params.participants.map(p => {
     const amount =
       params.stakeMode === 'custom'
-        ? parseStakeAmount(p.customStake)
+        ? toStakeNumber(p.customStake)
         : params.stakeMode === 'none'
         ? 0
         : globalParsed
@@ -80,9 +95,15 @@ async function createBet(
     }
   })
 
-  const { error: partError } = await supabase.from('bet_participants').insert(rows)
-  if (partError) return { error: partError.message }
+  console.log('[createBet] bet_participants rows (before insert)', JSON.stringify(rows, null, 2))
 
+  const { error: partError } = await supabase.from('bet_participants').insert(rows)
+  if (partError) {
+    console.log('[createBet] bet_participants insert error', partError)
+    return { error: partError.message }
+  }
+
+  console.log('[createBet] bet_participants insert OK', { betId: bet.id, rowCount: rows.length })
   return { betId: bet.id }
 }
 

@@ -45,7 +45,9 @@ create policy "settlements_select_participant"
     auth.uid() = debtor_id or auth.uid() = creditor_id
   );
 
--- Dłużnik lub wierzyciel może zaktualizować rozliczenie (np. oznaczyć jako zapłacone).
-create policy "settlements_update_participant"
+-- Tylko dłużnik może oznaczyć rozliczenie jako zapłacone (paid / paid_at).
+create policy "settlements_update_debtor"
   on public.settlements for update
-  using (auth.uid() = debtor_id or auth.uid() = creditor_id);
+  to authenticated
+  using (auth.uid() = debtor_id)
+  with check (auth.uid() = debtor_id);

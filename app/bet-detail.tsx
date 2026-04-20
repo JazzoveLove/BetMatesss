@@ -241,11 +241,22 @@ export default function BetDetailScreen() {
           </View>
         )}
 
-        {/* Settlements */}
+        {/* Settlements — rekordy z settlements (amount > 0 po stronie serwisu) */}
         {isCompleted && settlements.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>ROZLICZENIE</Text>
-            {settlements.map(s => (
+            {settlements.map(s => {
+              console.log('[bet-detail ROZLICZENIE] row', {
+                id: s.id,
+                debtorNick: s.debtorNick,
+                creditorNick: s.creditorNick,
+                amount: s.amount,
+                paid: s.paid,
+                debtorId: s.debtorId,
+                creditorId: s.creditorId,
+                currentUserId,
+              })
+              return (
               <View key={s.id} style={[styles.settlementCard, s.paid && styles.settlementPaid]}>
                 <Text style={styles.settlementLine}>
                   <Text style={styles.settlementName}>{s.debtorNick}</Text>
@@ -263,7 +274,10 @@ export default function BetDetailScreen() {
                     {s.debtorId === currentUserId && (
                       <TouchableOpacity
                         style={styles.payBtn}
-                        onPress={() => markPaid(s.id)}
+                        onPress={() => {
+                          console.log('[bet-detail] Zapłacono pressed', s.id)
+                          void markPaid(s.id, s.debtorId)
+                        }}
                         disabled={markingPaid === s.id}
                         activeOpacity={0.8}
                       >
@@ -277,7 +291,10 @@ export default function BetDetailScreen() {
                     {s.creditorId === currentUserId && (
                       <TouchableOpacity
                         style={styles.remindBtn}
-                        onPress={() => void sendReminder(s)}
+                        onPress={() => {
+                          console.log('[bet-detail] Przypomnij pressed', s.id)
+                          void sendReminder(s)
+                        }}
                         disabled={reminding === s.id}
                         activeOpacity={0.8}
                       >
@@ -291,7 +308,8 @@ export default function BetDetailScreen() {
                   </View>
                 )}
               </View>
-            ))}
+              )
+            })}
           </View>
         )}
 
@@ -299,7 +317,11 @@ export default function BetDetailScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>ROZLICZENIE</Text>
             <View style={styles.emptyCard}>
-              <Text style={styles.emptyText}>Brak rozliczeń (zakład bez stawki)</Text>
+              <Text style={styles.emptyText}>
+                {bet.stakeMode === 'none'
+                  ? 'Brak rozliczeń (zakład bez stawki)'
+                  : 'Brak wpisów rozliczeniowych — odśwież ekran. Przy ustawionej stawce sprawdź logi: [getSettlements], [createSettlements].'}
+              </Text>
             </View>
           </View>
         )}

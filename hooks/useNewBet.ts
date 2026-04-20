@@ -5,7 +5,7 @@ import { BetsService } from '../services/bets.service'
 import { getAcceptedFriendsList } from '../services/friends.service'
 import { NotificationsService } from '../services/notifications.service'
 import type { StakeMode, NewBetParticipant } from '../types/bet.types'
-import { parseStakeAmount } from '../utils/odds'
+import { parseStakeAmount, toStakeNumber } from '../utils/odds'
 
 export function useNewBet(onCreated: (betId: string) => void) {
   const [step, setStep] = useState<1 | 2 | 3>(1)
@@ -95,13 +95,25 @@ export function useNewBet(onCreated: (betId: string) => void) {
     if (!profile || !selectedGame || !selectedFormat) return null
     if (createdBetId) return createdBetId
     setSaving(true)
+    const globalStakeNum = toStakeNumber(globalStake)
+    console.log('[useNewBet ensureBetCreated] payload before createBet', {
+      stakeMode,
+      globalStakeRaw: globalStake,
+      globalStakeNum,
+      participants: participants.map(p => ({
+        id: p.id,
+        nick: p.nick,
+        customStake: p.customStake,
+        parsedStake: toStakeNumber(p.customStake),
+      })),
+    })
     const result = await BetsService.createBet({
       creatorId: profile.id,
       gameTemplate: selectedGame,
       format: selectedFormat,
       stakeMode,
       participants,
-      globalStake: parseStakeAmount(globalStake),
+      globalStake: globalStakeNum,
     })
     setSaving(false)
     if ('error' in result) {
@@ -129,16 +141,21 @@ export function useNewBet(onCreated: (betId: string) => void) {
       const betId = await ensureBetCreated()
       if (!betId) return { error: 'Nie udało się utworzyć zakładu.' }
 
+      // W trybie „custom” wcześniej zawsze wstawiano 0 — nowy uczestnik dostaje domyślnie
+      // tę samą stawkę co twórca (z kroku 3); dopóki nie ma osobnego pola przy zaproszeniu.
       const friendStake =
         stakeMode === 'none'
           ? 0
           : stakeMode === 'custom'
-          ? 0
+          ? toStakeNumber(me.customStake)
           : parseStakeAmount(globalStake)
 
       const addResult = await BetsService.addParticipant(betId, friend.id, friendStake)
       if (addResult.error) return { error: addResult.error }
       addParticipant(friend)
+      if (stakeMode === 'custom' && friendStake > 0) {
+        setCustomStake(friend.id, String(friendStake))
+      }
 
       const pushResult = await NotificationsService.sendBetInviteNotification({
         userId: friend.id,
@@ -161,6 +178,7 @@ export function useNewBet(onCreated: (betId: string) => void) {
       stakeMode,
       globalStake,
       addParticipant,
+      setCustomStake,
     ],
   )
 

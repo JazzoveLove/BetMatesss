@@ -10,6 +10,13 @@ export function parseStakeAmount(input: string | number | null | undefined): num
   return Number.isFinite(n) ? n : 0
 }
 
+/** Kwota jako liczba dla `bet_participants.stake_amount` (2 miejsca po przecinku). */
+export function toStakeNumber(input: string | number | null | undefined): number {
+  const n = parseStakeAmount(input)
+  if (!Number.isFinite(n) || n < 0) return 0
+  return Math.round(n * 100) / 100
+}
+
 export function calcOdds(
   participantStake: number,
   allParticipants: { customStake: string }[],

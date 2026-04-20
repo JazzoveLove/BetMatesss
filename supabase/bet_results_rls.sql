@@ -27,7 +27,23 @@ create policy "bet_results_insert_participant"
     )
   );
 
--- Tylko osoba, która wpisała wynik, może go zaktualizować.
+-- Tylko osoba, która wpisała wynik, może go zaktualizować (np. poprawka przed potwierdzeniem).
 create policy "bet_results_update_recorder"
   on public.bet_results for update
   using (auth.uid() = recorded_by);
+
+-- Drugi uczestnik (nie ten, który wpisał wynik) może potwierdzić wynik.
+create policy "bet_results_update_confirmer"
+  on public.bet_results for update
+  using (
+    auth.uid() <> recorded_by
+    and exists (
+      select 1 from public.bet_participants
+      where bet_participants.bet_id = bet_results.bet_id
+        and bet_participants.user_id = auth.uid()
+    )
+  )
+  with check (
+    confirmed = true
+    and confirmed_by = auth.uid()
+  );
