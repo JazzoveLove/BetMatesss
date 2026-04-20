@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native'
+import { ActivityIndicator, RefreshControl } from 'react-native'
+import { ScrollView, YStack, XStack, Text, Button } from 'tamagui'
 import { useNavigation } from '@react-navigation/native'
 import { useDashboard } from '../hooks/useDashboard'
 import { useAuth } from '../hooks/useAuth'
@@ -14,16 +15,17 @@ export default function DashboardScreen() {
 
   if (loading) {
     return (
-      <View style={styles.centered}>
+      <YStack flex={1} style={{ backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator color="#7F77DD" size="large" />
-      </View>
+      </YStack>
     )
   }
 
   return (
     <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.content}
+      flex={1}
+      style={{ backgroundColor: '#0f1117' }}
+      contentContainerStyle={{ padding: 20, paddingTop: 56, paddingBottom: 40 } as any}
       showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl
@@ -34,19 +36,30 @@ export default function DashboardScreen() {
         />
       }
     >
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.greeting}>Cześć, {nick} 👋</Text>
-          <Text style={styles.subtitle}>Twoje zakłady ze znajomymi</Text>
-        </View>
-        <TouchableOpacity style={styles.logoutBtn} onPress={() => signOut()}>
-          <Text style={styles.logoutText}>Wyloguj</Text>
-        </TouchableOpacity>
-      </View>
+      <XStack style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
+        <YStack>
+          <Text style={{ fontSize: 22, fontWeight: '700', color: '#e8e6e0' }}>Cześć, {nick} 👋</Text>
+          <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)', marginTop: 3 }}>
+            Twoje zakłady ze znajomymi
+          </Text>
+        </YStack>
+        <Button
+          chromeless
+          onPress={() => signOut()}
+          style={{
+            paddingHorizontal: 14,
+            paddingVertical: 7,
+            borderRadius: 8,
+            borderWidth: 0.5,
+            borderColor: '#1e2330',
+            backgroundColor: 'transparent',
+          }}
+        >
+          <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)' }}>Wyloguj</Text>
+        </Button>
+      </XStack>
 
-      {/* Stats */}
-      <View style={styles.statsRow}>
+      <XStack style={{ flexDirection: 'row', gap: 10, marginBottom: 32 }}>
         <StatCard
           label="Bilans"
           value={formatBalance(stats.balance)}
@@ -58,24 +71,41 @@ export default function DashboardScreen() {
           value={`${stats.winRate}%`}
           highlight={stats.winRate >= 50 ? 'positive' : stats.winRate > 0 ? 'negative' : 'neutral'}
         />
-      </View>
+      </XStack>
 
-      {/* Active bets */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Aktywne zakłady</Text>
+      <YStack style={{ marginBottom: 32 }}>
+        <XStack style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <Text style={{ fontSize: 16, fontWeight: '600', color: '#e8e6e0' }}>Aktywne zakłady</Text>
           {activeBets.length > 0 && (
-            <View style={styles.countBadge}>
-              <Text style={styles.countText}>{activeBets.length}</Text>
-            </View>
+            <YStack
+              style={{
+                backgroundColor: '#534AB720',
+                borderRadius: 20,
+                paddingHorizontal: 8,
+                paddingVertical: 2,
+              }}
+            >
+              <Text style={{ fontSize: 12, color: '#7F77DD', fontWeight: '600' }}>{activeBets.length}</Text>
+            </YStack>
           )}
-        </View>
+        </XStack>
 
         {activeBets.length === 0 ? (
-          <View style={styles.empty}>
-            <Text style={styles.emptyText}>Brak aktywnych zakładów</Text>
-            <Text style={styles.emptyHint}>Dodaj pierwszy zakład ze znajomym</Text>
-          </View>
+          <YStack
+            style={{
+              backgroundColor: '#181c24',
+              borderRadius: 14,
+              borderWidth: 0.5,
+              borderColor: '#1e2330',
+              padding: 24,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 14, color: 'rgba(232,230,224,0.5)', marginBottom: 4 }}>
+              Brak aktywnych zakładów
+            </Text>
+            <Text style={{ fontSize: 12, color: '#534AB7' }}>Dodaj pierwszy zakład ze znajomym</Text>
+          </YStack>
         ) : (
           activeBets.map(bet => (
             <BetCard
@@ -89,68 +119,69 @@ export default function DashboardScreen() {
             />
           ))
         )}
-      </View>
+      </YStack>
 
-      {/* Recent results */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Ostatnie wyniki</Text>
+      <YStack style={{ marginBottom: 32 }}>
+        <Text style={{ fontSize: 16, fontWeight: '600', color: '#e8e6e0', marginBottom: 12 }}>Ostatnie wyniki</Text>
 
         {recentResults.length === 0 ? (
-          <View style={styles.empty}>
-            <Text style={styles.emptyText}>Brak rozegranych zakładów</Text>
-          </View>
+          <YStack
+            style={{
+              backgroundColor: '#181c24',
+              borderRadius: 14,
+              borderWidth: 0.5,
+              borderColor: '#1e2330',
+              padding: 24,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{ fontSize: 14, color: 'rgba(232,230,224,0.5)' }}>Brak rozegranych zakładów</Text>
+          </YStack>
         ) : (
           recentResults.map(r => (
-            <TouchableOpacity
+            <XStack
               key={r.id}
-              style={styles.resultCard}
               onPress={() => navigation.navigate('BetDetail', { betId: r.id })}
-              activeOpacity={0.75}
+              pressStyle={{ opacity: 0.75 }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: '#181c24',
+                borderRadius: 14,
+                borderWidth: 0.5,
+                borderColor: '#1e2330',
+                marginBottom: 10,
+                overflow: 'hidden',
+              }}
             >
-              <View style={[styles.resultBar, r.profit >= 0 ? styles.barWin : styles.barLoss]} />
-              <View style={styles.resultBody}>
-                <Text style={styles.resultGame}>
+              <YStack
+                style={{
+                  width: 4,
+                  alignSelf: 'stretch',
+                  backgroundColor: r.profit >= 0 ? '#1D9E75' : '#E24B4A',
+                }}
+              />
+              <YStack flex={1} style={{ paddingVertical: 14, paddingHorizontal: 14 }}>
+                <Text style={{ fontSize: 13, fontWeight: '600', color: '#e8e6e0', marginBottom: 3 }}>
                   {GAME_MAP[r.gameTemplate]?.label ?? r.gameTemplate}
                 </Text>
-                <Text style={styles.resultOpponent}>vs {r.opponentNick}</Text>
-              </View>
-              <Text style={[styles.resultProfit, r.profit >= 0 ? styles.profitWin : styles.profitLoss]}>
-                {r.profit >= 0 ? '+' : ''}{r.profit} zł
+                <Text style={{ fontSize: 12, color: 'rgba(232,230,224,0.5)' }}>vs {r.opponentNick}</Text>
+              </YStack>
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: '700',
+                  paddingRight: 16,
+                  color: r.profit >= 0 ? '#1D9E75' : '#E24B4A',
+                }}
+              >
+                {r.profit >= 0 ? '+' : ''}
+                {r.profit} zł
               </Text>
-            </TouchableOpacity>
+            </XStack>
           ))
         )}
-      </View>
+      </YStack>
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#0f1117' },
-  content: { padding: 20, paddingTop: 56, paddingBottom: 40 },
-  centered: { flex: 1, backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 },
-  greeting: { fontSize: 22, fontWeight: '700', color: '#e8e6e0' },
-  subtitle: { fontSize: 13, color: 'rgba(232,230,224,0.5)', marginTop: 3 },
-  logoutBtn: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 8, borderWidth: 0.5, borderColor: '#1e2330' },
-  logoutText: { fontSize: 13, color: 'rgba(232,230,224,0.5)' },
-  statsRow: { flexDirection: 'row', gap: 10, marginBottom: 32 },
-  section: { marginBottom: 32 },
-  sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
-  sectionTitle: { fontSize: 16, fontWeight: '600', color: '#e8e6e0', marginBottom: 12 },
-  countBadge: { backgroundColor: '#534AB720', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 2, marginBottom: 12 },
-  countText: { fontSize: 12, color: '#7F77DD', fontWeight: '600' },
-  empty: { backgroundColor: '#181c24', borderRadius: 14, borderWidth: 0.5, borderColor: '#1e2330', padding: 24, alignItems: 'center' },
-  emptyText: { fontSize: 14, color: 'rgba(232,230,224,0.5)', marginBottom: 4 },
-  emptyHint: { fontSize: 12, color: '#534AB7' },
-  resultCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#181c24', borderRadius: 14, borderWidth: 0.5, borderColor: '#1e2330', marginBottom: 10, overflow: 'hidden' },
-  resultBar: { width: 4, alignSelf: 'stretch' },
-  barWin: { backgroundColor: '#1D9E75' },
-  barLoss: { backgroundColor: '#E24B4A' },
-  resultBody: { flex: 1, paddingVertical: 14, paddingHorizontal: 14 },
-  resultGame: { fontSize: 13, fontWeight: '600', color: '#e8e6e0', marginBottom: 3 },
-  resultOpponent: { fontSize: 12, color: 'rgba(232,230,224,0.5)' },
-  resultProfit: { fontSize: 15, fontWeight: '700', paddingRight: 16 },
-  profitWin: { color: '#1D9E75' },
-  profitLoss: { color: '#E24B4A' },
-})

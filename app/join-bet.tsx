@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native'
+import { ActivityIndicator, Alert } from 'react-native'
+import { YStack, XStack, Text, Button } from 'tamagui'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { BetsService } from '../services/bets.service'
 import { AuthService } from '../services/auth.service'
@@ -77,75 +78,69 @@ export default function JoinBetScreen() {
 
   if (loading) {
     return (
-      <View style={styles.centered}>
+      <YStack flex={1} style={{ backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator color="#7F77DD" size="large" />
-      </View>
+      </YStack>
     )
   }
 
   if (!preview) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Nie udało się odczytać zaproszenia.</Text>
-      </View>
+      <YStack flex={1} style={{ backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: 'rgba(232,230,224,0.5)', fontSize: 15 }}>Nie udało się odczytać zaproszenia.</Text>
+      </YStack>
     )
   }
 
   const game = GAME_MAP[preview.gameTemplate] ?? { emoji: '🎲', label: preview.gameTemplate }
 
   return (
-    <View style={styles.screen}>
-      <View style={styles.card}>
-        <Text style={styles.title}>{preview.title}</Text>
-        <View style={styles.row}>
-          <Text style={styles.label}>Gra</Text>
-          <Text style={styles.value}>{game.emoji} {game.label}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text style={styles.label}>Stawka</Text>
-          <Text style={styles.value}>{preview.stakeAmount} zł</Text>
-        </View>
-        <TouchableOpacity
-          style={[styles.joinBtn, joining && styles.joinBtnDisabled]}
-          onPress={handleJoin}
+    <YStack flex={1} style={{ backgroundColor: '#0f1117', padding: 20, justifyContent: 'center' }}>
+      <YStack
+        style={{
+          backgroundColor: '#181c24',
+          borderRadius: 16,
+          borderColor: '#1e2330',
+          borderWidth: 0.5,
+          padding: 20,
+          gap: 14,
+        }}
+      >
+        <Text style={{ fontSize: 24, fontWeight: '700', color: '#e8e6e0', marginBottom: 8 }}>{preview.title}</Text>
+        <XStack style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+            Gra
+          </Text>
+          <Text style={{ fontSize: 16, color: '#e8e6e0', fontWeight: '600' }}>
+            {game.emoji} {game.label}
+          </Text>
+        </XStack>
+        <XStack style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+            Stawka
+          </Text>
+          <Text style={{ fontSize: 16, color: '#e8e6e0', fontWeight: '600' }}>{preview.stakeAmount} zł</Text>
+        </XStack>
+        <Button
           disabled={joining}
-          activeOpacity={0.85}
+          onPress={handleJoin}
+          style={{
+            marginTop: 10,
+            backgroundColor: '#534AB7',
+            borderRadius: 12,
+            height: 52,
+            opacity: joining ? 0.65 : 1,
+          }}
         >
-          {joining
-            ? <ActivityIndicator color="#fff" />
-            : <Text style={styles.joinBtnText}>
-                {preview.alreadyConfirmed ? 'Przejdź do zakładu' : 'Dołącz do zakładu'}
-              </Text>
-          }
-        </TouchableOpacity>
-      </View>
-    </View>
+          {joining ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '700' }}>
+              {preview.alreadyConfirmed ? 'Przejdź do zakładu' : 'Dołącz do zakładu'}
+            </Text>
+          )}
+        </Button>
+      </YStack>
+    </YStack>
   )
 }
-
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#0f1117', padding: 20, justifyContent: 'center' },
-  centered: { flex: 1, backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' },
-  errorText: { color: 'rgba(232,230,224,0.5)', fontSize: 15 },
-  card: {
-    backgroundColor: '#181c24',
-    borderRadius: 16,
-    borderColor: '#1e2330',
-    borderWidth: 0.5,
-    padding: 20,
-    gap: 14,
-  },
-  title: { fontSize: 24, fontWeight: '700', color: '#e8e6e0', marginBottom: 8 },
-  row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  label: { fontSize: 13, color: 'rgba(232,230,224,0.5)', textTransform: 'uppercase', letterSpacing: 0.5 },
-  value: { fontSize: 16, color: '#e8e6e0', fontWeight: '600' },
-  joinBtn: {
-    marginTop: 10,
-    backgroundColor: '#534AB7',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  joinBtnDisabled: { opacity: 0.65 },
-  joinBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
-})

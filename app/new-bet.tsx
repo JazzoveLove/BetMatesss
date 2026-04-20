@@ -1,4 +1,5 @@
-import { View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet, ActivityIndicator, Share, Modal, Alert, Image } from 'react-native'
+import { TouchableOpacity, StyleSheet, ActivityIndicator, Share, Modal, Alert, Image } from 'react-native'
+import { View, Text, ScrollView, Input } from 'tamagui'
 import { useNavigation } from '@react-navigation/native'
 import { useMemo, useState } from 'react'
 import { useNewBet } from '../hooks/useNewBet'
@@ -168,13 +169,13 @@ export default function NewBetScreen() {
         {needsGlobalStake && (
           <View style={styles.fieldBlock}>
             <Text style={styles.fieldLabel}>Stawka za osobę (zł)</Text>
-            <TextInput
+            <Input
               style={styles.input}
               value={globalStake}
               onChangeText={setGlobalStake}
               keyboardType="numeric"
               placeholder="0"
-              placeholderTextColor="rgba(232,230,224,0.3)"
+              placeholderTextColor={'rgba(232,230,224,0.3)' as never}
             />
           </View>
         )}
@@ -193,13 +194,13 @@ export default function NewBetScreen() {
             </View>
             <View style={styles.participantRight}>
               {stakeMode === 'custom' && (
-                <TextInput
+                <Input
                   style={styles.customStakeInput}
                   value={p.customStake}
                   onChangeText={v => setCustomStake(p.id, v)}
                   keyboardType="numeric"
                   placeholder="zł"
-                  placeholderTextColor="rgba(232,230,224,0.3)"
+                  placeholderTextColor={'rgba(232,230,224,0.3)' as never}
                 />
               )}
               {p.id !== currentUser?.id && (
@@ -304,7 +305,7 @@ export default function NewBetScreen() {
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={styles.scrollContent as any}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
@@ -366,7 +367,7 @@ export default function NewBetScreen() {
             ) : friends.length === 0 ? (
               <Text style={styles.qrHint}>Brak zaakceptowanych znajomych.</Text>
             ) : (
-              <ScrollView style={styles.friendsList} contentContainerStyle={styles.friendsListContent}>
+              <ScrollView style={styles.friendsList} contentContainerStyle={styles.friendsListContent as any}>
                 {friends.map(friend => {
                   const isAlreadyParticipant = participants.some(p => p.id === friend.id)
                   const isInviting = invitingFriendId === friend.id

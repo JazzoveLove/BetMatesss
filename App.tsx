@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
-import { Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 import * as Linking from 'expo-linking'
+import { TamaguiProvider, Text, Button } from 'tamagui'
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -22,6 +23,7 @@ import {
 } from './lib/friend-invite-queue'
 import { extractFriendIdFromUrl } from './lib/friend-invite-url'
 import { extractBetInviteCodeFromUrl } from './lib/bet-invite-url'
+import tamaguiConfig from './tamagui.config'
 
 // ─── Navigators ───────────────────────────────────────────────────────────────
 
@@ -33,7 +35,9 @@ const Stack = createNativeStackNavigator()
 type AppState = 'loading' | 'auth' | 'setup' | 'main'
 
 function TabIcon({ icon, color }: { icon: string; color: string }) {
-  return <Text style={{ fontSize: 20, color }}>{icon}</Text>
+  return (
+    <Text style={{ fontSize: 20, color }}>{icon}</Text>
+  )
 }
 
 // ─── Tab navigator ────────────────────────────────────────────────────────────
@@ -67,13 +71,14 @@ function TabNavigator() {
           tabBarLabel: () => null,
           tabBarIcon: () => null,
           tabBarButton: ({ onPress }) => (
-            <TouchableOpacity
+            <Button
+              unstyled
+              onPress={onPress}
               style={styles.newBetBtn}
-              onPress={onPress ?? undefined}
-              activeOpacity={0.8}
+              pressStyle={{ opacity: 0.8 }}
             >
               <Text style={styles.newBetPlus}>+</Text>
-            </TouchableOpacity>
+            </Button>
           ),
         }}
       />
@@ -93,7 +98,7 @@ function TabNavigator() {
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
-export default function App() {
+function AppContent() {
   const [appState, setAppState] = useState<AppState>('loading')
   const [session, setSession] = useState<Session | null>(null)
   const [pendingBetInviteCode, setPendingBetInviteCode] = useState<string | null>(null)
@@ -217,6 +222,14 @@ export default function App() {
         />
       </Stack.Navigator>
     </NavigationContainer>
+  )
+}
+
+export default function App() {
+  return (
+    <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
+      <AppContent />
+    </TamaguiProvider>
   )
 }
 

@@ -1,8 +1,6 @@
 import { useState } from 'react'
-import {
-  View, Text, TextInput, TouchableOpacity,
-  StyleSheet, Alert, KeyboardAvoidingView, Platform,
-} from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform } from 'react-native'
+import { YStack, Text, Input, Button } from 'tamagui'
 import { useAuth } from '../hooks/useAuth'
 
 type Props = {
@@ -43,107 +41,72 @@ export default function SetupProfileScreen({ userId, onComplete }: Props) {
     onComplete()
   }
 
+  const canSave = !loading && nick.trim().length >= 2
+
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={{ flex: 1, backgroundColor: '#0f1117' }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <View style={styles.inner}>
-        <Text style={styles.emoji}>👋</Text>
-        <Text style={styles.title}>Jak masz na imię?</Text>
-        <Text style={styles.subtitle}>
+      <YStack flex={1} style={{ justifyContent: 'center', padding: 28 }}>
+        <Text style={{ fontSize: 48, textAlign: 'center', marginBottom: 16 }}>👋</Text>
+        <Text style={{ fontSize: 26, fontWeight: '700', color: '#e8e6e0', textAlign: 'center', marginBottom: 8 }}>
+          Jak masz na imię?
+        </Text>
+        <Text
+          style={{
+            fontSize: 14,
+            color: 'rgba(232,230,224,0.5)',
+            textAlign: 'center',
+            marginBottom: 40,
+            lineHeight: 20,
+          }}
+        >
           Twój nick będą widzieć znajomi przy zakładach
         </Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Wpisz nick..."
-          placeholderTextColor="rgba(232,230,224,0.3)"
+        <Input
           value={nick}
           onChangeText={setNick}
+          placeholder="Wpisz nick..."
+          placeholderTextColor={'rgba(232,230,224,0.3)' as never}
           autoCapitalize="none"
           autoCorrect={false}
           maxLength={20}
           returnKeyType="done"
           onSubmitEditing={saveNick}
+          style={{
+            backgroundColor: '#181c24',
+            borderWidth: 0.5,
+            borderColor: '#1e2330',
+            borderRadius: 12,
+            padding: 16,
+            fontSize: 18,
+            color: '#e8e6e0',
+            textAlign: 'center',
+            letterSpacing: 0.5,
+          }}
         />
 
-        <Text style={styles.hint}>{nick.trim().length} / 20</Text>
+        <Text style={{ fontSize: 12, color: 'rgba(232,230,224,0.3)', textAlign: 'right', marginTop: 6, marginBottom: 32 }}>
+          {nick.trim().length} / 20
+        </Text>
 
-        <TouchableOpacity
-          style={[styles.btn, (loading || nick.trim().length < 2) && styles.btnDisabled]}
+        <Button
+          disabled={!canSave}
           onPress={saveNick}
-          disabled={loading || nick.trim().length < 2}
-          activeOpacity={0.8}
+          style={{
+            backgroundColor: '#534AB7',
+            borderRadius: 12,
+            height: 52,
+            opacity: canSave ? 1 : 0.4,
+          }}
         >
-          <Text style={styles.btnText}>
+          <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>
             {loading ? 'Zapisywanie...' : 'Gotowe'}
           </Text>
-        </TouchableOpacity>
-      </View>
+        </Button>
+      </YStack>
     </KeyboardAvoidingView>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0f1117',
-  },
-  inner: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 28,
-  },
-  emoji: {
-    fontSize: 48,
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: '#e8e6e0',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: 'rgba(232,230,224,0.5)',
-    textAlign: 'center',
-    marginBottom: 40,
-    lineHeight: 20,
-  },
-  input: {
-    backgroundColor: '#181c24',
-    borderWidth: 0.5,
-    borderColor: '#1e2330',
-    borderRadius: 12,
-    padding: 16,
-    fontSize: 18,
-    color: '#e8e6e0',
-    textAlign: 'center',
-    letterSpacing: 0.5,
-  },
-  hint: {
-    fontSize: 12,
-    color: 'rgba(232,230,224,0.3)',
-    textAlign: 'right',
-    marginTop: 6,
-    marginBottom: 32,
-  },
-  btn: {
-    backgroundColor: '#534AB7',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  btnDisabled: {
-    opacity: 0.4,
-  },
-  btnText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-})

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { YStack, Text } from 'tamagui'
 
 type Props = {
   label: string
@@ -7,48 +7,33 @@ type Props = {
 }
 
 export default function StatCard({ label, value, highlight = 'neutral' }: Props) {
+  const valueColor =
+    highlight === 'positive' ? '#1D9E75' : highlight === 'negative' ? '#E24B4A' : '#e8e6e0'
+
   return (
-    <View style={styles.card}>
-      <Text style={styles.label}>{label}</Text>
+    <YStack
+      flex={1}
+      style={{
+        backgroundColor: '#181c24',
+        borderRadius: 14,
+        borderWidth: 0.5,
+        borderColor: '#1e2330',
+        padding: 14,
+        alignItems: 'center',
+      }}
+    >
       <Text
-        style={[
-          styles.value,
-          highlight === 'positive' && styles.positive,
-          highlight === 'negative' && styles.negative,
-        ]}
+        style={{
+          fontSize: 10,
+          color: 'rgba(232,230,224,0.5)',
+          textTransform: 'uppercase',
+          letterSpacing: 0.7,
+          marginBottom: 7,
+        }}
       >
-        {value}
+        {label}
       </Text>
-    </View>
+      <Text style={{ fontSize: 20, fontWeight: '700', color: valueColor }}>{value}</Text>
+    </YStack>
   )
 }
-
-const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    backgroundColor: '#181c24',
-    borderRadius: 14,
-    borderWidth: 0.5,
-    borderColor: '#1e2330',
-    padding: 14,
-    alignItems: 'center',
-  },
-  label: {
-    fontSize: 10,
-    color: 'rgba(232,230,224,0.5)',
-    textTransform: 'uppercase',
-    letterSpacing: 0.7,
-    marginBottom: 7,
-  },
-  value: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#e8e6e0',
-  },
-  positive: {
-    color: '#1D9E75',
-  },
-  negative: {
-    color: '#E24B4A',
-  },
-})

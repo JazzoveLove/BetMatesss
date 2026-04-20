@@ -1,12 +1,5 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native'
+import { ActivityIndicator, RefreshControl } from 'react-native'
+import { ScrollView, YStack, XStack, Text, Button } from 'tamagui'
 import { useProfile } from '../hooks/useProfile'
 import { useAuth } from '../hooks/useAuth'
 import { GAME_MAP } from '../constants/games'
@@ -39,11 +32,15 @@ export default function ProfileScreen() {
 
   if (loading || !data) {
     return (
-      <View style={styles.centered}>
-        {loading ? <ActivityIndicator color="#7F77DD" size="large" /> : (
-          <Text style={styles.muted}>Nie udało się wczytać profilu.</Text>
+      <YStack flex={1} style={{ backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
+        {loading ? (
+          <ActivityIndicator color="#7F77DD" size="large" />
+        ) : (
+          <Text style={{ fontSize: 14, color: 'rgba(232,230,224,0.5)', textAlign: 'center' }}>
+            Nie udało się wczytać profilu.
+          </Text>
         )}
-      </View>
+      </YStack>
     )
   }
 
@@ -51,8 +48,9 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView
-      style={styles.screen}
-      contentContainerStyle={styles.content}
+      flex={1}
+      style={{ backgroundColor: '#0f1117' }}
+      contentContainerStyle={{ padding: 20, paddingTop: 56, paddingBottom: 40 } as any}
       showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl
@@ -63,17 +61,30 @@ export default function ProfileScreen() {
         />
       }
     >
-      <View style={styles.headerRow}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>{initialsFromNick(nick)}</Text>
-        </View>
-        <View style={styles.headerText}>
-          <Text style={styles.nick}>{nick}</Text>
-          <Text style={styles.joined}>Dołączył(a): {formatJoined(createdAt)}</Text>
-        </View>
-      </View>
+      <XStack style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 28 }}>
+        <YStack
+          style={{
+            width: 72,
+            height: 72,
+            borderRadius: 36,
+            backgroundColor: '#534AB730',
+            borderWidth: 0.5,
+            borderColor: '#534AB7',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ fontSize: 24, fontWeight: '700', color: '#7F77DD' }}>{initialsFromNick(nick)}</Text>
+        </YStack>
+        <YStack flex={1}>
+          <Text style={{ fontSize: 22, fontWeight: '700', color: '#e8e6e0', marginBottom: 4 }}>{nick}</Text>
+          <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)' }}>
+            Dołączył(a): {formatJoined(createdAt)}
+          </Text>
+        </YStack>
+      </XStack>
 
-      <View style={styles.statsRow}>
+      <XStack style={{ flexDirection: 'row', gap: 10, marginBottom: 28 }}>
         <StatCard
           label="Bilans"
           value={formatBalance(stats.balance)}
@@ -85,151 +96,189 @@ export default function ProfileScreen() {
           value={`${stats.winRate}%`}
           highlight={stats.winRate >= 50 ? 'positive' : stats.winRate > 0 ? 'negative' : 'neutral'}
         />
-      </View>
+      </XStack>
 
-      <Text style={styles.sectionTitle}>Wyniki wg dyscypliny</Text>
+      <Text style={{ fontSize: 16, fontWeight: '600', color: '#e8e6e0', marginBottom: 12 }}>
+        Wyniki wg dyscypliny
+      </Text>
       {disciplines.length === 0 ? (
-        <View style={styles.emptyBox}>
-          <Text style={styles.muted}>Brak rozliczonych zakładów z wynikiem W/L</Text>
-        </View>
+        <YStack
+          style={{
+            backgroundColor: '#181c24',
+            borderRadius: 14,
+            borderWidth: 0.5,
+            borderColor: '#1e2330',
+            padding: 20,
+            marginBottom: 24,
+          }}
+        >
+          <Text style={{ fontSize: 14, color: 'rgba(232,230,224,0.5)', textAlign: 'center' }}>
+            Brak rozliczonych zakładów z wynikiem W/L
+          </Text>
+        </YStack>
       ) : (
-        <View style={styles.table}>
-          <View style={styles.tableHeader}>
-            <Text style={[styles.th, styles.thGame]}>Dyscyplina</Text>
-            <Text style={styles.th}>W/L</Text>
-            <Text style={styles.th}>%</Text>
-          </View>
+        <YStack
+          style={{
+            backgroundColor: '#181c24',
+            borderRadius: 14,
+            borderWidth: 0.5,
+            borderColor: '#1e2330',
+            marginBottom: 28,
+            overflow: 'hidden',
+          }}
+        >
+          <XStack
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingVertical: 10,
+              paddingHorizontal: 12,
+              backgroundColor: '#1e2330',
+            }}
+          >
+            <Text style={{ flex: 1, fontSize: 11, fontWeight: '700', color: 'rgba(232,230,224,0.45)', textTransform: 'uppercase' }}>
+              Dyscyplina
+            </Text>
+            <Text
+              style={{
+                width: 56,
+                textAlign: 'right',
+                fontSize: 11,
+                fontWeight: '700',
+                color: 'rgba(232,230,224,0.45)',
+                textTransform: 'uppercase',
+              }}
+            >
+              W/L
+            </Text>
+            <Text
+              style={{
+                width: 56,
+                textAlign: 'right',
+                fontSize: 11,
+                fontWeight: '700',
+                color: 'rgba(232,230,224,0.45)',
+                textTransform: 'uppercase',
+              }}
+            >
+              %
+            </Text>
+          </XStack>
           {disciplines.map(row => {
             const game = GAME_MAP[row.gameTemplate] ?? { emoji: '🎲', label: row.gameTemplate }
             return (
-              <View key={row.gameTemplate} style={styles.tableRow}>
-                <View style={styles.disciplineCell}>
-                  <Text style={styles.discEmoji}>{game.emoji}</Text>
-                  <Text style={styles.discName} numberOfLines={1}>
+              <XStack
+                key={row.gameTemplate}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 12,
+                  paddingHorizontal: 12,
+                  borderTopWidth: 0.5,
+                  borderTopColor: '#1e2330',
+                }}
+              >
+                <XStack flex={1} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Text style={{ fontSize: 18 }}>{game.emoji}</Text>
+                  <Text style={{ flex: 1, fontSize: 14, fontWeight: '600', color: '#e8e6e0' }} numberOfLines={1}>
                     {game.label}
                   </Text>
-                </View>
-                <Text style={styles.wl}>
+                </XStack>
+                <Text
+                  style={{
+                    width: 56,
+                    textAlign: 'right',
+                    fontSize: 14,
+                    color: '#e8e6e0',
+                    fontVariant: ['tabular-nums'],
+                  }}
+                >
                   {row.wins}/{row.losses}
                 </Text>
-                <Text style={styles.pct}>{row.winPct}%</Text>
-              </View>
+                <Text
+                  style={{
+                    width: 56,
+                    textAlign: 'right',
+                    fontSize: 14,
+                    fontWeight: '700',
+                    color: '#7F77DD',
+                    fontVariant: ['tabular-nums'],
+                  }}
+                >
+                  {row.winPct}%
+                </Text>
+              </XStack>
             )
           })}
-        </View>
+        </YStack>
       )}
 
-      <Text style={styles.sectionTitle}>Znajomi — ranking (bilans)</Text>
+      <Text style={{ fontSize: 16, fontWeight: '600', color: '#e8e6e0', marginBottom: 12 }}>
+        Znajomi — ranking (bilans)
+      </Text>
       {friendsRank.length === 0 ? (
-        <View style={styles.emptyBox}>
-          <Text style={styles.muted}>Dodaj znajomych, żeby zobaczyć ranking</Text>
-        </View>
+        <YStack
+          style={{
+            backgroundColor: '#181c24',
+            borderRadius: 14,
+            borderWidth: 0.5,
+            borderColor: '#1e2330',
+            padding: 20,
+            marginBottom: 24,
+          }}
+        >
+          <Text style={{ fontSize: 14, color: 'rgba(232,230,224,0.5)', textAlign: 'center' }}>
+            Dodaj znajomych, żeby zobaczyć ranking
+          </Text>
+        </YStack>
       ) : (
         friendsRank.map((f, index) => (
-          <View key={f.id} style={styles.friendRow}>
-            <Text style={styles.rankNum}>{index + 1}</Text>
-            <View style={styles.friendMid}>
-              <Text style={styles.friendNick}>{f.nick}</Text>
-            </View>
+          <XStack
+            key={f.id}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              backgroundColor: '#181c24',
+              borderRadius: 12,
+              borderWidth: 0.5,
+              borderColor: '#1e2330',
+              padding: 14,
+              marginBottom: 8,
+              gap: 12,
+            }}
+          >
+            <Text style={{ fontSize: 14, fontWeight: '700', color: '#534AB7', width: 24 }}>{index + 1}</Text>
+            <YStack flex={1}>
+              <Text style={{ fontSize: 15, fontWeight: '600', color: '#e8e6e0' }}>{f.nick}</Text>
+            </YStack>
             <Text
-              style={[
-                styles.friendBalance,
-                f.balance > 0 && styles.amountWin,
-                f.balance < 0 && styles.amountLoss,
-              ]}
+              style={{
+                fontSize: 14,
+                fontWeight: '700',
+                color: f.balance > 0 ? '#1D9E75' : f.balance < 0 ? '#E24B4A' : '#e8e6e0',
+              }}
             >
               {formatBalance(f.balance)}
             </Text>
-          </View>
+          </XStack>
         ))
       )}
 
-      <TouchableOpacity style={styles.logoutBtn} onPress={() => void signOut()} activeOpacity={0.85}>
-        <Text style={styles.logoutText}>Wyloguj</Text>
-      </TouchableOpacity>
+      <Button
+        chromeless
+        onPress={() => void signOut()}
+        style={{
+          marginTop: 16,
+          backgroundColor: '#1e2330',
+          borderRadius: 12,
+          paddingVertical: 16,
+          alignItems: 'center',
+          borderWidth: 0.5,
+          borderColor: '#1e2330',
+        }}
+      >
+        <Text style={{ fontSize: 15, fontWeight: '600', color: 'rgba(232,230,224,0.6)' }}>Wyloguj</Text>
+      </Button>
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#0f1117' },
-  content: { padding: 20, paddingTop: 56, paddingBottom: 40 },
-  centered: { flex: 1, backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' },
-  headerRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 28 },
-  avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: '#534AB730',
-    borderWidth: 0.5,
-    borderColor: '#534AB7',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarText: { fontSize: 24, fontWeight: '700', color: '#7F77DD' },
-  headerText: { flex: 1 },
-  nick: { fontSize: 22, fontWeight: '700', color: '#e8e6e0', marginBottom: 4 },
-  joined: { fontSize: 13, color: 'rgba(232,230,224,0.5)' },
-  statsRow: { flexDirection: 'row', gap: 10, marginBottom: 28 },
-  sectionTitle: { fontSize: 16, fontWeight: '600', color: '#e8e6e0', marginBottom: 12 },
-  emptyBox: {
-    backgroundColor: '#181c24',
-    borderRadius: 14,
-    borderWidth: 0.5,
-    borderColor: '#1e2330',
-    padding: 20,
-    marginBottom: 24,
-  },
-  muted: { fontSize: 14, color: 'rgba(232,230,224,0.5)', textAlign: 'center' },
-  table: {
-    backgroundColor: '#181c24',
-    borderRadius: 14,
-    borderWidth: 0.5,
-    borderColor: '#1e2330',
-    marginBottom: 28,
-    overflow: 'hidden',
-  },
-  tableHeader: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 12, backgroundColor: '#1e2330' },
-  th: { fontSize: 11, fontWeight: '700', color: 'rgba(232,230,224,0.45)', textTransform: 'uppercase', width: 56, textAlign: 'right' },
-  thGame: { flex: 1, textAlign: 'left', width: undefined },
-  tableRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    borderTopWidth: 0.5,
-    borderTopColor: '#1e2330',
-  },
-  disciplineCell: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8 },
-  discEmoji: { fontSize: 18 },
-  discName: { flex: 1, fontSize: 14, fontWeight: '600', color: '#e8e6e0' },
-  wl: { width: 56, textAlign: 'right', fontSize: 14, color: '#e8e6e0', fontVariant: ['tabular-nums'] },
-  pct: { width: 56, textAlign: 'right', fontSize: 14, fontWeight: '700', color: '#7F77DD', fontVariant: ['tabular-nums'] },
-  friendRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#181c24',
-    borderRadius: 12,
-    borderWidth: 0.5,
-    borderColor: '#1e2330',
-    padding: 14,
-    marginBottom: 8,
-    gap: 12,
-  },
-  rankNum: { fontSize: 14, fontWeight: '700', color: '#534AB7', width: 24 },
-  friendMid: { flex: 1 },
-  friendNick: { fontSize: 15, fontWeight: '600', color: '#e8e6e0' },
-  friendBalance: { fontSize: 14, fontWeight: '700', color: '#e8e6e0' },
-  amountWin: { color: '#1D9E75' },
-  amountLoss: { color: '#E24B4A' },
-  logoutBtn: {
-    marginTop: 16,
-    backgroundColor: '#1e2330',
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
-    borderWidth: 0.5,
-    borderColor: '#1e2330',
-  },
-  logoutText: { fontSize: 15, fontWeight: '600', color: 'rgba(232,230,224,0.6)' },
-})

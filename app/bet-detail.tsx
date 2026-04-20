@@ -1,16 +1,6 @@
 import { useState, useCallback } from 'react'
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  Alert,
-} from 'react-native'
+import { StyleSheet, ActivityIndicator, Modal, Pressable, Alert, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, Input } from 'tamagui'
 import { useRoute, useNavigation, RouteProp } from '@react-navigation/native'
 import { useBetDetail } from '../hooks/useBetDetail'
 import { GAME_MAP } from '../constants/games'
@@ -120,7 +110,7 @@ export default function BetDetailScreen() {
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={styles.scrollContent as any}
         showsVerticalScrollIndicator={false}
       >
         {/* Game info */}
@@ -336,12 +326,12 @@ export default function BetDetailScreen() {
         <Pressable style={styles.modalBackdrop} onPress={closeResultModal}>
           <Pressable style={styles.modalCard} onPress={e => e.stopPropagation()}>
             <Text style={styles.modalTitle}>Wpisz wynik</Text>
-            <TextInput
+            <Input
               style={styles.modalScoreInput}
               value={modalScore}
               onChangeText={setModalScore}
               placeholder="np. 5:3"
-              placeholderTextColor="rgba(232,230,224,0.3)"
+              placeholderTextColor={'rgba(232,230,224,0.3)' as never}
               autoCapitalize="none"
             />
             <Text style={styles.resolveHint}>Kto wygrał?</Text>
