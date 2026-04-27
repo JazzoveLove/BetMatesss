@@ -1,7 +1,9 @@
 import { supabase } from '../lib/supabase'
+import { calculatePerMatchBalance } from '../utils/formats'
 import { parseStakeAmount } from '../utils/odds'
+import { settlementDraftsFromPairBalances } from '../utils/settlements'
 import { loadNicksByIds } from './friends.service'
-import type { Settlement, StakeMode } from '../types/bet.types'
+import type { BetParticipant, BetResult, Settlement, StakeMode } from '../types/bet.types'
 
 async function getSettlements(betId: string): Promise<Settlement[]> {
   console.log('[getSettlements] start', { betId })
@@ -80,6 +82,29 @@ async function markSettlementPaid(
   return {}
 }
 
+export type SettlementRow = {
+  bet_id: string
+  debtor_id: string
+  creditor_id: string
+  amount: number
+  paid: false
+}
+
+export function buildSettlementRows(
+  betId: string,
+  participants: { user_id: string; stake_amount: number | string }[],
+  winnerId: string,
+): SettlementRow[] {
+  return participants
+    .filter(p => p.user_id !== winnerId)
+    .map(p => {
+      const amount = parseStakeAmount(p.stake_amount)
+      if (amount <= 0) return null
+      return { bet_id: betId, debtor_id: p.user_id, creditor_id: winnerId, amount, paid: false as const }
+    })
+    .filter((row): row is SettlementRow => row !== null)
+}
+
 /**
  * Wywołana po potwierdzeniu wyniku przez gracza B.
  * Pobiera uczestników i zwycięzcę, oblicza długi, zapisuje do settlements.
@@ -106,7 +131,7 @@ async function createSettlements(betId: string): Promise<{ error?: string }> {
   console.log('[createSettlements] step 3 fetch bet stake_mode')
   const { data: bet, error: betErr } = await supabase
     .from('bets')
-    .select('id, stake_mode')
+    .select('id, stake_mode, format, stake_per_match')
     .eq('id', betId)
     .maybeSingle()
 
@@ -118,7 +143,80 @@ async function createSettlements(betId: string): Promise<{ error?: string }> {
   }
 
   const stakeMode = (bet as { stake_mode: StakeMode }).stake_mode
+  const betFormat = (bet as { format?: string }).format
+  const stakePerMatch = Number((bet as { stake_per_match?: number | string }).stake_per_match ?? 0)
   console.log('[createSettlements] step 4 stake_mode', stakeMode)
+
+  if (betFormat === 'per_match') {
+    if (!Number.isFinite(stakePerMatch) || stakePerMatch <= 0) {
+      console.log('[createSettlements] per_match: brak stawki za mecz — brak rozliczeń')
+      return {}
+    }
+
+    const { data: participants, error: partErr } = await supabase
+      .from('bet_participants')
+      .select('user_id, stake_amount, odds, role, confirmed')
+      .eq('bet_id', betId)
+
+    if (partErr) return { error: partErr.message }
+
+    const partRows = (participants ?? []) as {
+      user_id: string
+      stake_amount: number | string
+      odds: number | string
+      role: string
+      confirmed: boolean
+    }[]
+
+    const participantsForCalc: BetParticipant[] = partRows.map(p => ({
+      id: p.user_id,
+      nick: '',
+      stakeAmount: parseStakeAmount(p.stake_amount),
+      odds: Number(p.odds) || 0,
+      role: p.role,
+      confirmed: p.confirmed,
+    }))
+
+    const { data: resultRows, error: resErr } = await supabase
+      .from('bet_results')
+      .select('id, match_number, winner_id, scores, confirmed')
+      .eq('bet_id', betId)
+      .order('match_number', { ascending: true })
+
+    if (resErr) return { error: resErr.message }
+
+    const results: BetResult[] = ((resultRows ?? []) as any[]).map(r => ({
+      id: r.id,
+      bet_id: betId,
+      match_number: r.match_number,
+      winner_id: r.winner_id,
+      scores: (r.scores ?? {}) as Record<string, number | string>,
+      confirmed: !!r.confirmed,
+    }))
+
+    const balance = calculatePerMatchBalance(results, stakePerMatch, participantsForCalc)
+    const ids = partRows.map(p => p.user_id)
+    const drafts = settlementDraftsFromPairBalances(balance, ids)
+    console.log('[createSettlements] per_match drafts', drafts)
+
+    if (drafts.length === 0) {
+      console.log('[createSettlements] per_match: bilans zerowy — brak rozliczeń')
+      return {}
+    }
+
+    const settlementRows = drafts.map(d => ({
+      bet_id: betId,
+      debtor_id: d.debtorId,
+      creditor_id: d.creditorId,
+      amount: d.amount,
+      paid: false,
+    }))
+
+    const { error: insErr } = await supabase.from('settlements').insert(settlementRows)
+    if (insErr) return { error: insErr.message }
+    console.log('[createSettlements] per_match — utworzono', settlementRows.length, 'rozliczenie')
+    return {}
+  }
 
   if (stakeMode === 'none') {
     console.log('[createSettlements] step 4b stake_mode=none — no settlement rows')

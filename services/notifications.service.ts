@@ -73,6 +73,36 @@ async function sendBetInviteNotification(params: {
   return error ? { error: error.message } : {}
 }
 
+/**
+ * Zapis zaproszeń w tabeli `notifications` (widok w Znajomi / odświeżenie listy).
+ * Prawdziwy push na iOS/Android wymaga `expo-notifications`, zapisu Expo Push Token w Supabase
+ * oraz Edge Function lub serwera wywołującego https://exp.host/--/api/v2/push/send —
+ * obecnie w projekcie tego nie ma.
+ */
+async function sendBetInvite(params: {
+  betId: string
+  fromUserId: string
+  fromNick: string
+  toUserIds: string[]
+  gameTemplate: string
+  stakeByUserId?: Record<string, number>
+}): Promise<{ error?: string }> {
+  for (const userId of params.toUserIds) {
+    if (userId === params.fromUserId) continue
+    const stakeAmount = params.stakeByUserId?.[userId] ?? 0
+    const result = await sendBetInviteNotification({
+      userId,
+      fromUserId: params.fromUserId,
+      fromNick: params.fromNick,
+      betId: params.betId,
+      gameTemplate: params.gameTemplate,
+      stakeAmount,
+    })
+    if (result.error) return result
+  }
+  return {}
+}
+
 async function getPendingBetInviteNotifications(userId: string): Promise<BetInviteNotification[]> {
   const { data, error } = await supabase
     .from('notifications')
@@ -115,6 +145,7 @@ async function sendSettlementReminderNotification(params: {
 }
 
 export const NotificationsService = {
+  sendBetInvite,
   sendBetInviteNotification,
   getPendingBetInviteNotifications,
   markNotificationRead,

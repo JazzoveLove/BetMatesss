@@ -1,219 +1,274 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useCallback, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react'
 import { Alert } from 'react-native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { AuthService } from '../services/auth.service'
-import { BetsService } from '../services/bets.service'
-import { getAcceptedFriendsList } from '../services/friends.service'
-import { NotificationsService } from '../services/notifications.service'
-import type { StakeMode, NewBetParticipant } from '../types/bet.types'
-import { parseStakeAmount, toStakeNumber } from '../utils/odds'
+import { GAME_TEMPLATES, type GameTemplate } from '../constants/games'
+import type { BetFormat, PokerMode, StakeMode } from '../types/bet.types'
+import type { UserProfile } from '../types/user.types'
+import { useBets } from './useBets'
+import { useFriends } from './useFriends'
+import { getAvailableFormats, getDefaultFormat } from '../utils/formats'
 
-export function useNewBet(onCreated: (betId: string) => void) {
-  const [step, setStep] = useState<1 | 2 | 3>(1)
-  const [selectedGame, setSelectedGame] = useState<string | null>(null)
-  const [selectedFormat, setSelectedFormat] = useState<string | null>(null)
-  const [stakeMode, setStakeMode] = useState<StakeMode>('equal')
-  const [globalStake, setGlobalStake] = useState('')
-  const [participants, setParticipants] = useState<NewBetParticipant[]>([])
-  const [currentUser, setCurrentUser] = useState<NewBetParticipant | null>(null)
-  const [createdBetId, setCreatedBetId] = useState<string | null>(null)
-  const [friends, setFriends] = useState<{ id: string; nick: string; avatar_url?: string | null }[]>([])
-  const [friendsLoading, setFriendsLoading] = useState(false)
-  const [saving, setSaving] = useState(false)
+export type NewBetStep = 1 | 2 | 3 | 4
+
+export type NewBetState = {
+  currentUser: UserProfile | null
+  selectedGame: GameTemplate | null
+  participants: UserProfile[]
+  selectedFormat: BetFormat | null
+  bestOfCount: 3 | 5 | 7
+  stakeMode: StakeMode
+  stakeAmount: number
+  customStakes: Record<string, number>
+  pokerMode: PokerMode
+  pokerStack: number
+  pokerRebuyStack: number
+  stakePerMatch: number
+  searchQuery: string
+  searchFocused: boolean
+  preselectedFriend: UserProfile | undefined
+  availableFormats: BetFormat[]
+  friendProfiles: UserProfile[]
+  recentGames: GameTemplate[]
+  gamesFiltered: GameTemplate[]
+  totalPlayers: number
+  sectionData: { title: string; data: GameTemplate[]; show: boolean }[]
+  loading: boolean
+}
+
+export type NewBetHandlers = {
+  handleGameSelect: (game: GameTemplate) => void
+  handleBack: () => void
+  handleSubmit: () => Promise<void>
+  resetNewBet: () => void
+  toggleParticipant: (friend: UserProfile) => void
+  setParticipants: Dispatch<SetStateAction<UserProfile[]>>
+  setStep: Dispatch<SetStateAction<NewBetStep>>
+  setSelectedFormat: Dispatch<SetStateAction<BetFormat | null>>
+  setBestOfCount: Dispatch<SetStateAction<3 | 5 | 7>>
+  setStakePerMatch: Dispatch<SetStateAction<number>>
+  setPokerMode: Dispatch<SetStateAction<PokerMode>>
+  setPokerStack: Dispatch<SetStateAction<number>>
+  setPokerRebuyStack: Dispatch<SetStateAction<number>>
+  setStakeMode: Dispatch<SetStateAction<StakeMode>>
+  setStakeAmount: Dispatch<SetStateAction<number>>
+  setCustomStakes: Dispatch<SetStateAction<Record<string, number>>>
+  setSearchQuery: Dispatch<SetStateAction<string>>
+  setSearchFocused: (v: boolean) => void
+}
+
+export function useNewBet() {
+  const navigation = useNavigation<any>()
+  const route = useRoute<any>()
+  const preselectedFriend = route.params?.preselectedFriend as UserProfile | undefined
+  const { friends, nick, avatar } = useFriends()
+  const { bets, createBet, loading } = useBets()
+
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(null)
+  const [step, setStep] = useState<NewBetStep>(1)
+  const [selectedGame, setSelectedGame] = useState<GameTemplate | null>(null)
+  const [participants, setParticipants] = useState<UserProfile[]>([])
+  const [selectedFormat, setSelectedFormat] = useState<BetFormat | null>(null)
+  const [bestOfCount, setBestOfCount] = useState<3 | 5 | 7>(3)
+  const [stakeMode, setStakeMode] = useState<StakeMode>('none')
+  const [stakeAmount, setStakeAmount] = useState<number>(0)
+  const [customStakes, setCustomStakes] = useState<Record<string, number>>({})
+  const [pokerMode, setPokerMode] = useState<PokerMode>('winner_takes_all')
+  const [pokerStack, setPokerStack] = useState<number>(3000)
+  const [pokerRebuyStack, setPokerRebuyStack] = useState<number>(1500)
+  const [stakePerMatch, setStakePerMatch] = useState<number>(20)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchFocused, setSearchFocused] = useState(false)
 
   useEffect(() => {
-    if (step !== 3 || currentUser) return
-    ;(async () => {
-      const profile = await AuthService.getCurrentUserProfile()
-      if (!profile) return
-      const me: NewBetParticipant = { id: profile.id, nick: profile.nick, customStake: '' }
+    void (async () => {
+      const me = await AuthService.getCurrentUserProfile()
+      if (!me) return
       setCurrentUser(me)
-      setParticipants([me])
     })()
-  }, [step, currentUser])
-
-  useEffect(() => {
-    if (step !== 3 || !currentUser) return
-    ;(async () => {
-      setFriendsLoading(true)
-      const rows = await getAcceptedFriendsList(currentUser.id)
-      setFriends(rows)
-      setFriendsLoading(false)
-    })()
-  }, [step, currentUser])
-
-  const addParticipant = useCallback((user: { id: string; nick: string }) => {
-    setParticipants(prev => {
-      if (prev.some(p => p.id === user.id)) return prev
-      return [...prev, { ...user, customStake: '' }]
-    })
   }, [])
 
-  const removeParticipant = useCallback(
-    (id: string) => {
-      if (id === currentUser?.id) return
-      setParticipants(prev => prev.filter(p => p.id !== id))
-    },
-    [currentUser],
+  useEffect(() => {
+    if (!preselectedFriend) return
+    setParticipants(prev => (prev.some(p => p.id === preselectedFriend.id) ? prev : [preselectedFriend, ...prev]))
+  }, [preselectedFriend])
+
+  const friendProfiles = useMemo<UserProfile[]>(
+    () =>
+      friends.map(friendship => {
+        const friendId = friendship.user_a === currentUser?.id ? friendship.user_b : friendship.user_a
+        return { id: friendId, nick: nick(friendId), avatar_url: avatar(friendId) }
+      }),
+    [avatar, currentUser?.id, friends, nick],
   )
 
-  const setCustomStake = useCallback((id: string, value: string) => {
-    setParticipants(prev => prev.map(p => (p.id === id ? { ...p, customStake: value } : p)))
+  const recentGames = useMemo(() => {
+    const ids = [...new Set(bets.map(b => b.game_template))].slice(0, 3)
+    return ids.map(id => GAME_TEMPLATES.find(g => g.id === id)).filter(Boolean) as GameTemplate[]
+  }, [bets])
+
+  const gamesFiltered = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) return GAME_TEMPLATES
+    return GAME_TEMPLATES.filter(game => game.name.toLowerCase().includes(query))
+  }, [searchQuery])
+
+  const availableFormats = useMemo(
+    () => (selectedGame ? getAvailableFormats(selectedGame, participants.length) : []),
+    [participants.length, selectedGame],
+  )
+
+  useEffect(() => {
+    if (!selectedGame || step !== 3) return
+    const nextDefault = getDefaultFormat(selectedGame, participants.length)
+    setSelectedFormat(prev => (prev && availableFormats.includes(prev) ? prev : nextDefault))
+  }, [availableFormats, participants.length, selectedGame, step])
+
+  const totalPlayers = participants.length + 1
+
+  const sectionData = useMemo(
+    () =>
+      [
+        { title: 'OSTATNIO UZYWANE', data: recentGames, show: recentGames.length > 0 },
+        { title: 'SPORT', data: GAME_TEMPLATES.filter(g => g.category === 'sport'), show: true },
+        { title: 'GRY VIDEO', data: GAME_TEMPLATES.filter(g => g.category === 'video'), show: true },
+        { title: 'PLANSZOWE', data: GAME_TEMPLATES.filter(g => g.category === 'planszowe'), show: true },
+        { title: 'INNE', data: GAME_TEMPLATES.filter(g => g.category === 'inne'), show: true },
+      ].filter(section => section.show),
+    [recentGames],
+  )
+
+  const handleGameSelect = useCallback((game: GameTemplate) => {
+    setSelectedGame(game)
+    setStep(2)
   }, [])
 
-  const setStakeModeAndReset = useCallback((mode: StakeMode) => {
-    if (mode === 'none') setGlobalStake('')
-    setStakeMode(mode)
+  const toggleParticipant = useCallback((friend: UserProfile) => {
+    setParticipants(prev =>
+      prev.some(p => p.id === friend.id) ? prev.filter(p => p.id !== friend.id) : [...prev, friend],
+    )
   }, [])
 
-  const canProceedStep1 = selectedGame !== null
-  const canProceedStep2 = selectedFormat !== null
-  const canCreate = (() => {
-    if (participants.length < 1) return false
-    if (stakeMode === 'none') return true
-    if (stakeMode === 'custom') return participants.every(p => parseStakeAmount(p.customStake) > 0)
-    return parseStakeAmount(globalStake) > 0
-  })()
+  const handleBack = useCallback(() => {
+    if (step === 1) {
+      Alert.alert('Anulowac?', 'Stracisz wprowadzone dane.', [
+        { text: 'Kontynuuj', style: 'cancel' },
+        { text: 'Anuluj zaklad', onPress: () => navigation.goBack() },
+      ])
+      return
+    }
+    setStep(prev => (prev - 1) as NewBetStep)
+  }, [navigation, step])
 
-  const totalPool =
-    stakeMode === 'custom'
-      ? participants.reduce((s, p) => s + parseStakeAmount(p.customStake), 0)
-      : parseStakeAmount(globalStake) * participants.length
+  const handleSubmit = useCallback(async () => {
+    if (!selectedGame || !selectedFormat || !currentUser) return
+    const allParticipants = [currentUser, ...participants]
+    const participantRows = allParticipants.map(player => ({
+      id: player.id,
+      nick: player.nick,
+      customStake: String(stakeMode === 'custom' ? customStakes[player.id] ?? 0 : stakeAmount),
+    }))
 
-  const reset = useCallback(() => {
-    setStep(1)
-    setSelectedGame(null)
-    setSelectedFormat(null)
-    setStakeMode('equal')
-    setGlobalStake('')
-    setParticipants([])
-    setCurrentUser(null)
-    setCreatedBetId(null)
-  }, [])
+    console.log('[handleSubmit] stakePerMatch:', stakePerMatch)
+    console.log('[handleSubmit] selectedFormat:', selectedFormat)
 
-  const ensureBetCreated = useCallback(async (): Promise<string | null> => {
-    const profile = currentUser
-    if (!profile || !selectedGame || !selectedFormat) return null
-    if (createdBetId) return createdBetId
-    setSaving(true)
-    const globalStakeNum = toStakeNumber(globalStake)
-    console.log('[useNewBet ensureBetCreated] payload before createBet', {
-      stakeMode,
-      globalStakeRaw: globalStake,
-      globalStakeNum,
-      participants: participants.map(p => ({
-        id: p.id,
-        nick: p.nick,
-        customStake: p.customStake,
-        parsedStake: toStakeNumber(p.customStake),
-      })),
-    })
-    const result = await BetsService.createBet({
-      creatorId: profile.id,
-      gameTemplate: selectedGame,
+    await createBet({
+      creatorId: currentUser.id,
+      gameTemplate: selectedGame.id,
       format: selectedFormat,
       stakeMode,
-      participants,
-      globalStake: globalStakeNum,
+      participants: participantRows,
+      globalStake: stakeMode === 'equal' ? stakeAmount : 0,
+      bestOfCount: selectedFormat === 'best_of' ? bestOfCount : undefined,
+      stakePerMatch: selectedFormat === 'per_match' ? stakePerMatch : undefined,
+      stakeAmount: stakeMode === 'equal' ? stakeAmount : undefined,
+      customStakes: stakeMode === 'custom' ? customStakes : undefined,
+      pokerMode: selectedGame.id === 'poker' ? pokerMode : undefined,
+      pokerStack: selectedGame.id === 'poker' ? pokerStack : undefined,
+      pokerRebuyStack: selectedGame.id === 'poker' ? pokerRebuyStack : undefined,
+      participantIds: participants.map(p => p.id),
     })
-    setSaving(false)
-    if ('error' in result) {
-      Alert.alert('Błąd', result.error)
-      return null
-    }
-    setCreatedBetId(result.betId)
-    return result.betId
-  }, [currentUser, selectedGame, selectedFormat, stakeMode, participants, globalStake, createdBetId])
 
-  const handleCreate = useCallback(async () => {
-    const betId = await ensureBetCreated()
-    if (!betId) return
-    reset()
-    onCreated(betId)
-  }, [ensureBetCreated, reset, onCreated])
-
-  const inviteFriendToBet = useCallback(
-    async (friend: { id: string; nick: string; avatar_url?: string | null }): Promise<{ error?: string }> => {
-      const me = currentUser
-      if (!me || !selectedGame || !selectedFormat) return { error: 'Brak danych zakładu.' }
-      const alreadySelected = participants.some(p => p.id === friend.id)
-      if (alreadySelected) return {}
-
-      const betId = await ensureBetCreated()
-      if (!betId) return { error: 'Nie udało się utworzyć zakładu.' }
-
-      // W trybie „custom” wcześniej zawsze wstawiano 0 — nowy uczestnik dostaje domyślnie
-      // tę samą stawkę co twórca (z kroku 3); dopóki nie ma osobnego pola przy zaproszeniu.
-      const friendStake =
-        stakeMode === 'none'
-          ? 0
-          : stakeMode === 'custom'
-          ? toStakeNumber(me.customStake)
-          : parseStakeAmount(globalStake)
-
-      const addResult = await BetsService.addParticipant(betId, friend.id, friendStake)
-      if (addResult.error) return { error: addResult.error }
-      addParticipant(friend)
-      if (stakeMode === 'custom' && friendStake > 0) {
-        setCustomStake(friend.id, String(friendStake))
-      }
-
-      const pushResult = await NotificationsService.sendBetInviteNotification({
-        userId: friend.id,
-        fromUserId: me.id,
-        fromNick: me.nick,
-        betId,
-        gameTemplate: selectedGame,
-        stakeAmount: friendStake,
-      })
-
-      if (pushResult.error) return { error: pushResult.error }
-      return {}
-    },
-    [
-      currentUser,
-      selectedGame,
-      selectedFormat,
-      participants,
-      ensureBetCreated,
-      stakeMode,
-      globalStake,
-      addParticipant,
-      setCustomStake,
-    ],
-  )
-
-  return {
-    // step
-    step,
-    setStep,
-    // selections
-    selectedGame,
-    setSelectedGame,
-    selectedFormat,
-    setSelectedFormat,
-    // stakes
-    stakeMode,
-    setStakeMode: setStakeModeAndReset,
-    globalStake,
-    setGlobalStake,
-    // participants
-    participants,
+    navigation.navigate('Home')
+  }, [
+    bestOfCount,
+    createBet,
     currentUser,
-    createdBetId,
-    friends,
-    friendsLoading,
-    addParticipant,
-    removeParticipant,
-    setCustomStake,
-    // computed
-    totalPool,
-    canProceedStep1,
-    canProceedStep2,
-    canCreate,
-    // actions
-    saving,
-    ensureBetCreated,
-    inviteFriendToBet,
-    handleCreate,
+    customStakes,
+    navigation,
+    participants,
+    pokerMode,
+    pokerRebuyStack,
+    pokerStack,
+    selectedFormat,
+    selectedGame,
+    stakeAmount,
+    stakeMode,
+    stakePerMatch,
+  ])
+
+  const resetNewBet = useCallback(() => {
+    setStep(1)
+    setSelectedGame(null)
+    setParticipants([])
+    setSelectedFormat(null)
+    setBestOfCount(3)
+    setStakeMode('none')
+    setStakeAmount(0)
+    setStakePerMatch(0)
+    setCustomStakes({})
+    setPokerMode('winner_takes_all')
+    setPokerStack(3000)
+    setPokerRebuyStack(1500)
+    setSearchQuery('')
+    setSearchFocused(false)
+  }, [])
+
+  const state: NewBetState = {
+    currentUser,
+    selectedGame,
+    participants,
+    selectedFormat,
+    bestOfCount,
+    stakeMode,
+    stakeAmount,
+    customStakes,
+    pokerMode,
+    pokerStack,
+    pokerRebuyStack,
+    stakePerMatch,
+    searchQuery,
+    searchFocused,
+    preselectedFriend,
+    availableFormats,
+    friendProfiles,
+    recentGames,
+    gamesFiltered,
+    totalPlayers,
+    sectionData,
+    loading,
   }
+
+  const handlers: NewBetHandlers = {
+    handleGameSelect,
+    handleBack,
+    handleSubmit,
+    resetNewBet,
+    toggleParticipant,
+    setParticipants,
+    setStep,
+    setSelectedFormat,
+    setBestOfCount,
+    setStakePerMatch,
+    setPokerMode,
+    setPokerStack,
+    setPokerRebuyStack,
+    setStakeMode,
+    setStakeAmount,
+    setCustomStakes,
+    setSearchQuery,
+    setSearchFocused,
+  }
+
+  return { step, state, handlers }
 }

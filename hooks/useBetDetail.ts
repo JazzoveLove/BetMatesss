@@ -4,14 +4,28 @@ import { supabase } from '../lib/supabase'
 import { AuthService } from '../services/auth.service'
 import { BetsService } from '../services/bets.service'
 import { NotificationsService } from '../services/notifications.service'
-import type { BetDetail, Settlement } from '../types/bet.types'
+import type { BetDetail, PendingResult, Settlement } from '../types/bet.types'
 
-type PendingResult = {
-  id: string
-  winnerId: string
-  score: string
-  recordedBy: string
-  confirmed: boolean
+type ActionLoadingState = {
+  resolving: boolean
+  confirming: boolean
+  disputing: boolean
+  accepting: boolean
+  rejecting: boolean
+  completingSession: boolean
+  markingPaid: string | null
+  reminding: string | null
+}
+
+const initialActionLoading: ActionLoadingState = {
+  resolving: false,
+  confirming: false,
+  disputing: false,
+  accepting: false,
+  rejecting: false,
+  completingSession: false,
+  markingPaid: null,
+  reminding: null,
 }
 
 export function useBetDetail(betId: string) {
@@ -21,11 +35,11 @@ export function useBetDetail(betId: string) {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [score, setScore] = useState('')
   const [pendingResult, setPendingResult] = useState<PendingResult | null>(null)
-  const [resolving, setResolving] = useState(false)
-  const [confirming, setConfirming] = useState(false)
-  const [disputing, setDisputing] = useState(false)
-  const [markingPaid, setMarkingPaid] = useState<string | null>(null)
-  const [reminding, setReminding] = useState<string | null>(null)
+  const [actionLoading, setActionLoading] = useState<ActionLoadingState>(initialActionLoading)
+
+  const setAction = useCallback(<K extends keyof ActionLoadingState>(key: K, value: ActionLoadingState[K]) => {
+    setActionLoading(prev => ({ ...prev, [key]: value }))
+  }, [])
 
   const loadData = useCallback(async () => {
     console.log('[useBetDetail loadData] start', { betId })
@@ -44,7 +58,11 @@ export function useBetDetail(betId: string) {
     })
 
     let nextPending: PendingResult | null = null
-    if (betData?.status === 'awaiting_confirmation' || betData?.status === 'disputed') {
+    if (
+      betData &&
+      betData.format !== 'per_match' &&
+      (betData.status === 'awaiting_confirmation' || betData.status === 'disputed')
+    ) {
       nextPending = await BetsService.getPendingBetResult(betId)
       console.log('[useBetDetail loadData] pending result', nextPending)
     }
@@ -66,17 +84,13 @@ export function useBetDetail(betId: string) {
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*',
           schema: 'public',
           table: 'bet_participants',
           filter: `bet_id=eq.${betId}`,
         },
-        payload => {
-          const prevConfirmed = (payload.old as { confirmed?: boolean } | null)?.confirmed
-          const nextConfirmed = (payload.new as { confirmed?: boolean } | null)?.confirmed
-          if (prevConfirmed === false && nextConfirmed === true) {
-            void loadData()
-          }
+        () => {
+          void loadData()
         },
       )
       .subscribe()
@@ -171,14 +185,14 @@ export function useBetDetail(betId: string) {
         Alert.alert('Brak wyniku', 'Wpisz wynik przed rozstrzygnięciem.')
         return false
       }
-      setResolving(true)
+      setAction('resolving', true)
       const result = await BetsService.submitBetResult({
         betId,
         winnerId,
         score: resultScore,
         recordedBy: currentUserId,
       })
-      setResolving(false)
+      setAction('resolving', false)
       if (result.error) {
         Alert.alert('Błąd', result.error)
         return false
@@ -187,38 +201,77 @@ export function useBetDetail(betId: string) {
       await loadData()
       return true
     },
-    [bet, currentUserId, score, betId, loadData],
+    [bet, currentUserId, score, betId, loadData, setAction],
   )
+
+  const submitPerMatchResult = useCallback(
+    async (winnerId: string, scoreText: string, requireScore: boolean): Promise<boolean> => {
+      if (!bet || !currentUserId) return false
+      const trimmed = scoreText.trim()
+      if (requireScore && !trimmed) {
+        Alert.alert('Brak wyniku', 'Wpisz wynik meczu.')
+        return false
+      }
+      setAction('resolving', true)
+      const result = await BetsService.submitPerMatchBetResult({
+        betId,
+        winnerId,
+        score: trimmed,
+        recordedBy: currentUserId,
+      })
+      setAction('resolving', false)
+      if (result.error) {
+        Alert.alert('Błąd', result.error)
+        return false
+      }
+      await loadData()
+      return true
+    },
+    [bet, currentUserId, betId, loadData, setAction],
+  )
+
+  const completeMatchSession = useCallback(async (): Promise<boolean> => {
+    if (!currentUserId) return false
+    setAction('completingSession', true)
+    const result = await BetsService.completePerMatchSession(betId, currentUserId)
+    setAction('completingSession', false)
+    if (result.error) {
+      Alert.alert('Błąd', result.error)
+      return false
+    }
+    await loadData()
+    return true
+  }, [betId, currentUserId, loadData, setAction])
 
   const confirmResult = useCallback(async () => {
     if (!bet || !currentUserId || !pendingResult) return
     console.log('[useBetDetail confirmResult] start', { betId, resultId: pendingResult.id })
-    setConfirming(true)
+    setAction('confirming', true)
     const result = await BetsService.confirmBetResult({
       betId,
       resultId: pendingResult.id,
       confirmerId: currentUserId,
     })
-    setConfirming(false)
+    setAction('confirming', false)
     console.log('[useBetDetail confirmResult] BetsService.confirmBetResult', result)
     if (result.error) {
       Alert.alert('Błąd', result.error)
       return
     }
     await loadData()
-  }, [bet, betId, currentUserId, pendingResult, loadData])
+  }, [bet, betId, currentUserId, pendingResult, loadData, setAction])
 
   const disputeResult = useCallback(async () => {
     if (!pendingResult) return
-    setDisputing(true)
+    setAction('disputing', true)
     const result = await BetsService.disputeBetResult(betId)
-    setDisputing(false)
+    setAction('disputing', false)
     if (result.error) {
       Alert.alert('Błąd', result.error)
       return
     }
     await loadData()
-  }, [betId, pendingResult, loadData])
+  }, [betId, pendingResult, loadData, setAction])
 
   const markPaid = useCallback(
     async (settlementId: string, debtorId: string) => {
@@ -227,9 +280,9 @@ export function useBetDetail(betId: string) {
         return
       }
       console.log('[useBetDetail markPaid] start', { settlementId, debtorId })
-      setMarkingPaid(settlementId)
+      setAction('markingPaid', settlementId)
       const result = await BetsService.markSettlementPaid(settlementId, debtorId)
-      setMarkingPaid(null)
+      setAction('markingPaid', null)
       console.log('[useBetDetail markPaid] result', result)
       if (result.error) {
         Alert.alert('Błąd', result.error)
@@ -238,29 +291,65 @@ export function useBetDetail(betId: string) {
       const settlData = await BetsService.getSettlements(betId)
       setSettlements(settlData)
     },
-    [betId, currentUserId],
+    [betId, currentUserId, setAction],
   )
+
+  const acceptBet = useCallback(async (): Promise<boolean> => {
+    if (!currentUserId) return false
+    setAction('accepting', true)
+    const result = await BetsService.confirmParticipation(betId, currentUserId)
+    setAction('accepting', false)
+    if (result.error) {
+      Alert.alert('Błąd', result.error)
+      return false
+    }
+    await loadData()
+    return true
+  }, [betId, currentUserId, loadData, setAction])
+
+  const rejectBet = useCallback(async (): Promise<boolean> => {
+    if (!currentUserId) return false
+    setAction('rejecting', true)
+    const result = await BetsService.rejectParticipation(betId, currentUserId)
+    setAction('rejecting', false)
+    if (result.error) {
+      Alert.alert('Błąd', result.error)
+      return false
+    }
+    return true
+  }, [betId, currentUserId, setAction])
 
   const sendReminder = useCallback(
     async (s: Settlement) => {
       if (!currentUserId || currentUserId !== s.creditorId) return
       console.log('[useBetDetail sendReminder] start', { settlementId: s.id, debtorId: s.debtorId })
-      setReminding(s.id)
+      setAction('reminding', s.id)
       const result = await NotificationsService.sendSettlementReminderNotification({
         debtorUserId: s.debtorId,
         creditorNick: s.creditorNick,
         betId,
         amount: s.amount,
       })
-      setReminding(null)
+      setAction('reminding', null)
       if (result.error) {
         Alert.alert('Błąd', result.error)
         return
       }
       Alert.alert('Wysłano', 'Dłużnik dostał przypomnienie w aplikacji.')
     },
-    [betId, currentUserId],
+    [betId, currentUserId, setAction],
   )
+
+  const {
+    resolving,
+    confirming,
+    disputing,
+    accepting,
+    rejecting,
+    completingSession,
+    markingPaid,
+    reminding,
+  } = actionLoading
 
   return {
     loading,
@@ -280,6 +369,13 @@ export function useBetDetail(betId: string) {
     disputeResult,
     markPaid,
     sendReminder,
+    acceptBet,
+    rejectBet,
+    accepting,
+    rejecting,
+    submitPerMatchResult,
+    completeMatchSession,
+    completingSession,
     reload: loadData,
   }
 }

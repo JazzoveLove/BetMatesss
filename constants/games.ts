@@ -1,18 +1,16 @@
-export type GameTemplate = {
-  id: string
-  name: string
-  emoji: string
-}
+import { BOARD_GAME_TEMPLATES } from './games/board'
+import { CUSTOM_GAME_TEMPLATES } from './games/custom'
+import { SPORT_GAME_TEMPLATES } from './games/sport'
+import type { GameTemplate } from './games/types'
+import { VIDEO_GAME_TEMPLATES } from './games/video'
+
+export type { GameTemplate, WinCondition } from './games/types'
 
 export const GAME_TEMPLATES: GameTemplate[] = [
-  { id: 'pilkarzyki', name: 'Pilkarzyki', emoji: '⚽' },
-  { id: 'ping_pong', name: 'Ping pong', emoji: '🏓' },
-  { id: 'dart', name: 'Dart', emoji: '🎯' },
-  { id: 'koszykowka', name: 'Koszykowka 1v1', emoji: '🏀' },
-  { id: 'szachy', name: 'Szachy', emoji: '♟️' },
-  { id: 'poker', name: 'Poker', emoji: '🃏' },
-  { id: 'gra_video', name: 'Gra video', emoji: '🎮' },
-  { id: 'wlasna', name: 'Wlasna gra', emoji: '✏️' },
+  ...SPORT_GAME_TEMPLATES,
+  ...BOARD_GAME_TEMPLATES,
+  ...VIDEO_GAME_TEMPLATES,
+  ...CUSTOM_GAME_TEMPLATES,
 ]
 
 export const GAME_MAP = Object.fromEntries(

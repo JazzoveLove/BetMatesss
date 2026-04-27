@@ -24,11 +24,23 @@ export function calcOdds(
   mode: StakeMode,
 ): number {
   const g = parseStakeAmount(globalStake)
-  if (mode === 'none' || mode === 'pick') return 0
+  if (mode === 'none') return 0
   if (mode === 'equal') {
     const total = g * allParticipants.length
     return g > 0 ? Math.round((total / g) * 100) / 100 : 0
   }
   const total = allParticipants.reduce((s, p) => s + parseStakeAmount(p.customStake), 0)
   return participantStake > 0 ? Math.round((total / participantStake) * 100) / 100 : 0
+}
+
+export function calculateOdds(stakes: Record<string, number>): Record<string, number> {
+  const total = Object.values(stakes).reduce((sum, value) => sum + parseStakeAmount(value), 0)
+  const result: Record<string, number> = {}
+
+  Object.entries(stakes).forEach(([userId, stake]) => {
+    const normalizedStake = parseStakeAmount(stake)
+    result[userId] = normalizedStake > 0 ? total / normalizedStake : 0
+  })
+
+  return result
 }

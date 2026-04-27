@@ -1,5 +1,5 @@
-import { ActivityIndicator, RefreshControl, Share, Alert } from 'react-native'
-import { ScrollView, YStack, XStack, Text, Input, Button } from 'tamagui'
+import { ActivityIndicator, RefreshControl, Share, Alert, TextInput } from 'react-native'
+import { ScrollView, YStack, XStack, Text, Button } from 'tamagui'
 import * as Clipboard from 'expo-clipboard'
 import { useFriends } from '../hooks/useFriends'
 import type { FriendshipRow } from '../types/user.types'
@@ -162,11 +162,11 @@ export default function FriendsScreen() {
         <Text style={{ fontSize: 12, color: 'rgba(232,230,224,0.4)', marginBottom: 12, lineHeight: 17 }}>
           Wpisz kod od znajomego (bez spacji).
         </Text>
-        <Input
+        <TextInput
           value={codeInput}
           onChangeText={t => setCodeInput(t.toUpperCase())}
           placeholder="np. A3K9PQ2M"
-          placeholderTextColor={'rgba(232,230,224,0.3)' as never}
+          placeholderTextColor={'rgba(232,230,224,0.3)'}
           autoCapitalize="characters"
           autoCorrect={false}
           maxLength={16}
@@ -201,11 +201,11 @@ export default function FriendsScreen() {
           Min. 2 znaki.
         </Text>
         <XStack style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
-          <Input
+          <TextInput
             value={nickSearch}
             onChangeText={t => void searchNick(t)}
             placeholder="Szukaj nicku..."
-            placeholderTextColor={'rgba(232,230,224,0.3)' as never}
+            placeholderTextColor={'rgba(232,230,224,0.3)'}
             autoCapitalize="none"
             autoCorrect={false}
             style={{ ...inputStyle, flex: 1, marginBottom: 8 }}

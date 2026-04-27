@@ -1,13 +1,11 @@
 export type BetFormat =
   | 'single'
-  | 'per_match'
   | 'best_of'
+  | 'per_match'
   | 'round_robin'
   | 'elimination'
   | 'session'
-  | 'series'
-  | 'team'
-export type StakeMode = 'equal' | 'custom' | 'prediction' | 'pick' | 'none'
+export type StakeMode = 'none' | 'equal' | 'custom'
 export type BetStatus =
   | 'pending'
   | 'active'
@@ -15,6 +13,8 @@ export type BetStatus =
   | 'awaiting_confirmation'
   | 'completed'
   | 'disputed'
+export type ResultType = 'score' | 'legs' | 'sets' | 'winner_only' | 'chips'
+export type PokerMode = 'winner_takes_all' | 'chip_count'
 
 export type NewBetParticipant = {
   id: string
@@ -34,6 +34,7 @@ export type BetParticipant = {
 export interface Bet {
   id: string
   creator_id: string
+  rivalry_id?: string
   game_template: string
   format: BetFormat
   stake_mode: StakeMode
@@ -42,6 +43,9 @@ export interface Bet {
   stake_per_match?: number
   session_id?: string
   bracket_mode?: 'auto' | 'manual'
+  poker_mode?: PokerMode
+  poker_stack?: number
+  poker_rebuy_stack?: number
   notes?: string | null
   created_at: string
 }
@@ -53,6 +57,7 @@ export interface BetResult {
   round_number?: number
   winner_id: string
   scores: Record<string, number | string>
+  chips?: Record<string, number>
   confirmed: boolean
 }
 
@@ -69,13 +74,51 @@ export type Settlement = {
 
 export type BetDetail = {
   id: string
+  creatorId: string
   gameTemplate: string
   format: BetFormat
   stakeMode: StakeMode
   status: BetStatus
   notes: string | null
   createdAt: string
+  stakePerMatch?: number
   participants: BetParticipant[]
+  results: BetResult[]
+}
+
+/** Oczekujący wynik (potwierdzenie drugiej strony) — spójny kształt z serwisem / hookiem szczegółów. */
+export type PendingResult = {
+  id: string
+  winnerId: string
+  score: string
+  recordedBy: string
+  confirmed: boolean
+}
+
+export type FormatViewProps = {
+  bet: BetDetail
+  currentUserId: string | null
+  settlements: Settlement[]
+  resolving: boolean
+  confirming: boolean
+  disputing: boolean
+  markingPaid: string | null
+  reminding: string | null
+  pendingResult: PendingResult | null
+  submitResult: (winnerId: string, score?: string) => Promise<boolean>
+  submitPerMatchResult: (winnerId: string, score: string, requireScore: boolean) => Promise<boolean>
+  completeMatchSession: () => Promise<boolean>
+  confirmResult: () => Promise<void>
+  disputeResult: () => Promise<void>
+  markPaid: (settlementId: string, debtorId: string) => Promise<void>
+  sendReminder: (settlement: Settlement) => Promise<void>
+  acceptBet: () => Promise<boolean>
+  rejectBet: () => Promise<boolean>
+  accepting: boolean
+  rejecting: boolean
+  completingSession: boolean
+  openResultModal: () => void
+  openPerMatchResultModal: () => void
 }
 
 export type ActiveBetItem = {
@@ -103,10 +146,18 @@ export type DashboardStats = {
 export interface CreateBetParams {
   creatorId: string
   gameTemplate: string
-  format: BetFormat | string
+  format: BetFormat
   stakeMode: StakeMode
   participants: NewBetParticipant[]
   globalStake: number
+  bestOfCount?: number
+  stakeAmount?: number
+  stakePerMatch?: number
+  customStakes?: Record<string, number>
+  pokerMode?: PokerMode
+  pokerStack?: number
+  pokerRebuyStack?: number
+  participantIds?: string[]
 }
 
 /** Etykieta badge na liście historii (SPEC + spór / remis bez kasy) */

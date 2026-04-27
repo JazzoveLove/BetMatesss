@@ -47,3 +47,16 @@ export function calculateSettlements(
       amount: p.stakeAmount,
     }))
 }
+
+/** Jedna para przelewów dla 2 graczy z bilansu netto (suma bilansów = 0). */
+export function settlementDraftsFromPairBalances(
+  balanceByUserId: Record<string, number>,
+  participantIds: string[],
+): SettlementDraft[] {
+  if (participantIds.length !== 2) return []
+  const [a, b] = [...participantIds].sort()
+  const balA = balanceByUserId[a] ?? 0
+  if (balA === 0) return []
+  if (balA > 0) return [{ debtorId: b, creditorId: a, amount: balA }]
+  return [{ debtorId: a, creditorId: b, amount: -balA }]
+}
