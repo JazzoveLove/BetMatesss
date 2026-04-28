@@ -24,6 +24,7 @@ import {
 import { extractFriendIdFromUrl } from './lib/friend-invite-url'
 import { extractBetInviteCodeFromUrl } from './lib/bet-invite-url'
 import tamaguiConfig from './tamagui.config'
+import { Colors } from './constants/colors'
 
 // ─── Navigators ───────────────────────────────────────────────────────────────
 
@@ -49,8 +50,8 @@ function TabNavigator() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: '#7F77DD',
-        tabBarInactiveTintColor: 'rgba(232,230,224,0.35)',
+        tabBarActiveTintColor: Colors.accentLight,
+        tabBarInactiveTintColor: Colors.textMuted,
         tabBarLabelStyle: styles.tabLabel,
       }}
     >
@@ -68,6 +69,7 @@ function TabNavigator() {
         name="Nowy"
         component={NewBetScreen}
         options={{
+          headerShown: false,
           tabBarLabel: () => null,
           tabBarIcon: () => null,
           tabBarButton: ({ onPress }) => (
@@ -237,34 +239,34 @@ export default function App() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: '#0a0c11',
-    borderTopColor: '#1e2330',
-    borderTopWidth: 0.5,
-    height: 64,
+    backgroundColor: Colors.card,
+    borderTopColor: Colors.borderSoft,
+    borderTopWidth: 1,
+    height: 72,
     paddingBottom: 10,
-    paddingTop: 6,
+    paddingTop: 8,
   },
   tabLabel: {
     fontSize: 10,
     marginTop: 2,
   },
   newBetBtn: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-    backgroundColor: '#534AB7',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: Colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 18,
-    shadowColor: '#534AB7',
+    marginBottom: 20,
+    shadowColor: Colors.accent,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.45,
+    shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 8,
   },
   newBetPlus: {
     fontSize: 32,
-    color: '#fff',
+    color: Colors.white,
     lineHeight: 36,
     fontWeight: '300',
   },

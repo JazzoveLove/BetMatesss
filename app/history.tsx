@@ -1,6 +1,6 @@
 import { ActivityIndicator, RefreshControl } from 'react-native'
 import { ScrollView, YStack, XStack, Text } from 'tamagui'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { useHistory } from '../hooks/useHistory'
 import { GAME_MAP } from '../constants/games'
 import type { HistoryBadgeLabel, HistoryListItem } from '../types/bet.types'
@@ -50,7 +50,9 @@ function AmountText({ item }: { item: HistoryListItem }) {
 
 export default function HistoryScreen() {
   const navigation = useNavigation<any>()
-  const { loading, refreshing, items, filter, setFilter, onRefresh } = useHistory()
+  const route = useRoute<any>()
+  const initialFilter = route.params?.initialFilter === 'active' ? 'active' : 'all'
+  const { loading, refreshing, items, filter, setFilter, onRefresh } = useHistory(initialFilter)
 
   if (loading) {
     return (

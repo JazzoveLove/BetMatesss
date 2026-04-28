@@ -15,11 +15,29 @@ import type {
   ProfileScreenData,
 } from '../../types/bet.types'
 
+type DashboardStatsExtended = DashboardStats & {
+  wins: number
+  losses: number
+  totalMatches: number
+}
+
 type DashboardData = {
   nick: string
-  stats: DashboardStats
-  activeBets: ActiveBetItem[]
-  recentResults: RecentResult[]
+  stats: DashboardStatsExtended
+  activeBets: (ActiveBetItem & { timeLabel: string })[]
+  recentResults: (RecentResult & { timeLabel: string })[]
+}
+
+function formatRelativeTime(iso: string): string {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return 'Teraz'
+  const diff = Date.now() - date.getTime()
+  const hour = 1000 * 60 * 60
+  const day = hour * 24
+  if (diff < hour) return '< 1h temu'
+  if (diff < day) return `${Math.max(1, Math.floor(diff / hour))}h temu`
+  if (diff < day * 7) return `${Math.max(1, Math.floor(diff / day))} dni temu`
+  return date.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' })
 }
 
 export async function getDashboardData(userId: string): Promise<DashboardData> {
@@ -30,7 +48,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
       .select(`
         stake_amount, odds,
         bets (
-          id, game_template, status,
+          id, game_template, status, created_at,
           bet_participants ( user_id, stake_amount, odds, users ( nick ) )
         )
       `)
@@ -65,6 +83,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
       id: string
       game_template: string
       status: string
+      created_at: string
       bet_participants: {
         user_id: string
         stake_amount?: number | string
@@ -109,8 +128,8 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
   const opponentNickFor = (r: DashRow) =>
     r.joinNick ?? (r.opponentUserId ? extraNicks[r.opponentUserId] : undefined) ?? 'Przeciwnik'
 
-  const active: ActiveBetItem[] = []
-  const completed: { id: string; gameTemplate: string; opponentNick: string }[] = []
+  const active: (ActiveBetItem & { timeLabel: string })[] = []
+  const completed: { id: string; gameTemplate: string; opponentNick: string; createdAt: string }[] = []
   const seenBetIds = new Set<string>()
 
   for (const r of dashRows) {
@@ -131,26 +150,40 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
         stakeAmount: r.stakeAmount,
         odds: r.odds,
         opponentNick,
+        timeLabel: formatRelativeTime(bet.created_at),
       })
     } else if (bet.status === 'completed') {
-      completed.push({ id: bet.id, gameTemplate: bet.game_template, opponentNick })
+      completed.push({
+        id: bet.id,
+        gameTemplate: bet.game_template,
+        opponentNick,
+        createdAt: bet.created_at,
+      })
     }
   }
 
   const completedIds = new Set(completed.map(b => b.id))
   const wins = settlements.filter(s => s.creditor_id === userId && completedIds.has(s.bet_id)).length
-  const winRate = completedIds.size > 0 ? Math.round((wins / completedIds.size) * 100) : 0
+  const totalMatches = completedIds.size
+  const losses = Math.max(0, totalMatches - wins)
+  const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0
 
-  const recentResults: RecentResult[] = completed.slice(0, 3).map(b => {
+  const recentResults: (RecentResult & { timeLabel: string })[] = completed.slice(0, 3).map(b => {
     const s = settlements.find(s => s.bet_id === b.id)
     const profit = s ? (s.creditor_id === userId ? s.amount : -s.amount) : 0
-    return { id: b.id, gameTemplate: b.gameTemplate, opponentNick: b.opponentNick, profit }
+    return {
+      id: b.id,
+      gameTemplate: b.gameTemplate,
+      opponentNick: b.opponentNick,
+      profit,
+      timeLabel: formatRelativeTime(b.createdAt),
+    }
   })
 
   return {
     nick,
-    stats: { balance, totalBets: participations.length, winRate },
-    activeBets: active,
+    stats: { balance, totalBets: participations.length, winRate, wins, losses, totalMatches },
+    activeBets: active.slice(0, 3),
     recentResults,
   }
 }

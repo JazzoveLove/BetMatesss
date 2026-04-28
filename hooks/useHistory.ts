@@ -13,12 +13,12 @@ function itemMatchesFilter(item: HistoryListItem, filter: HistoryFilter, statusB
   return st !== 'completed'
 }
 
-export function useHistory() {
+export function useHistory(initialFilter: HistoryFilter = 'all') {
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [items, setItems] = useState<HistoryListItem[]>([])
   const [statusById, setStatusById] = useState<Map<string, BetStatus>>(new Map())
-  const [filter, setFilter] = useState<HistoryFilter>('all')
+  const [filter, setFilter] = useState<HistoryFilter>(initialFilter)
 
   const load = useCallback(async () => {
     const userId = await AuthService.getCurrentUserId()

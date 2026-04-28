@@ -9,7 +9,7 @@ import { useBets } from './useBets'
 import { useFriends } from './useFriends'
 import { getAvailableFormats, getDefaultFormat } from '../utils/formats'
 
-export type NewBetStep = 1 | 2 | 3 | 4
+export type NewBetStep = 1 | 2 | 3
 
 export type NewBetState = {
   currentUser: UserProfile | null
@@ -119,7 +119,7 @@ export function useNewBet() {
   )
 
   useEffect(() => {
-    if (!selectedGame || step !== 3) return
+    if (!selectedGame || step !== 2) return
     const nextDefault = getDefaultFormat(selectedGame, participants.length)
     setSelectedFormat(prev => (prev && availableFormats.includes(prev) ? prev : nextDefault))
   }, [availableFormats, participants.length, selectedGame, step])

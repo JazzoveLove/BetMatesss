@@ -1,187 +1,301 @@
-import { ActivityIndicator, RefreshControl } from 'react-native'
-import { ScrollView, YStack, XStack, Text, Button } from 'tamagui'
+import { Animated, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import type { DimensionValue } from 'react-native'
+import { useEffect, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDashboard } from '../hooks/useDashboard'
-import { useAuth } from '../hooks/useAuth'
-import { formatBalance, balanceHighlight } from '../utils/settlements'
-import StatCard from '../components/StatCard'
-import BetCard from '../components/BetCard'
-import { GAME_MAP } from '../constants/games'
+import { Colors } from '../constants/colors'
+import { ActiveBetCard } from '../components/dashboard/ActiveBetCard'
+import { RecentMatchCard } from '../components/dashboard/RecentMatchCard'
+
+function formatCurrency(value: number): string {
+  const prefix = value > 0 ? '+' : ''
+  return `${prefix}${value} zł`
+}
+
+function SkeletonBlock({ width, height, radius = 8 }: { width: DimensionValue; height: number; radius?: number }) {
+  return <View style={{ width, height, borderRadius: radius, backgroundColor: Colors.cardAlt }} />
+}
+
+function SectionHeader({
+  title,
+  actionText,
+  onPress,
+}: {
+  title: string
+  actionText: string
+  onPress: () => void
+}) {
+  return (
+    <View style={styles.sectionHeader}>
+      <Text style={styles.sectionTitle}>{title}</Text>
+      <Pressable onPress={onPress}>
+        <Text style={styles.sectionAction}>{actionText}</Text>
+      </Pressable>
+    </View>
+  )
+}
 
 export default function DashboardScreen() {
   const navigation = useNavigation<any>()
-  const { signOut } = useAuth()
-  const { loading, refreshing, nick, stats, activeBets, recentResults, onRefresh } = useDashboard()
+  const { loading, user, stats, activeBets, recentMatches } = useDashboard()
+  const winProgress = useRef(new Animated.Value(0)).current
 
-  if (loading) {
-    return (
-      <YStack flex={1} style={{ backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator color="#7F77DD" size="large" />
-      </YStack>
-    )
-  }
+  useEffect(() => {
+    Animated.timing(winProgress, {
+      toValue: stats.winRate / 100,
+      duration: 600,
+      useNativeDriver: false,
+    }).start()
+  }, [stats.winRate, winProgress])
 
   return (
-    <ScrollView
-      flex={1}
-      style={{ backgroundColor: '#0f1117' }}
-      contentContainerStyle={{ padding: 20, paddingTop: 56, paddingBottom: 40 } as any}
-      showsVerticalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          tintColor="#7F77DD"
-          colors={['#7F77DD']}
-        />
-      }
-    >
-      <XStack style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
-        <YStack>
-          <Text style={{ fontSize: 22, fontWeight: '700', color: '#e8e6e0' }}>Cześć, {nick} 👋</Text>
-          <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)', marginTop: 3 }}>
-            Twoje zakłady ze znajomymi
-          </Text>
-        </YStack>
-        <Button
-          chromeless
-          onPress={() => signOut()}
-          style={{
-            paddingHorizontal: 14,
-            paddingVertical: 7,
-            borderRadius: 8,
-            borderWidth: 0.5,
-            borderColor: '#1e2330',
-            backgroundColor: 'transparent',
-          }}
+    <SafeAreaView style={styles.safeTop} edges={['top']}>
+      <SafeAreaView style={styles.safeBottom} edges={['bottom']}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={{ paddingBottom: 24 }}
+          bounces
+          showsVerticalScrollIndicator={false}
         >
-          <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)' }}>Wyloguj</Text>
-        </Button>
-      </XStack>
+          <View style={styles.header}>
+            <View style={styles.headerLeft}>
+              <Text style={styles.helloMuted}>Cześć,</Text>
+              <Text style={styles.nick}>{loading ? '...' : user.nick}</Text>
+              <Text style={styles.helloMuted}>{activeBets.length} aktywne zakłady</Text>
+            </View>
+            <View style={styles.headerRight}>
+              <Pressable style={styles.iconButton}>
+                <Text style={styles.iconText}>🔔</Text>
+              </Pressable>
+              <Pressable style={styles.avatarButton} onPress={() => navigation.navigate('Profil')}>
+                <Text style={styles.avatarButtonText}>{loading ? '...' : user.avatarInitials}</Text>
+              </Pressable>
+            </View>
+          </View>
 
-      <XStack style={{ flexDirection: 'row', gap: 10, marginBottom: 32 }}>
-        <StatCard
-          label="Bilans"
-          value={formatBalance(stats.balance)}
-          highlight={balanceHighlight(stats.balance)}
-        />
-        <StatCard label="Zakłady" value={String(stats.totalBets)} />
-        <StatCard
-          label="Win Rate"
-          value={`${stats.winRate}%`}
-          highlight={stats.winRate >= 50 ? 'positive' : stats.winRate > 0 ? 'negative' : 'neutral'}
-        />
-      </XStack>
-
-      <YStack style={{ marginBottom: 32 }}>
-        <XStack style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: '#e8e6e0' }}>Aktywne zakłady</Text>
-          {activeBets.length > 0 && (
-            <YStack
-              style={{
-                backgroundColor: '#534AB720',
-                borderRadius: 20,
-                paddingHorizontal: 8,
-                paddingVertical: 2,
-              }}
-            >
-              <Text style={{ fontSize: 12, color: '#7F77DD', fontWeight: '600' }}>{activeBets.length}</Text>
-            </YStack>
-          )}
-        </XStack>
-
-        {activeBets.length === 0 ? (
-          <YStack
-            style={{
-              backgroundColor: '#181c24',
-              borderRadius: 14,
-              borderWidth: 0.5,
-              borderColor: '#1e2330',
-              padding: 24,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 14, color: 'rgba(232,230,224,0.5)', marginBottom: 4 }}>
-              Brak aktywnych zakładów
-            </Text>
-            <Text style={{ fontSize: 12, color: '#534AB7' }}>Dodaj pierwszy zakład ze znajomym</Text>
-          </YStack>
-        ) : (
-          activeBets.map(bet => (
-            <BetCard
-              key={bet.id}
-              gameTemplate={bet.gameTemplate}
-              opponentNick={bet.opponentNick}
-              stakeAmount={bet.stakeAmount}
-              odds={bet.odds}
-              status={bet.status}
-              onPress={() => navigation.navigate('BetDetail', { betId: bet.id })}
-            />
-          ))
-        )}
-      </YStack>
-
-      <YStack style={{ marginBottom: 32 }}>
-        <Text style={{ fontSize: 16, fontWeight: '600', color: '#e8e6e0', marginBottom: 12 }}>Ostatnie wyniki</Text>
-
-        {recentResults.length === 0 ? (
-          <YStack
-            style={{
-              backgroundColor: '#181c24',
-              borderRadius: 14,
-              borderWidth: 0.5,
-              borderColor: '#1e2330',
-              padding: 24,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 14, color: 'rgba(232,230,224,0.5)' }}>Brak rozegranych zakładów</Text>
-          </YStack>
-        ) : (
-          recentResults.map(r => (
-            <XStack
-              key={r.id}
-              onPress={() => navigation.navigate('BetDetail', { betId: r.id })}
-              pressStyle={{ opacity: 0.75 }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                backgroundColor: '#181c24',
-                borderRadius: 14,
-                borderWidth: 0.5,
-                borderColor: '#1e2330',
-                marginBottom: 10,
-                overflow: 'hidden',
-              }}
-            >
-              <YStack
-                style={{
-                  width: 4,
-                  alignSelf: 'stretch',
-                  backgroundColor: r.profit >= 0 ? '#1D9E75' : '#E24B4A',
-                }}
-              />
-              <YStack flex={1} style={{ paddingVertical: 14, paddingHorizontal: 14 }}>
-                <Text style={{ fontSize: 13, fontWeight: '600', color: '#e8e6e0', marginBottom: 3 }}>
-                  {GAME_MAP[r.gameTemplate]?.label ?? r.gameTemplate}
-                </Text>
-                <Text style={{ fontSize: 12, color: 'rgba(232,230,224,0.5)' }}>vs {r.opponentNick}</Text>
-              </YStack>
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: '700',
-                  paddingRight: 16,
-                  color: r.profit >= 0 ? '#1D9E75' : '#E24B4A',
-                }}
-              >
-                {r.profit >= 0 ? '+' : ''}
-                {r.profit} zł
+          {loading ? (
+            <View style={styles.heroCard}>
+              <SkeletonBlock width={120} height={44} radius={8} />
+              <View style={{ marginTop: 8 }}>
+                <SkeletonBlock width={240} height={12} radius={6} />
+              </View>
+              <View style={{ marginTop: 16 }}>
+                <SkeletonBlock width="100%" height={6} radius={3} />
+              </View>
+              <View style={styles.heroBottom}>
+                <SkeletonBlock width={68} height={36} radius={8} />
+                <SkeletonBlock width={68} height={36} radius={8} />
+                <SkeletonBlock width={68} height={36} radius={8} />
+              </View>
+            </View>
+          ) : (
+            <View style={styles.heroCard}>
+              <Text style={styles.bigScore}>
+                <Text style={{ color: Colors.green }}>{stats.wins}W</Text>
+                <Text style={{ color: Colors.textMuted }}> / {stats.losses}P</Text>
               </Text>
-            </XStack>
-          ))
-        )}
-      </YStack>
-    </ScrollView>
+              <Text style={styles.heroLabel}>WYGRANE / PRZEGRANE — WSZYSTKIE MECZE</Text>
+              <View style={styles.progressTrack}>
+                <Animated.View
+                  style={[
+                    styles.progressWin,
+                    {
+                      width: winProgress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['0%', '100%'],
+                      }),
+                    },
+                  ]}
+                />
+                <View style={[styles.progressLoss, { flex: Math.max(0, 1 - stats.winRate / 100) }]} />
+              </View>
+              <View style={styles.heroBottom}>
+                <View style={styles.metricCol}>
+                  <Text style={styles.metricValue}>{stats.winRate}%</Text>
+                  <Text style={styles.metricLabel}>WIN RATE</Text>
+                </View>
+                <View style={styles.metricDivider} />
+                <View style={styles.metricCol}>
+                  <Text style={styles.metricValue}>{stats.totalMatches}</Text>
+                  <Text style={styles.metricLabel}>MECZE</Text>
+                </View>
+                <View style={styles.metricDivider} />
+                <View style={styles.metricCol}>
+                  <Text style={[styles.metricValue, { color: stats.balance >= 0 ? Colors.green : Colors.red }]}>
+                    {formatCurrency(stats.balance)}
+                  </Text>
+                  <Text style={styles.metricLabel}>BILANS</Text>
+                </View>
+              </View>
+            </View>
+          )}
+
+          <View style={styles.section}>
+            <SectionHeader
+              title="AKTYWNE ZAKŁADY"
+              actionText="Zobacz wszystkie ->"
+              onPress={() => navigation.navigate('Historia', { initialFilter: 'active' })}
+            />
+            <View style={styles.cardsColumn}>
+              {(loading ? [1, 2, 3] : activeBets.slice(0, 3)).map(item =>
+                typeof item === 'number' ? (
+                  <View key={item} style={styles.loadingCard}>
+                    <SkeletonBlock width={40} height={40} radius={20} />
+                    <View style={{ flex: 1, gap: 8 }}>
+                      <SkeletonBlock width="76%" height={16} radius={6} />
+                      <SkeletonBlock width="56%" height={12} radius={6} />
+                    </View>
+                    <SkeletonBlock width={72} height={30} radius={8} />
+                  </View>
+                ) : (
+                  <ActiveBetCard
+                    key={item.id}
+                    item={item}
+                    onPress={() => navigation.navigate('BetDetail', { betId: item.id })}
+                  />
+                ),
+              )}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <SectionHeader
+              title="OSTATNIE MECZE"
+              actionText="Zobacz wszystkie ->"
+              onPress={() => navigation.navigate('Historia')}
+            />
+            <View style={styles.cardsColumn}>
+              {(loading ? [1, 2, 3] : recentMatches.slice(0, 3)).map(item =>
+                typeof item === 'number' ? (
+                  <View key={item} style={styles.loadingCardNoBorder}>
+                    <SkeletonBlock width={40} height={40} radius={20} />
+                    <View style={{ flex: 1, gap: 8 }}>
+                      <SkeletonBlock width="76%" height={16} radius={6} />
+                      <SkeletonBlock width="56%" height={12} radius={6} />
+                    </View>
+                    <SkeletonBlock width={72} height={30} radius={20} />
+                  </View>
+                ) : (
+                  <RecentMatchCard
+                    key={item.id}
+                    item={item}
+                    onPress={() => navigation.navigate('BetDetail', { betId: item.id })}
+                  />
+                ),
+              )}
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaView>
   )
 }
+
+const styles = StyleSheet.create({
+  safeTop: { flex: 1, backgroundColor: Colors.background },
+  safeBottom: { flex: 1, backgroundColor: Colors.background },
+  container: { flex: 1, backgroundColor: Colors.background },
+  header: {
+    paddingTop: 12,
+    paddingHorizontal: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  headerLeft: { gap: 4 },
+  helloMuted: { color: Colors.textMuted, fontSize: 12 },
+  nick: { color: Colors.text, fontSize: 28, fontWeight: '700' },
+  headerRight: { flexDirection: 'row', gap: 8 },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.cardAlt,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconText: { color: Colors.text, fontSize: 16 },
+  avatarButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarButtonText: { color: Colors.white, fontSize: 14, fontWeight: '700' },
+  heroCard: {
+    marginHorizontal: 16,
+    marginBottom: 24,
+    backgroundColor: Colors.card,
+    borderRadius: 16,
+    padding: 16,
+  },
+  bigScore: { fontSize: 40, fontWeight: '700' },
+  heroLabel: {
+    marginTop: 4,
+    fontSize: 10,
+    letterSpacing: 1,
+    color: Colors.textMuted,
+    textTransform: 'uppercase',
+  },
+  progressTrack: {
+    marginTop: 16,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: Colors.red,
+    overflow: 'hidden',
+    flexDirection: 'row',
+  },
+  progressWin: { height: 6, backgroundColor: Colors.green },
+  progressLoss: { backgroundColor: Colors.red },
+  heroBottom: {
+    marginTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderSoft,
+    paddingTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  metricCol: { flex: 1, alignItems: 'center', gap: 4 },
+  metricDivider: { width: 1, height: 32, backgroundColor: Colors.borderSoft },
+  metricValue: { color: Colors.text, fontSize: 20, fontWeight: '700' },
+  metricLabel: { color: Colors.textMuted, fontSize: 10, letterSpacing: 1, textTransform: 'uppercase' },
+  section: { paddingHorizontal: 16, marginBottom: 24 },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+    paddingHorizontal: 4,
+  },
+  sectionTitle: {
+    color: Colors.textMuted,
+    textTransform: 'uppercase',
+    fontSize: 11,
+    letterSpacing: 1,
+    fontWeight: '700',
+  },
+  sectionAction: { color: Colors.accentLight, fontSize: 13, fontWeight: '500' },
+  cardsColumn: { gap: 12 },
+  loadingCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: Colors.card,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.borderSoft,
+    padding: 12,
+  },
+  loadingCardNoBorder: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: Colors.card,
+    borderRadius: 12,
+    padding: 12,
+  },
+})
