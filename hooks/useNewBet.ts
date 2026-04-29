@@ -8,6 +8,7 @@ import type { UserProfile } from '../types/user.types'
 import { useBets } from './useBets'
 import { useFriends } from './useFriends'
 import { getAvailableFormats, getDefaultFormat } from '../utils/formats'
+import { log } from '../utils/logger'
 
 export type NewBetStep = 1 | 2 | 3
 
@@ -169,8 +170,8 @@ export function useNewBet() {
       customStake: String(stakeMode === 'custom' ? customStakes[player.id] ?? 0 : stakeAmount),
     }))
 
-    console.log('[handleSubmit] stakePerMatch:', stakePerMatch)
-    console.log('[handleSubmit] selectedFormat:', selectedFormat)
+    log('[handleSubmit] stakePerMatch:', stakePerMatch)
+    log('[handleSubmit] selectedFormat:', selectedFormat)
 
     await createBet({
       creatorId: currentUser.id,

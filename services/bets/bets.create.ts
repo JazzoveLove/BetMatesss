@@ -3,6 +3,7 @@ import { NotificationsService } from '../notifications.service'
 import { calcOdds, toStakeNumber } from '../../utils/odds'
 import { getBetInviteCodeFromBetId, parseBetIdFromInviteCode } from '../../lib/bet-invite-url'
 import type { StakeMode, BetStatus, CreateBetParams } from '../../types/bet.types'
+import { log, warn } from '../../utils/logger'
 
 export type BetInvitePreview = {
   betId: string
@@ -53,7 +54,7 @@ export function buildParticipantRows(
 export async function createBet(
   params: CreateBetParams,
 ): Promise<{ betId: string } | { error: string }> {
-  console.log('[createBet] input params', {
+  log('[createBet] input params', {
     creatorId: params.creatorId,
     gameTemplate: params.gameTemplate,
     format: params.format,
@@ -89,15 +90,15 @@ export async function createBet(
 
   const rows = buildParticipantRows(bet.id, params)
 
-  console.log('[createBet] bet_participants rows (before insert)', JSON.stringify(rows, null, 2))
+  log('[createBet] bet_participants rows (before insert)', JSON.stringify(rows, null, 2))
 
   const { error: partError } = await supabase.from('bet_participants').insert(rows)
   if (partError) {
-    console.log('[createBet] bet_participants insert error', partError)
+    log('[createBet] bet_participants insert error', partError)
     return { error: partError.message }
   }
 
-  console.log('[createBet] bet_participants insert OK', { betId: bet.id, rowCount: rows.length })
+  log('[createBet] bet_participants insert OK', { betId: bet.id, rowCount: rows.length })
 
   const creatorNick = params.participants.find(p => p.id === params.creatorId)?.nick ?? 'Znajomy'
   const toUserIds = rows.filter(r => r.user_id !== params.creatorId).map(r => r.user_id)
@@ -112,7 +113,7 @@ export async function createBet(
       stakeByUserId,
     })
     if (notifResult.error) {
-      console.warn('[createBet] sendBetInvite failed', notifResult.error)
+      warn('[createBet] sendBetInvite failed', notifResult.error)
     }
   }
 
@@ -141,6 +142,15 @@ export async function getBetInvitePreview(
 
   if (participantsError) return { error: participantsError.message }
 
+  const betData = bet as {
+    id: string
+    game_template: string
+    stake_mode: StakeMode
+    status: BetStatus
+    notes: string | null
+    creator_id: string
+  }
+
   const rows = (participants ?? []) as {
     user_id: string
     stake_amount: number
@@ -148,17 +158,17 @@ export async function getBetInvitePreview(
     role: string
   }[]
 
-  const creatorParticipant = rows.find(row => row.user_id === (bet as any).creator_id)
+  const creatorParticipant = rows.find(row => row.user_id === betData.creator_id)
   const currentUserParticipant = rows.find(row => row.user_id === userId)
 
   return {
-    betId: (bet as any).id,
-    inviteCode: getBetInviteCodeFromBetId((bet as any).id),
-    title: (bet as any).notes?.trim() || `Zakład #${String((bet as any).id).slice(0, 8)}`,
-    gameTemplate: (bet as any).game_template,
-    stakeMode: (bet as any).stake_mode,
-    status: (bet as any).status,
-    creatorId: (bet as any).creator_id,
+    betId: betData.id,
+    inviteCode: getBetInviteCodeFromBetId(betData.id),
+    title: betData.notes?.trim() || `Zakład #${String(betData.id).slice(0, 8)}`,
+    gameTemplate: betData.game_template,
+    stakeMode: betData.stake_mode,
+    status: betData.status,
+    creatorId: betData.creator_id,
     stakeAmount: Number(creatorParticipant?.stake_amount ?? 0),
     alreadyParticipant: !!currentUserParticipant,
     alreadyConfirmed: !!currentUserParticipant?.confirmed,
@@ -169,38 +179,42 @@ export async function joinBetFromInvite(
   code: string,
   userId: string,
 ): Promise<{ betId: string } | { error: string }> {
-  console.log('[joinBetFromInvite] start', { code, userId })
+  log('[joinBetFromInvite] start', { code, userId })
   const preview = await getBetInvitePreview(code, userId)
-  console.log('[joinBetFromInvite] preview result', preview)
+  log('[joinBetFromInvite] preview result', preview)
   if ('error' in preview) return preview
   if (preview.status === 'completed') return { error: 'Zakład jest już zakończony.' }
   if (preview.creatorId === userId) return { betId: preview.betId }
 
-  const { data: existingParticipant } = await supabase
+  const { data } = await supabase
     .from('bet_participants')
     .select('id, confirmed')
     .eq('bet_id', preview.betId)
     .eq('user_id', userId)
     .maybeSingle()
-  console.log('[joinBetFromInvite] existing participant', existingParticipant)
+  const existingParticipant = data as {
+    id: string
+    confirmed: boolean
+  } | null
+  log('[joinBetFromInvite] existing participant', existingParticipant)
 
   if (existingParticipant) {
-    if (!(existingParticipant as any).confirmed) {
-      console.log('[joinBetFromInvite] updating confirmed=true', {
+    if (!existingParticipant.confirmed) {
+      log('[joinBetFromInvite] updating confirmed=true', {
         betId: preview.betId,
         userId,
-        participantId: (existingParticipant as any).id,
+        participantId: existingParticipant.id,
       })
       const { error: updErr } = await supabase
         .from('bet_participants')
         .update({ confirmed: true })
-        .eq('id', (existingParticipant as any).id)
-      if (updErr) console.log('[joinBetFromInvite] update confirmed failed', updErr)
+        .eq('id', existingParticipant.id)
+      if (updErr) log('[joinBetFromInvite] update confirmed failed', updErr)
       if (updErr) return { error: updErr.message }
-      console.log('[joinBetFromInvite] update confirmed success')
+      log('[joinBetFromInvite] update confirmed success')
     }
   } else {
-    console.log('[joinBetFromInvite] inserting participant with confirmed=true', {
+    log('[joinBetFromInvite] inserting participant with confirmed=true', {
       betId: preview.betId,
       userId,
       stakeAmount: preview.stakeAmount,
@@ -213,36 +227,36 @@ export async function joinBetFromInvite(
       role: 'participant',
       confirmed: true,
     })
-    if (insErr) console.log('[joinBetFromInvite] insert participant failed', insErr)
+    if (insErr) log('[joinBetFromInvite] insert participant failed', insErr)
     if (insErr) return { error: insErr.message }
-    console.log('[joinBetFromInvite] insert participant success')
+    log('[joinBetFromInvite] insert participant success')
   }
 
   const { data: allParticipants, error: allErr } = await supabase
     .from('bet_participants')
     .select('confirmed')
     .eq('bet_id', preview.betId)
-  console.log('[joinBetFromInvite] all participants confirmed rows', allParticipants)
+  log('[joinBetFromInvite] all participants confirmed rows', allParticipants)
 
   if (allErr) return { error: allErr.message }
 
   const everyoneConfirmed = ((allParticipants ?? []) as { confirmed: boolean }[]).every(p => p.confirmed)
-  console.log('[joinBetFromInvite] everyone confirmed?', {
+  log('[joinBetFromInvite] everyone confirmed?', {
     betId: preview.betId,
     everyoneConfirmed,
   })
   if (everyoneConfirmed) {
-    console.log('[joinBetFromInvite] updating bet status to active', { betId: preview.betId })
+    log('[joinBetFromInvite] updating bet status to active', { betId: preview.betId })
     const { error: updateStatusError } = await supabase
       .from('bets')
       .update({ status: 'active' })
       .eq('id', preview.betId)
       .eq('status', 'pending')
-    if (updateStatusError) console.log('[joinBetFromInvite] update bet status failed', updateStatusError)
+    if (updateStatusError) log('[joinBetFromInvite] update bet status failed', updateStatusError)
     if (updateStatusError) return { error: updateStatusError.message }
-    console.log('[joinBetFromInvite] update bet status success')
+    log('[joinBetFromInvite] update bet status success')
   }
 
-  console.log('[joinBetFromInvite] done', { betId: preview.betId })
+  log('[joinBetFromInvite] done', { betId: preview.betId })
   return { betId: preview.betId }
 }

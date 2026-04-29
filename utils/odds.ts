@@ -19,7 +19,7 @@ export function toStakeNumber(input: string | number | null | undefined): number
 
 export function calcOdds(
   participantStake: number,
-  allParticipants: { customStake: string }[],
+  allParticipants: { customStake: number }[],
   globalStake: number,
   mode: StakeMode,
 ): number {

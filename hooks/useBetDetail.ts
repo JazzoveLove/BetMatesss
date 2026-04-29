@@ -5,6 +5,7 @@ import { AuthService } from '../services/auth.service'
 import { BetsService } from '../services/bets.service'
 import { NotificationsService } from '../services/notifications.service'
 import type { BetDetail, PendingResult, Settlement } from '../types/bet.types'
+import { log } from '../utils/logger'
 
 type ActionLoadingState = {
   resolving: boolean
@@ -42,7 +43,7 @@ export function useBetDetail(betId: string) {
   }, [])
 
   const loadData = useCallback(async () => {
-    console.log('[useBetDetail loadData] start', { betId })
+    log('[useBetDetail loadData] start', { betId })
     const userId = await AuthService.getCurrentUserId()
     if (!userId) return
     setCurrentUserId(userId)
@@ -52,7 +53,7 @@ export function useBetDetail(betId: string) {
       BetsService.getSettlements(betId),
     ])
 
-    console.log('[useBetDetail loadData] bet + settlements', {
+    log('[useBetDetail loadData] bet + settlements', {
       status: betData?.status,
       settlementsCount: nextSettlements.length,
     })
@@ -64,14 +65,14 @@ export function useBetDetail(betId: string) {
       (betData.status === 'awaiting_confirmation' || betData.status === 'disputed')
     ) {
       nextPending = await BetsService.getPendingBetResult(betId)
-      console.log('[useBetDetail loadData] pending result', nextPending)
+      log('[useBetDetail loadData] pending result', nextPending)
     }
 
     setBet(betData)
     setPendingResult(nextPending)
     setSettlements(nextSettlements)
     if (nextPending?.score) setScore(nextPending.score)
-    console.log('[useBetDetail loadData] done')
+    log('[useBetDetail loadData] done')
   }, [betId])
 
   useEffect(() => {
@@ -150,7 +151,7 @@ export function useBetDetail(betId: string) {
           filter: `bet_id=eq.${betId}`,
         },
         payload => {
-          console.log('[useBetDetail realtime] settlements INSERT', payload)
+          log('[useBetDetail realtime] settlements INSERT', payload)
           void loadData()
         },
       )
@@ -163,7 +164,7 @@ export function useBetDetail(betId: string) {
           filter: `bet_id=eq.${betId}`,
         },
         payload => {
-          console.log('[useBetDetail realtime] settlements UPDATE', payload)
+          log('[useBetDetail realtime] settlements UPDATE', payload)
           void loadData()
         },
       )
@@ -245,7 +246,7 @@ export function useBetDetail(betId: string) {
 
   const confirmResult = useCallback(async () => {
     if (!bet || !currentUserId || !pendingResult) return
-    console.log('[useBetDetail confirmResult] start', { betId, resultId: pendingResult.id })
+    log('[useBetDetail confirmResult] start', { betId, resultId: pendingResult.id })
     setAction('confirming', true)
     const result = await BetsService.confirmBetResult({
       betId,
@@ -253,7 +254,7 @@ export function useBetDetail(betId: string) {
       confirmerId: currentUserId,
     })
     setAction('confirming', false)
-    console.log('[useBetDetail confirmResult] BetsService.confirmBetResult', result)
+    log('[useBetDetail confirmResult] BetsService.confirmBetResult', result)
     if (result.error) {
       Alert.alert('Błąd', result.error)
       return
@@ -276,14 +277,14 @@ export function useBetDetail(betId: string) {
   const markPaid = useCallback(
     async (settlementId: string, debtorId: string) => {
       if (!currentUserId || debtorId !== currentUserId) {
-        console.log('[useBetDetail markPaid] skip — not debtor', { settlementId, debtorId, currentUserId })
+        log('[useBetDetail markPaid] skip — not debtor', { settlementId, debtorId, currentUserId })
         return
       }
-      console.log('[useBetDetail markPaid] start', { settlementId, debtorId })
+      log('[useBetDetail markPaid] start', { settlementId, debtorId })
       setAction('markingPaid', settlementId)
       const result = await BetsService.markSettlementPaid(settlementId, debtorId)
       setAction('markingPaid', null)
-      console.log('[useBetDetail markPaid] result', result)
+      log('[useBetDetail markPaid] result', result)
       if (result.error) {
         Alert.alert('Błąd', result.error)
         return
@@ -322,7 +323,7 @@ export function useBetDetail(betId: string) {
   const sendReminder = useCallback(
     async (s: Settlement) => {
       if (!currentUserId || currentUserId !== s.creditorId) return
-      console.log('[useBetDetail sendReminder] start', { settlementId: s.id, debtorId: s.debtorId })
+      log('[useBetDetail sendReminder] start', { settlementId: s.id, debtorId: s.debtorId })
       setAction('reminding', s.id)
       const result = await NotificationsService.sendSettlementReminderNotification({
         debtorUserId: s.debtorId,

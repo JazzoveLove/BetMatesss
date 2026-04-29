@@ -3,6 +3,7 @@ import { parseStakeAmount } from '../../utils/odds'
 import { createSettlements, getSettlements, markSettlementPaid } from '../settlements.service'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
 import type { BetDetail, BetParticipant, BetResultRow } from '../../types/bet.types'
+import { log, warn } from '../../utils/logger'
 
 export { getSettlements, markSettlementPaid }
 
@@ -27,7 +28,7 @@ export async function getBetDetail(betId: string): Promise<BetDetail | null> {
     return null
   }
   if (!data) {
-    console.warn('[getBetDetail] brak danych dla betId:', betId)
+    warn('[getBetDetail] brak danych dla betId:', betId)
     return null
   }
 
@@ -223,7 +224,7 @@ type ConfirmResultParams = {
 }
 
 export async function confirmBetResult(params: ConfirmResultParams): Promise<{ error?: string }> {
-  console.log('[confirmBetResult] start', params)
+  log('[confirmBetResult] start', params)
 
   const { error: resultError } = await supabase
     .from('bet_results')
@@ -231,7 +232,7 @@ export async function confirmBetResult(params: ConfirmResultParams): Promise<{ e
     .eq('id', params.resultId)
     .eq('bet_id', params.betId)
 
-  console.log('[confirmBetResult] bet_results update', { resultError })
+  log('[confirmBetResult] bet_results update', { resultError })
   if (resultError) return { error: resultError.message }
 
   const { error: betError } = await supabase
@@ -239,12 +240,12 @@ export async function confirmBetResult(params: ConfirmResultParams): Promise<{ e
     .update({ status: 'completed' })
     .eq('id', params.betId)
 
-  console.log('[confirmBetResult] bets status update', { betError })
+  log('[confirmBetResult] bets status update', { betError })
   if (betError) return { error: betError.message }
 
-  console.log('[confirmBetResult] calling createSettlements for betId', params.betId)
+  log('[confirmBetResult] calling createSettlements for betId', params.betId)
   const settlResult = await createSettlements(params.betId)
-  console.log('[confirmBetResult] createSettlements result', settlResult)
+  log('[confirmBetResult] createSettlements result', settlResult)
   return settlResult
 }
 
