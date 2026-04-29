@@ -3,7 +3,7 @@ import { parseStakeAmount } from '../../utils/odds'
 import { loadNicksByIds, getAcceptedFriendsList } from '../friends.service'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
 import type {
-  Bet,
+  BetRow,
   ActiveBetItem,
   RecentResult,
   DashboardStats,
@@ -191,7 +191,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
   }
 }
 
-export async function getUserBets(userId: string): Promise<Bet[]> {
+export async function getUserBets(userId: string): Promise<BetRow[]> {
   const [createdRes, participantsRes] = await Promise.all([
     supabase.from('bets').select('*').eq('creator_id', userId).order('created_at', { ascending: false }),
     supabase
@@ -202,16 +202,16 @@ export async function getUserBets(userId: string): Promise<Bet[]> {
   if (createdRes.error) throw createdRes.error
   if (participantsRes.error) throw participantsRes.error
 
-  const created = (createdRes.data ?? []) as Bet[]
-  const participated = ((participantsRes.data ?? []) as { bets: Bet | Bet[] | null }[])
+  const created = (createdRes.data ?? []) as BetRow[]
+  const participated = ((participantsRes.data ?? []) as { bets: BetRow | BetRow[] | null }[])
     .flatMap(row => (Array.isArray(row.bets) ? row.bets : row.bets ? [row.bets] : []))
-  const byId = new Map<string, Bet>()
+  const byId = new Map<string, BetRow>()
   for (const bet of [...created, ...participated]) byId.set(bet.id, bet)
   return [...byId.values()].sort((a, b) => b.created_at.localeCompare(a.created_at))
 }
 
 export function historyBadgeAndAmount(
-  bet: Bet,
+  bet: BetRow,
   profit: number,
   hadSettlement: boolean,
 ): { badge: HistoryBadgeLabel; amountLabel: string } {
