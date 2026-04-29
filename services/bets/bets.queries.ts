@@ -58,8 +58,11 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
       .select('id, amount, paid, debtor_id, creditor_id, bet_id')
       .or(`debtor_id.eq.${userId},creditor_id.eq.${userId}`),
   ])
+  if (profileRes.error) throw profileRes.error
+  if (participationsRes.error) throw participationsRes.error
+  if (settlementsRes.error) throw settlementsRes.error
 
-  const nick = (profileRes.data as any)?.nick ?? 'Graczu'
+  const nick = (profileRes.data as { nick: string })?.nick ?? 'Graczu'
 
   const settlements = (settlementsRes.data ?? []) as {
     id: string
@@ -196,6 +199,9 @@ export async function getUserBets(userId: string): Promise<Bet[]> {
       .select('bets(*)')
       .eq('user_id', userId),
   ])
+  if (createdRes.error) throw createdRes.error
+  if (participantsRes.error) throw participantsRes.error
+
   const created = (createdRes.data ?? []) as Bet[]
   const participated = ((participantsRes.data ?? []) as { bets: Bet | Bet[] | null }[])
     .flatMap(row => (Array.isArray(row.bets) ? row.bets : row.bets ? [row.bets] : []))
@@ -236,13 +242,18 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
   if (bets.length === 0) return []
 
   const betIds = bets.map(b => b.id)
-  const [{ data: parts }, { data: settlements }] = await Promise.all([
+  const [partsRes, settlementsRes] = await Promise.all([
     supabase
       .from('bet_participants')
       .select('bet_id, user_id, users ( nick )')
       .in('bet_id', betIds),
     supabase.from('settlements').select('bet_id, debtor_id, creditor_id, amount').in('bet_id', betIds),
   ])
+  if (partsRes.error) throw partsRes.error
+  if (settlementsRes.error) throw settlementsRes.error
+
+  const parts = partsRes.data
+  const settlements = settlementsRes.data
 
   const settlementsList = (settlements ?? []) as {
     bet_id: string
@@ -322,10 +333,11 @@ export async function getDisciplineStatsForUser(userId: string): Promise<Discipl
   if (completed.length === 0) return []
 
   const betIds = completed.map(b => b.id)
-  const { data: settlements } = await supabase
+  const { data: settlements, error: settlementsErr } = await supabase
     .from('settlements')
     .select('bet_id, debtor_id, creditor_id')
     .in('bet_id', betIds)
+  if (settlementsErr) throw settlementsErr
 
   const settlementsList = (settlements ?? []) as {
     bet_id: string
@@ -366,6 +378,8 @@ export async function getFriendsBalanceLeaderboard(userId: string): Promise<Frie
     supabase.from('settlements').select('id, amount, debtor_id, creditor_id').in('debtor_id', ids),
     supabase.from('settlements').select('id, amount, debtor_id, creditor_id').in('creditor_id', ids),
   ])
+  if (debtorRes.error) throw debtorRes.error
+  if (creditorRes.error) throw creditorRes.error
 
   const seen = new Set<string>()
   const rows: { amount: number; debtor_id: string; creditor_id: string }[] = []
