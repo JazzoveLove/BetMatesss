@@ -16,6 +16,7 @@ import FriendsScreen from './app/friends'
 import ProfileScreen from './app/profile'
 import BetDetailScreen from './app/bet-detail'
 import JoinBetScreen from './app/join-bet'
+import RivalryScreen from './app/rivalry'
 import {
   enqueueFriendInvite,
   setNavigateToFriendsTab,
@@ -221,6 +222,11 @@ function AppContent() {
           name="JoinBet"
           component={JoinBetScreen}
           options={{ animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="Rivalry"
+          component={RivalryScreen}
+          options={{ headerShown: false, animation: 'slide_from_right' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

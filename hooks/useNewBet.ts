@@ -97,7 +97,7 @@ export function useNewBet() {
     () =>
       friends.map(friendship => {
         const friendId = friendship.user_a === currentUser?.id ? friendship.user_b : friendship.user_a
-        return { id: friendId, nick: nick(friendId), avatar_url: avatar(friendId) }
+        return { id: friendId, nick: nick(friendId), avatarUrl: avatar(friendId) }
       }),
     [avatar, currentUser?.id, friends, nick],
   )

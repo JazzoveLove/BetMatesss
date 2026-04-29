@@ -3,7 +3,7 @@ import { calculatePerMatchBalance } from '../utils/formats'
 import { parseStakeAmount } from '../utils/odds'
 import { settlementDraftsFromPairBalances } from '../utils/settlements'
 import { loadNicksByIds } from './friends.service'
-import type { BetParticipant, BetResult, Settlement, StakeMode } from '../types/bet.types'
+import type { BetParticipant, BetResultRow, Settlement, StakeMode } from '../types/bet.types'
 
 async function getSettlements(betId: string): Promise<Settlement[]> {
   console.log('[getSettlements] start', { betId })
@@ -185,7 +185,7 @@ async function createSettlements(betId: string): Promise<{ error?: string }> {
 
     if (resErr) return { error: resErr.message }
 
-    const results: BetResult[] = ((resultRows ?? []) as any[]).map(r => ({
+    const results: BetResultRow[] = ((resultRows ?? []) as any[]).map(r => ({
       id: r.id,
       bet_id: betId,
       match_number: r.match_number,

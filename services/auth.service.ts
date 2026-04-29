@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabase'
 import type { Session } from '@supabase/supabase-js'
-import type { UserProfile } from '../types/user.types'
+import type { UserProfile, UserProfileRow } from '../types/user.types'
 
 export const AuthService = {
   signIn(email: string, password: string) {
@@ -54,22 +54,13 @@ export const AuthService = {
     return supabase.auth.onAuthStateChange(cb)
   },
 
-  mapProfileRow(row: {
-    id: string
-    nick: string
-    avatar_url?: string | null
-    invite_code?: string | null
-    created_at?: string
-    phone?: string | null
-  }): UserProfile {
+  mapProfileRow(row: UserProfileRow): UserProfile {
     return {
       id: row.id,
       nick: row.nick,
       avatarUrl: row.avatar_url,
-      avatar_url: row.avatar_url,
       inviteCode: row.invite_code,
-      invite_code: row.invite_code,
-      created_at: row.created_at,
+      createdAt: row.created_at,
       phone: row.phone,
     }
   },

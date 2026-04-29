@@ -1,5 +1,5 @@
 import type { GameTemplate } from '../constants/games'
-import type { BetFormat, BetParticipant, BetResult } from '../types/bet.types'
+import type { BetFormat, BetParticipant, BetResultRow } from '../types/bet.types'
 
 const FORMAT_MIN_PLAYERS: Record<BetFormat, number> = {
   single: 2,
@@ -51,7 +51,7 @@ export const getDefaultFormat = (
 
 /** Bilans netto z rozegranych meczów (tylko 2 graczy): zwycięzca +stake, przegrany −stake. */
 export const calculatePerMatchBalance = (
-  results: BetResult[],
+  results: BetResultRow[],
   stakePerMatch: number,
   participants: BetParticipant[],
 ): Record<string, number> => {

@@ -2,7 +2,7 @@ import { supabase } from '../../lib/supabase'
 import { parseStakeAmount } from '../../utils/odds'
 import { createSettlements, getSettlements, markSettlementPaid } from '../settlements.service'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
-import type { BetDetail, BetParticipant, BetResult } from '../../types/bet.types'
+import type { BetDetail, BetParticipant, BetResultRow } from '../../types/bet.types'
 
 export { getSettlements, markSettlementPaid }
 
@@ -54,7 +54,7 @@ export async function getBetDetail(betId: string): Promise<BetDetail | null> {
     scores: Record<string, unknown> | null
     confirmed: boolean
   }[]
-  const results: BetResult[] = [...rawResults]
+  const results: BetResultRow[] = [...rawResults]
     .sort((a, b) => a.match_number - b.match_number)
     .map(r => ({
       id: r.id,

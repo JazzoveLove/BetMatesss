@@ -8,7 +8,7 @@ export type BetFormat =
 export type StakeMode = 'none' | 'equal' | 'custom'
 export type BetStatus =
   | 'pending'
-  | 'active'
+  | 'active' 
   | 'in_progress'
   | 'awaiting_confirmation'
   | 'completed'
@@ -19,19 +19,19 @@ export type PokerMode = 'winner_takes_all' | 'chip_count'
 export type NewBetParticipant = {
   id: string
   nick: string
-  customStake: string
+  customStake: number
 }
-
+export type ParticipantRole = 'creator' | 'participant' 
 export type BetParticipant = {
   id: string
   nick: string
   stakeAmount: number
   odds: number
-  role: string
+  role: ParticipantRole
   confirmed: boolean
 }
-
-export interface Bet {
+/** Surowa odpowiedź z Supabase — używaj tylko w services/ */
+export interface BetRow {
   id: string
   creator_id: string
   rivalry_id?: string
@@ -49,14 +49,14 @@ export interface Bet {
   notes?: string | null
   created_at: string
 }
-
-export interface BetResult {
+/** Surowa odpowiedź z Supabase — używaj tylko w services/ */
+export interface BetResultRow {
   id: string
   bet_id: string
   match_number: number
   round_number?: number
   winner_id: string
-  scores: Record<string, number | string>
+  scores: {score: string}
   chips?: Record<string, number>
   confirmed: boolean
 }
@@ -83,10 +83,9 @@ export type BetDetail = {
   createdAt: string
   stakePerMatch?: number
   participants: BetParticipant[]
-  results: BetResult[]
+  results: BetResultRow[]
 }
 
-/** Oczekujący wynik (potwierdzenie drugiej strony) — spójny kształt z serwisem / hookiem szczegółów. */
 export type PendingResult = {
   id: string
   winnerId: string
@@ -160,7 +159,6 @@ export interface CreateBetParams {
   participantIds?: string[]
 }
 
-/** Etykieta badge na liście historii (SPEC + spór / remis bez kasy) */
 export type HistoryBadgeLabel = 'aktywny' | 'wygrany' | 'przegrany' | 'oczekuje' | 'spór' | 'zakończony'
 
 export type HistoryListItem = {
