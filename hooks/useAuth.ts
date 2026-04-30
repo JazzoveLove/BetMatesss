@@ -23,12 +23,19 @@ export function useAuth() {
       setState(prev => ({ ...prev, session: null, user: null }))
       return
     }
-    const profile = await AuthService.getCurrentUserProfile()
-    setState(prev => ({
-      ...prev,
-      session,
-      user: profile ? { id: profile.id, nick: profile.nick } : null,
-    }))
+    try {
+      const profile = await AuthService.getCurrentUserProfile()
+      setState(prev => ({
+        ...prev,
+        session,
+        user: profile ? { id: profile.id, nick: profile.nick } : null,
+      }))
+    } catch (err) {
+      setState(prev => ({
+        ...prev,
+        error: err instanceof Error ? err.message : 'Błąd ładowania profilu',
+      }))
+    }
   }, [])
 
   useEffect(() => {
@@ -86,8 +93,15 @@ export function useAuth() {
       setState(prev => ({ ...prev, error: result.error ?? 'Profile create failed' }))
       return result
     }
-    const profile = await AuthService.getCurrentUserProfile()
-    setState(prev => ({ ...prev, user: profile ? { id: profile.id, nick: profile.nick } : prev.user }))
+    try {
+      const profile = await AuthService.getCurrentUserProfile()
+      setState(prev => ({ ...prev, user: profile ? { id: profile.id, nick: profile.nick } : prev.user }))
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Nie udało się pobrać profilu użytkownika',
+      }))
+    }
     return result
   }, [])
 
