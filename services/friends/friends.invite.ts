@@ -2,6 +2,10 @@ import { supabase } from '../../lib/supabase'
 import { generateInviteCode } from '../../lib/invite-code'
 import type { FriendshipRow } from '../../types/user.types'
 
+type InviteCodeRow = {
+  invite_code?: string | null
+}
+
 export async function ensureMyInviteCode(userId: string): Promise<string | null> {
   const { data, error } = await supabase
     .from('users')
@@ -30,12 +34,13 @@ export async function ensureMyInviteCode(userId: string): Promise<string | null>
 
     if (upErr?.code === '23505') continue
 
-    const { data: again } = await supabase
+    const { data: again, error: againErr } = await supabase
       .from('users')
       .select('invite_code')
       .eq('id', userId)
       .maybeSingle()
-    const c = (again as { invite_code?: string } | null)?.invite_code
+    if (againErr) return null
+    const c = (again as InviteCodeRow | null)?.invite_code
     if (c) return c
   }
 
@@ -88,13 +93,14 @@ export async function handleFriendInvite(
 
   if (exists !== true) return { type: 'not_found' }
 
-  const { data: anyRow } = await supabase
+  const { data: anyRow, error: anyRowErr } = await supabase
     .from('friendships')
     .select('id, user_a, user_b, status')
     .or(
       `and(user_a.eq.${userId},user_b.eq.${otherId}),and(user_a.eq.${otherId},user_b.eq.${userId})`,
     )
     .maybeSingle()
+  if (anyRowErr) return { type: 'error', message: anyRowErr.message }
 
   if (anyRow) {
     const r = anyRow as FriendshipRow
@@ -129,10 +135,13 @@ export async function searchUsersByNick(
   excludeId: string,
 ): Promise<{ id: string; nick: string }[]> {
   if (query.trim().length < 2) return []
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('users')
     .select('id, nick')
     .ilike('nick', `%${query.trim()}%`)
     .limit(8)
+  if (error) {
+    return []
+  }
   return (data ?? []).filter(u => u.id !== excludeId)
 }
