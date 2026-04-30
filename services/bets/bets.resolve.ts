@@ -3,10 +3,37 @@ import { parseStakeAmount } from '../../utils/odds'
 import { createSettlements, getSettlements, markSettlementPaid } from '../settlements.service'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
 import type { BetDetail, BetParticipant, BetResultRow } from '../../types/bet.types'
-import { log, warn } from '../../utils/logger'
+import { error as logError, log, warn } from '../../utils/logger'
+import type { BetFormat, BetStatus, ParticipantRole, StakeMode } from '../../types/bet.types'
 
 export { getSettlements, markSettlementPaid }
 
+type BetDetailRow = {
+  id: string
+  creator_id: string
+  game_template: string
+  format: BetFormat
+  stake_mode: StakeMode
+  status: BetStatus
+  notes: string | null
+  created_at: string
+  stake_per_match: number | null
+  bet_participants: {
+    user_id: string
+    stake_amount: number
+    odds: number
+    role: ParticipantRole
+    confirmed: boolean
+    users: { nick: string } | { nick: string }[] | null
+  }[]
+  bet_results: {
+    id: string
+    match_number: number
+    winner_id: string
+    scores: { score: string } | null
+    confirmed: boolean
+  }[]
+}
 export async function getBetDetail(betId: string): Promise<BetDetail | null> {
   const { data, error } = await supabase
     .from('bets')
@@ -24,22 +51,23 @@ export async function getBetDetail(betId: string): Promise<BetDetail | null> {
     .maybeSingle()
 
   if (error) {
-    console.error('[getBetDetail] supabase error:', error.message, { betId })
+    logError('[getBetDetail] supabase error:', error.message, { betId })
     return null
   }
   if (!data) {
     warn('[getBetDetail] brak danych dla betId:', betId)
     return null
   }
+  const betData = data as BetDetailRow
 
   const seenUserIds = new Set<string>()
-  const participants: BetParticipant[] = ((data as any).bet_participants ?? [])
-    .filter((bp: any) => {
+  const participants: BetParticipant[] = betData.bet_participants
+    .filter(bp => {
       if (seenUserIds.has(bp.user_id)) return false
       seenUserIds.add(bp.user_id)
       return true
     })
-    .map((bp: any) => ({
+    .map(bp => ({
       id: bp.user_id,
       nick: normalizeUsersNick(bp.users) ?? 'Nieznany',
       stakeAmount: parseStakeAmount(bp.stake_amount),
@@ -48,37 +76,30 @@ export async function getBetDetail(betId: string): Promise<BetDetail | null> {
       confirmed: bp.confirmed,
     }))
 
-  const rawResults = ((data as any).bet_results ?? []) as {
-    id: string
-    match_number: number
-    winner_id: string
-    scores: Record<string, unknown> | null
-    confirmed: boolean
-  }[]
+  const rawResults = betData.bet_results ?? []
   const results: BetResultRow[] = [...rawResults]
     .sort((a, b) => a.match_number - b.match_number)
     .map(r => ({
       id: r.id,
-      bet_id: data.id,
+      bet_id: betData.id,
       match_number: r.match_number,
       winner_id: r.winner_id,
-      scores: (r.scores ?? {}) as Record<string, number | string>,
+      scores: { score: String((r.scores as { score?: string } | null)?.score ?? '') },
       confirmed: !!r.confirmed,
     }))
 
-  const stakePm = (data as any).stake_per_match
-  const stakePerMatch =
-    stakePm != null && stakePm !== '' ? Number(stakePm) : undefined
+  const stakePm = betData.stake_per_match
+  const stakePerMatch = stakePm != null ? Number(stakePm) : undefined
 
   return {
-    id: data.id,
-    creatorId: String((data as any).creator_id ?? ''),
-    gameTemplate: (data as any).game_template,
-    format: (data as any).format,
-    stakeMode: (data as any).stake_mode,
-    status: (data as any).status,
-    notes: (data as any).notes,
-    createdAt: (data as any).created_at,
+    id: betData.id,
+    creatorId: String(betData.creator_id ?? ''),
+    gameTemplate: betData.game_template,
+    format: betData.format,
+    stakeMode: betData.stake_mode,
+    status: betData.status,
+    notes: betData.notes,
+    createdAt: betData.created_at,
     stakePerMatch: Number.isFinite(stakePerMatch) ? stakePerMatch : undefined,
     participants,
     results,
@@ -92,6 +113,12 @@ type ResolveParams = {
   recordedBy: string
 }
 
+type BetRowFormat = {
+  format: string
+  status: string
+  creator_id: string
+}
+
 export type PendingBetResult = {
   id: string
   winnerId: string
@@ -100,9 +127,22 @@ export type PendingBetResult = {
   confirmed: boolean
 }
 
+type PendingBetResultRow = {
+  id: string
+  winner_id: string
+  scores: { score?: string } | null
+  recorded_by: string
+  confirmed: boolean
+}
+
+type MaxMatchRow = {
+  match_number?: number
+}
+
 export async function submitBetResult(params: ResolveParams): Promise<{ error?: string }> {
   const { data: betRow } = await supabase.from('bets').select('format').eq('id', params.betId).maybeSingle()
-  if ((betRow as { format?: string } | null)?.format === 'per_match') {
+  const row = betRow as Pick<BetRowFormat, 'format'> | null
+  if (row?.format === 'per_match') {
     return { error: 'Ten zakład jest rozliczany mecz po meczu — użyj „Wpisz wynik meczu”.' }
   }
 
@@ -133,10 +173,11 @@ export async function submitPerMatchBetResult(params: ResolveParams): Promise<{ 
     .maybeSingle()
 
   if (betErr || !betRow) return { error: betErr?.message ?? 'Nie znaleziono zakładu.' }
-  if ((betRow as { format?: string }).format !== 'per_match') {
+  const row = betRow as BetRowFormat
+  if (row.format !== 'per_match') {
     return { error: 'To nie jest zakład „za mecz”.' }
   }
-  if ((betRow as { status?: string }).status !== 'active') {
+  if (row.status !== 'active') {
     return { error: 'Można wpisywać wyniki tylko przy aktywnej sesji.' }
   }
 
@@ -148,7 +189,7 @@ export async function submitPerMatchBetResult(params: ResolveParams): Promise<{ 
     .limit(1)
     .maybeSingle()
 
-  const nextMatch = Number((maxRow as { match_number?: number } | null)?.match_number ?? 0) + 1
+  const nextMatch = Number((maxRow as MaxMatchRow | null)?.match_number ?? 0) + 1
   const scoreStored = params.score.trim() || '—'
 
   const { error: resultError } = await supabase.from('bet_results').insert({
@@ -175,13 +216,14 @@ export async function completePerMatchSession(
     .maybeSingle()
 
   if (betErr || !betRow) return { error: betErr?.message ?? 'Nie znaleziono zakładu.' }
-  if ((betRow as { format?: string }).format !== 'per_match') {
+  const row = betRow as BetRowFormat
+  if (row.format !== 'per_match') {
     return { error: 'Ten zakład nie jest w formacie „za mecz”.' }
   }
-  if ((betRow as { creator_id?: string }).creator_id !== userId) {
+  if (row.creator_id !== userId) {
     return { error: 'Tylko organizator może zakończyć sesję meczów.' }
   }
-  if ((betRow as { status?: string }).status !== 'active') {
+  if (row.status !== 'active') {
     return { error: 'Sesja nie jest aktywna.' }
   }
 
@@ -207,13 +249,14 @@ export async function getPendingBetResult(betId: string): Promise<PendingBetResu
     .maybeSingle()
 
   if (error || !data) return null
+  const pending = data as PendingBetResultRow
 
   return {
-    id: (data as any).id,
-    winnerId: (data as any).winner_id,
-    score: String((data as any).scores?.score ?? ''),
-    recordedBy: (data as any).recorded_by,
-    confirmed: !!(data as any).confirmed,
+    id: pending.id,
+    winnerId: pending.winner_id,
+    score: String(pending.scores?.score ?? ''),
+    recordedBy: pending.recorded_by,
+    confirmed: !!pending.confirmed,
   }
 }
 
