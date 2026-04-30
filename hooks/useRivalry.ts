@@ -1,7 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AuthService } from '../services/auth.service'
 import { supabase } from '../lib/supabase'
-import type { RivalryDisciplineStats, RivalryMatchItem } from '../types/bet.types'
+
+type RivalryMatchItem = {
+  betId: string
+  rivalryId: string
+  gameTemplate: string
+  createdAt: string
+  score: string | null
+  stakeAmount: number
+  profit: number
+  outcome: 'win' | 'loss' | 'draw'
+}
+
+type RivalryDisciplineStats = {
+  gameTemplate: string
+  wins: number
+  losses: number
+}
 
 type UseRivalryResult = {
   loading: boolean

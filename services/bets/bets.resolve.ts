@@ -140,7 +140,12 @@ type MaxMatchRow = {
 }
 
 export async function submitBetResult(params: ResolveParams): Promise<{ error?: string }> {
-  const { data: betRow } = await supabase.from('bets').select('format').eq('id', params.betId).maybeSingle()
+  const { data: betRow, error: betErr } = await supabase
+    .from('bets')
+    .select('format')
+    .eq('id', params.betId)
+    .maybeSingle()
+  if (betErr) return { error: betErr.message }
   const row = betRow as Pick<BetRowFormat, 'format'> | null
   if (row?.format === 'per_match') {
     return { error: 'Ten zakład jest rozliczany mecz po meczu — użyj „Wpisz wynik meczu”.' }
@@ -181,13 +186,14 @@ export async function submitPerMatchBetResult(params: ResolveParams): Promise<{ 
     return { error: 'Można wpisywać wyniki tylko przy aktywnej sesji.' }
   }
 
-  const { data: maxRow } = await supabase
+  const { data: maxRow, error: maxErr } = await supabase
     .from('bet_results')
     .select('match_number')
     .eq('bet_id', params.betId)
     .order('match_number', { ascending: false })
     .limit(1)
     .maybeSingle()
+  if (maxErr) return { error: maxErr.message }
 
   const nextMatch = Number((maxRow as MaxMatchRow | null)?.match_number ?? 0) + 1
   const scoreStored = params.score.trim() || '—'

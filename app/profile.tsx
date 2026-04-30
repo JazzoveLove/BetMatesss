@@ -12,13 +12,14 @@ import {
   TextInput,
   View,
 } from 'react-native'
-import * as ImagePicker from 'expo-image-picker'
 import { useNavigation } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../constants/colors'
 import { useProfile } from '../hooks/useProfile'
 import { AuthService } from '../services/auth.service'
 import { hexToRgba } from '../utils/colors'
+
+const ImagePicker: any = require('expo-image-picker')
 
 type Nav = {
   navigate: (screen: string) => void

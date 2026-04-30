@@ -75,45 +75,45 @@ describe('toStakeNumber', () => {
 describe('calcOdds', () => {
   describe('tryb none', () => {
     it('zawsze zwraca 0', () => {
-      const players = [{ customStake: '100' }, { customStake: '100' }]
+      const players = [{ customStake: 100 }, { customStake: 100 }]
       expect(calcOdds(100, players, 100, 'none')).toBe(0)
     })
   })
 
   describe('tryb equal', () => {
     it('2 graczy po 100 zł → kurs 2.0', () => {
-      const players = [{ customStake: '100' }, { customStake: '100' }]
+      const players = [{ customStake: 100 }, { customStake: 100 }]
       expect(calcOdds(100, players, 100, 'equal')).toBe(2)
     })
 
     it('3 graczy po 50 zł → kurs 3.0', () => {
       const players = [
-        { customStake: '50' },
-        { customStake: '50' },
-        { customStake: '50' },
+        { customStake: 50 },
+        { customStake: 50 },
+        { customStake: 50 },
       ]
       expect(calcOdds(50, players, 50, 'equal')).toBe(3)
     })
 
     it('stawka 0 → kurs 0 (ochrona przed dzieleniem przez zero)', () => {
-      const players = [{ customStake: '0' }, { customStake: '0' }]
+      const players = [{ customStake: 0 }, { customStake: 0 }]
       expect(calcOdds(0, players, 0, 'equal')).toBe(0)
     })
   })
 
   describe('tryb custom', () => {
     it('25 vs 75 zł → kurs 4.0 dla gracza z stawką 25', () => {
-      const players = [{ customStake: '25' }, { customStake: '75' }]
+      const players = [{ customStake: 25 }, { customStake: 75 }]
       expect(calcOdds(25, players, 0, 'custom')).toBe(4)
     })
 
     it('25 vs 75 zł → kurs 1.33 dla gracza z stawką 75', () => {
-      const players = [{ customStake: '25' }, { customStake: '75' }]
+      const players = [{ customStake: 25 }, { customStake: 75 }]
       expect(calcOdds(75, players, 0, 'custom')).toBe(1.33)
     })
 
     it('stawka uczestnika 0 → kurs 0 (ochrona przed dzieleniem przez zero)', () => {
-      const players = [{ customStake: '0' }, { customStake: '100' }]
+      const players = [{ customStake: 0 }, { customStake: 100 }]
       expect(calcOdds(0, players, 0, 'custom')).toBe(0)
     })
   })

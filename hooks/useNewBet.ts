@@ -167,7 +167,7 @@ export function useNewBet() {
     const participantRows = allParticipants.map(player => ({
       id: player.id,
       nick: player.nick,
-      customStake: String(stakeMode === 'custom' ? customStakes[player.id] ?? 0 : stakeAmount),
+      customStake: stakeMode === 'custom' ? customStakes[player.id] ?? 0 : stakeAmount,
     }))
 
     log('[handleSubmit] stakePerMatch:', stakePerMatch)

@@ -3,9 +3,9 @@ jest.mock('../../lib/supabase', () => ({ supabase: {} }))
 jest.mock('../friends.service', () => ({}))
 
 import { historyBadgeAndAmount } from './bets.queries'
-import type { Bet } from '../../types/bet.types'
+import type { BetRow } from '../../types/bet.types'
 
-const baseBet: Bet = {
+const baseBet: BetRow = {
   id: '1',
   creator_id: 'user-1',
   game_template: 'football',

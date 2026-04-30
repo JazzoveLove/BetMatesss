@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BetsService } from '../services/bets.service'
 import { AuthService } from '../services/auth.service'
 import { supabase } from '../lib/supabase'
-import type { Bet, CreateBetParams } from '../types/bet.types'
+import type { BetRow, CreateBetParams } from '../types/bet.types'
 
 export function useBets() {
-  const [bets, setBets] = useState<Bet[]>([])
+  const [bets, setBets] = useState<BetRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

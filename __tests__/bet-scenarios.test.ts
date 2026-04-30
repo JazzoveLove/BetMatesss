@@ -17,7 +17,7 @@ import { buildSettlementRows } from '../services/settlements.service'
 
 // ─── Pomocniki ────────────────────────────────────────────────────────────────
 
-function player(id: string, nick: string, customStake = '') {
+function player(id: string, nick: string, customStake = 0) {
   return { id, nick, customStake }
 }
 
@@ -92,8 +92,8 @@ describe('Zakład 2 graczy — equal stake', () => {
 
 describe('Zakład 2 graczy — custom stake (różne stawki)', () => {
   const participants = [
-    player('A', 'Maciek', '25'),
-    player('B', 'Bartek', '75'),
+    player('A', 'Maciek', 25),
+    player('B', 'Bartek', 75),
   ]
   const params = {
     creatorId: 'A',
@@ -247,11 +247,11 @@ describe('Zakład 5 graczy — equal stake (turniej grupowy)', () => {
 
 describe('Zakład 5 graczy — custom stake (każdy stawia inaczej)', () => {
   const participants = [
-    player('A', 'Maciek', '100'),
-    player('B', 'Bartek', '50'),
-    player('C', 'Kasia', '25'),
-    player('D', 'Piotr', '75'),
-    player('E', 'Ola', '150'),
+    player('A', 'Maciek', 100),
+    player('B', 'Bartek', 50),
+    player('C', 'Kasia', 25),
+    player('D', 'Piotr', 75),
+    player('E', 'Ola', 150),
   ]
   const rows = buildParticipantRows('bet-6', {
     creatorId: 'A',

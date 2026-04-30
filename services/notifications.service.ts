@@ -119,8 +119,9 @@ async function getPendingBetInviteNotifications(userId: string): Promise<BetInvi
     .filter((row): row is BetInviteNotification => !!row)
 }
 
-async function markNotificationRead(notificationId: string): Promise<void> {
-  await supabase.from('notifications').update({ read: true }).eq('id', notificationId)
+async function markNotificationRead(notificationId: string): Promise<{ error?: string }> {
+  const { error } = await supabase.from('notifications').update({ read: true }).eq('id', notificationId)
+  return error ? { error: error.message } : {}
 }
 
 async function sendSettlementReminderNotification(params: {

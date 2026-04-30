@@ -186,12 +186,13 @@ export async function joinBetFromInvite(
   if (preview.status === 'completed') return { error: 'Zakład jest już zakończony.' }
   if (preview.creatorId === userId) return { betId: preview.betId }
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('bet_participants')
     .select('id, confirmed')
     .eq('bet_id', preview.betId)
     .eq('user_id', userId)
     .maybeSingle()
+  if (error) return { error: error.message }
   const existingParticipant = data as {
     id: string
     confirmed: boolean

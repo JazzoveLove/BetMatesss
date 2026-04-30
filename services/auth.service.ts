@@ -20,27 +20,33 @@ export const AuthService = {
   },
 
   async getCurrentUserId(): Promise<string | null> {
-    const { data: { session } } = await supabase.auth.getSession()
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession()
+    if (error) throw error
     return session?.user.id ?? null
   },
 
   async getCurrentUserProfile(): Promise<{ id: string; nick: string } | null> {
     const userId = await AuthService.getCurrentUserId()
     if (!userId) return null
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('users')
       .select('id, nick')
       .eq('id', userId)
       .single()
+    if (error) throw error
     return data ? { id: data.id, nick: data.nick } : null
   },
 
   async hasProfile(userId: string): Promise<boolean> {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('users')
       .select('id')
       .eq('id', userId)
       .maybeSingle()
+    if (error) throw error
     return Boolean(data)
   },
 

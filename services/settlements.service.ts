@@ -3,18 +3,17 @@ import { calculatePerMatchBalance } from '../utils/formats'
 import { parseStakeAmount } from '../utils/odds'
 import { settlementDraftsFromPairBalances } from '../utils/settlements'
 import { loadNicksByIds } from './friends.service'
-import type { BetParticipant, BetResultRow, Settlement, StakeMode } from '../types/bet.types'
+import type { BetParticipant, BetResultRow, ParticipantRole, Settlement, StakeMode } from '../types/bet.types'
 import { log } from '../utils/logger'
 
 async function getSettlements(betId: string): Promise<Settlement[]> {
-  log('[getSettlements] start', { betId })
-
+  
   const { data: rows, error } = await supabase
     .from('settlements')
     .select('id, amount, paid, paid_at, debtor_id, creditor_id')
     .eq('bet_id', betId)
 
-  log('[getSettlements] raw rows', { rows, error })
+  
 
   if (error) {
     log('[getSettlements] query error', error)
@@ -174,7 +173,7 @@ async function createSettlements(betId: string): Promise<{ error?: string }> {
       nick: '',
       stakeAmount: parseStakeAmount(p.stake_amount),
       odds: Number(p.odds) || 0,
-      role: p.role,
+      role: p.role as ParticipantRole,
       confirmed: p.confirmed,
     }))
 
@@ -186,12 +185,20 @@ async function createSettlements(betId: string): Promise<{ error?: string }> {
 
     if (resErr) return { error: resErr.message }
 
-    const results: BetResultRow[] = ((resultRows ?? []) as any[]).map(r => ({
+    type BetResultRaw = {
+      id: string
+      match_number: number
+      winner_id: string
+      scores: { score: string } | null
+      confirmed: boolean
+    }
+
+    const results: BetResultRow[] = ((resultRows ?? []) as BetResultRaw[]).map(r => ({
       id: r.id,
       bet_id: betId,
       match_number: r.match_number,
       winner_id: r.winner_id,
-      scores: (r.scores ?? {}) as Record<string, number | string>,
+      scores: { score: String(r.scores?.score ?? '') },
       confirmed: !!r.confirmed,
     }))
 

@@ -6,6 +6,7 @@ import {
   FlatList,
   Pressable,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -113,8 +114,8 @@ export default function RivalryScreen() {
       format: detail.format,
       stakeMode: detail.stakeMode,
       participants: [
-        { id: me.id, nick: me.nick, customStake: String(meStake) },
-        { id: friendId, nick: friendNick, customStake: String(friendStake) },
+        { id: me.id, nick: me.nick, customStake: meStake },
+        { id: friendId, nick: friendNick, customStake: friendStake },
       ],
       globalStake: meStake,
       stakeAmount: meStake,
