@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { AuthService } from '../services/auth.service'
 import { BetsService } from '../services/bets.service'
 import { GAME_MAP } from '../constants/games'
+import { log } from '../utils/logger'
 
 type DashboardUser = {
   nick: string
@@ -80,37 +81,42 @@ export function useDashboard() {
       return
     }
 
+    try {
     const data = await BetsService.getDashboardData(userId)
-    setUser({ nick: data.nick, avatarInitials: getInitials(data.nick) })
-    setStats({
-      wins: data.stats.wins,
-      losses: data.stats.losses,
-      winRate: data.stats.winRate,
-      totalMatches: data.stats.totalMatches,
-      balance: data.stats.balance,
-    })
-    setActiveBets(
-      data.activeBets.map(item => ({
-        id: item.id,
-        opponentNick: item.opponentNick,
-        opponentInitials: getInitials(item.opponentNick),
-        game: mapGame(item.gameTemplate),
-        amount: item.stakeAmount,
-        timeLabel: item.timeLabel,
-        status: mapActiveStatus(item.status),
-      })),
-    )
-    setRecentMatches(
-      data.recentResults.map(item => ({
-        id: item.id,
-        opponentNick: item.opponentNick,
-        opponentInitials: getInitials(item.opponentNick),
-        game: mapGame(item.gameTemplate),
-        amount: item.profit,
-        dateLabel: item.timeLabel,
-        result: mapRecentResult(item.profit),
-      })),
-    )
+    
+      setUser({ nick: data.nick, avatarInitials: getInitials(data.nick) })
+      setStats({
+        wins: data.stats.wins,
+        losses: data.stats.losses,
+        winRate: data.stats.winRate,
+        totalMatches: data.stats.totalMatches,
+        balance: data.stats.balance,
+      })
+      setActiveBets(
+        data.activeBets.map(item => ({
+          id: item.id,
+          opponentNick: item.opponentNick,
+          opponentInitials: getInitials(item.opponentNick),
+          game: mapGame(item.gameTemplate),
+          amount: item.stakeAmount,
+          timeLabel: item.timeLabel,
+          status: mapActiveStatus(item.status),
+        })),
+      )
+      setRecentMatches(
+        data.recentResults.map(item => ({
+          id: item.id,
+          opponentNick: item.opponentNick,
+          opponentInitials: getInitials(item.opponentNick),
+          game: mapGame(item.gameTemplate),
+          amount: item.profit,
+          dateLabel: item.timeLabel,
+          result: mapRecentResult(item.profit),
+        })),
+      )
+    } catch (err) {
+      log('useDashboard load error:', err)
+    }
   }, [])
 
   useEffect(() => {
