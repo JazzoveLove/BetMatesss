@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AuthService } from '../services/auth.service'
 import { BetsService } from '../services/bets.service'
 import type { BetStatus, HistoryListItem } from '../types/bet.types'
+import { log } from '../utils/logger'
 
 export type HistoryFilter = 'all' | 'active' | 'completed'
 
@@ -27,9 +28,16 @@ export function useHistory(initialFilter: HistoryFilter = 'all') {
       setStatusById(new Map())
       return
     }
-    const [list, bets] = await Promise.all([BetsService.getHistoryForUser(userId), BetsService.getUserBets(userId)])
-    setItems(list)
-    setStatusById(new Map(bets.map(b => [b.id, b.status])))
+    try {
+      const [list, bets] = await Promise.all([
+        BetsService.getHistoryForUser(userId),
+        BetsService.getUserBets(userId),
+      ])
+      setItems(list)
+      setStatusById(new Map(bets.map(b => [b.id, b.status])))
+    } catch (err) {
+      log('useHistory load error:', err)
+    }
   }, [])
 
   useEffect(() => {
@@ -38,8 +46,13 @@ export function useHistory(initialFilter: HistoryFilter = 'all') {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
-    await load()
-    setRefreshing(false)
+    try {
+      await load()
+    } catch (err) {
+      log('useHistory onRefresh error:', err)
+    } finally {
+      setRefreshing(false)
+    }
   }, [load])
 
   const filteredItems = useMemo(
