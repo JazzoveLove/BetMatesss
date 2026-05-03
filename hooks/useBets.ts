@@ -29,6 +29,8 @@ export function useBets() {
   }, [refreshBets])
 
   useEffect(() => {
+    let cancelled = false
+
     const channel = supabase
       .channel('bets-status-changes')
       .on(
@@ -46,9 +48,18 @@ export function useBets() {
           }
         },
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        if (cancelled) return
+        if (status === 'CHANNEL_ERROR') {
+          setError(err?.message ?? 'Błąd połączenia realtime')
+        }
+        if (status === 'TIMED_OUT') {
+          setError('Przekroczono czas połączenia realtime')
+        }
+      })
 
     return () => {
+      cancelled = true
       supabase.removeChannel(channel)
     }
   }, [refreshBets])
@@ -60,7 +71,7 @@ export function useBets() {
       setError(result.error)
       throw new Error(result.error)
     }
-    await refreshBets()
+    await refreshBets().catch(err => setError(err.message))
     return result
   }, [refreshBets])
 
