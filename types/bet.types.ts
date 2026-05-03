@@ -49,6 +49,12 @@ export interface BetRow {
   notes?: string | null
   created_at: string
 }
+/** Skrót zakładu na listy w hooks/UI — bez pól DB; mapuj z BetRow w services/. */
+export type BetSummary = {
+  id: string
+  gameTemplate: string
+  status: BetStatus
+}
 /** Surowa odpowiedź z Supabase — używaj tylko w services/ */
 export interface BetResultRow {
   id: string

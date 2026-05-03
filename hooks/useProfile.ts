@@ -3,6 +3,7 @@ import { GAME_MAP } from '../constants/games'
 import { AuthService } from '../services/auth.service'
 import { BetsService } from '../services/bets.service'
 import type { ProfileScreenData } from '../types/bet.types'
+import { error } from '../utils/logger'
 
 export interface ProfileData {
   user: {
@@ -105,8 +106,12 @@ export function useProfile() {
       setData(null)
       return
     }
-    const row = await BetsService.getProfileScreenData(userId)
-    setData(row ? mapToProfileData(row) : null)
+    try {
+      const row = await BetsService.getProfileScreenData(userId)
+      setData(row ? mapToProfileData(row) : null)
+    } catch (e) {
+      error('[useProfile] load', e)
+    }
   }, [])
 
   useEffect(() => {
@@ -115,8 +120,11 @@ export function useProfile() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
-    await load()
-    setRefreshing(false)
+    try {
+      await load()
+    } finally {
+      setRefreshing(false)
+    }
   }, [load])
 
   return { loading, refreshing, data, onRefresh, reload: load }

@@ -3,6 +3,7 @@ import { parseStakeAmount } from '../../utils/odds'
 import { loadNicksByIds, getAcceptedFriendsList } from '../friends.service'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
 import type {
+  BetSummary,
   BetRow,
   ActiveBetItem,
   RecentResult,
@@ -208,6 +209,15 @@ export async function getUserBets(userId: string): Promise<BetRow[]> {
   const byId = new Map<string, BetRow>()
   for (const bet of [...created, ...participated]) byId.set(bet.id, bet)
   return [...byId.values()].sort((a, b) => b.created_at.localeCompare(a.created_at))
+}
+
+function toBetSummary(row: BetRow): BetSummary {
+  return { id: row.id, gameTemplate: row.game_template, status: row.status }
+}
+
+export async function getUserBetSummaries(userId: string): Promise<BetSummary[]> {
+  const rows = await getUserBets(userId)
+  return rows.map(toBetSummary)
 }
 
 export function historyBadgeAndAmount(

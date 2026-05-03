@@ -2,10 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BetsService } from '../services/bets.service'
 import { AuthService } from '../services/auth.service'
 import { supabase } from '../lib/supabase'
-import type { BetRow, CreateBetParams } from '../types/bet.types'
+import { error as logError } from '../utils/logger'
+import type { BetSummary, CreateBetParams } from '../types/bet.types'
 
 export function useBets() {
-  const [bets, setBets] = useState<BetRow[]>([])
+  const [bets, setBets] = useState<BetSummary[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -17,7 +18,7 @@ export function useBets() {
       return
     }
     try {
-      const data = await BetsService.getUserBets(userId)
+      const data = await BetsService.getUserBetSummaries(userId)
       setBets(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Nie udalo sie pobrac zakladow')
@@ -66,13 +67,19 @@ export function useBets() {
 
   const createBet = useCallback(async (params: CreateBetParams) => {
     setError(null)
-    const result = await BetsService.createBet(params)
-    if ('error' in result) {
-      setError(result.error)
-      throw new Error(result.error)
+    try {
+      const result = await BetsService.createBet(params)
+      if ('error' in result) {
+        setError(result.error)
+        throw new Error(result.error)
+      }
+      await refreshBets().catch(err => setError(err instanceof Error ? err.message : 'Nie udało się odświeżyć listy'))
+      return result
+    } catch (e) {
+      logError('[useBets] createBet', e)
+      setError(e instanceof Error ? e.message : 'Nie udało się utworzyć zakładu')
+      throw e
     }
-    await refreshBets().catch(err => setError(err.message))
-    return result
   }, [refreshBets])
 
   const activeBets = useMemo(

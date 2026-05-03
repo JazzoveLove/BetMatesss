@@ -114,14 +114,14 @@ export function useNewBet() {
   const friendProfiles = useMemo<UserProfile[]>(
     () =>
       friends.map(friendship => {
-        const friendId = friendship.user_a === currentUser?.id ? friendship.user_b : friendship.user_a
+        const friendId = friendship.userAId === currentUser?.id ? friendship.userBId : friendship.userAId
         return { id: friendId, nick: nick(friendId), avatarUrl: avatar(friendId) }
       }),
     [avatar, currentUser?.id, friends, nick],
   )
 
   const recentGames = useMemo(() => {
-    const ids = [...new Set(bets.map(b => b.game_template))].slice(0, 3)
+    const ids = [...new Set(bets.map(b => b.gameTemplate))].slice(0, 3)
     return ids.map(id => GAME_TEMPLATES.find(g => g.id === id)).filter(Boolean) as GameTemplate[]
   }, [bets])
 

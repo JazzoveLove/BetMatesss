@@ -1,12 +1,16 @@
 import { supabase } from '../../lib/supabase'
-import type { FriendshipRow } from '../../types/user.types'
+import type { Friendship, FriendshipRow } from '../../types/user.types'
 
 export type FriendshipsData = {
-  incoming: FriendshipRow[]
-  outgoing: FriendshipRow[]
-  friends: FriendshipRow[]
+  incoming: Friendship[]
+  outgoing: Friendship[]
+  friends: Friendship[]
   nickById: Record<string, string>
   avatarById: Record<string, string | null>
+}
+
+function toFriendship(r: FriendshipRow): Friendship {
+  return { id: r.id, userAId: r.user_a, userBId: r.user_b, status: r.status }
 }
 
 type UserProfileMini = {
@@ -35,14 +39,14 @@ export async function loadFriendships(userId: string): Promise<FriendshipsData> 
   if (error) return { incoming: [], outgoing: [], friends: [], nickById: {}, avatarById: {} }
 
   const rows = (data ?? []) as FriendshipRow[]
-  const incoming = rows.filter(r => r.status === 'pending' && r.user_b === userId)
-  const outgoing = rows.filter(r => r.status === 'pending' && r.user_a === userId)
-  const friends = rows.filter(r => r.status === 'accepted')
+  const incoming = rows.filter(r => r.status === 'pending' && r.user_b === userId).map(toFriendship)
+  const outgoing = rows.filter(r => r.status === 'pending' && r.user_a === userId).map(toFriendship)
+  const friends = rows.filter(r => r.status === 'accepted').map(toFriendship)
 
   const need = new Set<string>()
   for (const r of [...incoming, ...outgoing, ...friends]) {
-    if (r.user_a === userId) need.add(r.user_b)
-    else if (r.user_b === userId) need.add(r.user_a)
+    if (r.userAId === userId) need.add(r.userBId)
+    else if (r.userBId === userId) need.add(r.userAId)
   }
 
   const profiles = await loadProfilesByIds([...need])

@@ -20,10 +20,10 @@ import { Colors } from '../constants/colors'
 import { hexToRgba } from '../utils/colors'
 import * as Clipboard from 'expo-clipboard'
 import { useFriends } from '../hooks/useFriends'
-import type { FriendshipRow } from '../types/user.types'
+import type { Friendship } from '../types/user.types'
 
-function otherId(row: FriendshipRow, me: string): string {
-  return row.user_a === me ? row.user_b : row.user_a
+function otherId(row: Friendship, me: string): string {
+  return row.userAId === me ? row.userBId : row.userAId
 }
 
 export default function FriendsScreen() {
@@ -102,15 +102,15 @@ export default function FriendsScreen() {
   const pendingCards = useMemo(() => {
     const incomingCards = incoming.map(row => ({
       id: row.id,
-      friendId: row.user_a,
-      nick: nick(row.user_a),
+      friendId: row.userAId,
+      nick: nick(row.userAId),
       status: 'pending_received' as const,
       row,
     }))
     const outgoingCards = outgoing.map(row => ({
       id: row.id,
-      friendId: row.user_b,
-      nick: nick(row.user_b),
+      friendId: row.userBId,
+      nick: nick(row.userBId),
       status: 'pending_sent' as const,
       row,
     }))

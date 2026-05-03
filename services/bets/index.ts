@@ -25,6 +25,7 @@ export {
 export {
   getDashboardData,
   getUserBets,
+  getUserBetSummaries,
   getHistoryForUser,
   getDisciplineStatsForUser,
   getFriendsBalanceLeaderboard,
@@ -53,6 +54,7 @@ import {
 import {
   getDashboardData,
   getUserBets,
+  getUserBetSummaries,
   getHistoryForUser,
   getDisciplineStatsForUser,
   getFriendsBalanceLeaderboard,
@@ -66,6 +68,7 @@ export const BetsService = {
   getBet: getBetDetail,
   getBetDetail,
   getUserBets,
+  getUserBetSummaries,
   getHistoryForUser,
   getProfileScreenData,
   updateBetStatus,
