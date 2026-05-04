@@ -9,8 +9,13 @@ export type FriendshipsData = {
   avatarById: Record<string, string | null>
 }
 
-function toFriendship(r: FriendshipRow): Friendship {
-  return { id: r.id, userAId: r.user_a, userBId: r.user_b, status: r.status }
+function mapFriendshipRowToFriendship(row: FriendshipRow): Friendship {
+  return {
+    id: row.id,
+    userAId: row.user_a,
+    userBId: row.user_b,
+    status: row.status,
+  }
 }
 
 type UserProfileMini = {
@@ -39,9 +44,13 @@ export async function loadFriendships(userId: string): Promise<FriendshipsData> 
   if (error) return { incoming: [], outgoing: [], friends: [], nickById: {}, avatarById: {} }
 
   const rows = (data ?? []) as FriendshipRow[]
-  const incoming = rows.filter(r => r.status === 'pending' && r.user_b === userId).map(toFriendship)
-  const outgoing = rows.filter(r => r.status === 'pending' && r.user_a === userId).map(toFriendship)
-  const friends = rows.filter(r => r.status === 'accepted').map(toFriendship)
+  const incoming = rows
+    .filter(r => r.status === 'pending' && r.user_b === userId)
+    .map(mapFriendshipRowToFriendship)
+  const outgoing = rows
+    .filter(r => r.status === 'pending' && r.user_a === userId)
+    .map(mapFriendshipRowToFriendship)
+  const friends = rows.filter(r => r.status === 'accepted').map(mapFriendshipRowToFriendship)
 
   const need = new Set<string>()
   for (const r of [...incoming, ...outgoing, ...friends]) {
@@ -76,8 +85,9 @@ export async function getAcceptedFriendsList(
   if (error) return []
 
   const friendRows = (rows ?? []) as FriendshipRow[]
-  const otherIds = friendRows
-    .map(r => (r.user_a === userId ? r.user_b : r.user_b === userId ? r.user_a : null))
+  const mapped = friendRows.map(mapFriendshipRowToFriendship)
+  const otherIds = mapped
+    .map(f => (f.userAId === userId ? f.userBId : f.userBId === userId ? f.userAId : null))
     .filter((id): id is string => !!id)
   const uniqIds = [...new Set(otherIds)]
   if (uniqIds.length === 0) return []
