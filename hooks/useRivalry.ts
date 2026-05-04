@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AuthService } from '../services/auth.service'
 import { supabase } from '../lib/supabase'
+import { error as logError } from '../utils/logger'
 
 type RivalryMatchItem = {
   betId: string
@@ -210,8 +211,13 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
-    await load()
-    setRefreshing(false)
+    try {
+      await load()
+    } catch (e) {
+      logError('[useRivalry] onRefresh', e)
+    } finally {
+      setRefreshing(false)
+    }
   }, [load])
 
   const disciplines = useMemo(

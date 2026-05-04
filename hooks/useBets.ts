@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BetsService } from '../services/bets.service'
 import { AuthService } from '../services/auth.service'
 import { supabase } from '../lib/supabase'
+import { error as logError } from '../utils/logger'
 import type { BetSummary, CreateBetParams } from '../types/bet.types'
 
 export function useBets() {
@@ -17,7 +18,7 @@ export function useBets() {
       return
     }
     try {
-      const data = await BetsService.getUserBets(userId)
+      const data = await BetsService.getUserBetSummaries(userId)
       setBets(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Nie udalo sie pobrac zakladow')
@@ -29,6 +30,8 @@ export function useBets() {
   }, [refreshBets])
 
   useEffect(() => {
+    let cancelled = false
+
     const channel = supabase
       .channel('bets-status-changes')
       .on(
@@ -46,22 +49,37 @@ export function useBets() {
           }
         },
       )
-      .subscribe()
+      .subscribe((status, err) => {
+        if (cancelled) return
+        if (status === 'CHANNEL_ERROR') {
+          setError(err?.message ?? 'Błąd połączenia realtime')
+        }
+        if (status === 'TIMED_OUT') {
+          setError('Przekroczono czas połączenia realtime')
+        }
+      })
 
     return () => {
+      cancelled = true
       supabase.removeChannel(channel)
     }
   }, [refreshBets])
 
   const createBet = useCallback(async (params: CreateBetParams) => {
     setError(null)
-    const result = await BetsService.createBet(params)
-    if ('error' in result) {
-      setError(result.error)
-      throw new Error(result.error)
+    try {
+      const result = await BetsService.createBet(params)
+      if ('error' in result) {
+        setError(result.error)
+        throw new Error(result.error)
+      }
+      await refreshBets().catch(err => setError(err instanceof Error ? err.message : 'Nie udało się odświeżyć listy'))
+      return result
+    } catch (e) {
+      logError('[useBets] createBet', e)
+      setError(e instanceof Error ? e.message : 'Nie udało się utworzyć zakładu')
+      throw e
     }
-    await refreshBets()
-    return result
   }, [refreshBets])
 
   const activeBets = useMemo(

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from 'react'
 import { Alert } from 'react-native'
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
+import type { RouteProp } from '@react-navigation/native'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { AuthService } from '../services/auth.service'
 import { GAME_TEMPLATES, type GameTemplate } from '../constants/games'
@@ -8,7 +10,18 @@ import type { UserProfile } from '../types/user.types'
 import { useBets } from './useBets'
 import { useFriends } from './useFriends'
 import { getAvailableFormats, getDefaultFormat } from '../utils/formats'
-import { log } from '../utils/logger'
+import { error, log } from '../utils/logger'
+
+type NewBetTabParamList = {
+  Home: undefined
+  Historia: undefined
+  Nowy: { preselectedFriend?: UserProfile } | undefined
+  Znajomi: undefined
+  Profil: undefined
+}
+
+type NewBetNavigation = BottomTabNavigationProp<NewBetTabParamList, 'Nowy'>
+type NewBetRoute = RouteProp<NewBetTabParamList, 'Nowy'>
 
 export type NewBetStep = 1 | 2 | 3
 
@@ -59,9 +72,9 @@ export type NewBetHandlers = {
 }
 
 export function useNewBet() {
-  const navigation = useNavigation<any>()
-  const route = useRoute<any>()
-  const preselectedFriend = route.params?.preselectedFriend as UserProfile | undefined
+  const navigation = useNavigation<NewBetNavigation>()
+  const route = useRoute<NewBetRoute>()
+  const preselectedFriend = route.params?.preselectedFriend
   const { friends, nick, avatar } = useFriends()
   const { bets, createBet, loading } = useBets()
 
@@ -83,9 +96,13 @@ export function useNewBet() {
 
   useEffect(() => {
     void (async () => {
-      const me = await AuthService.getCurrentUserProfile()
-      if (!me) return
-      setCurrentUser(me)
+      try {
+        const me = await AuthService.getCurrentUserProfile()
+        if (!me) return
+        setCurrentUser(me)
+      } catch (e) {
+        error('[useNewBet] getCurrentUserProfile', e)
+      }
     })()
   }, [])
 
@@ -97,7 +114,7 @@ export function useNewBet() {
   const friendProfiles = useMemo<UserProfile[]>(
     () =>
       friends.map(friendship => {
-        const friendId = friendship.user_a === currentUser?.id ? friendship.user_b : friendship.user_a
+        const friendId = friendship.userAId === currentUser?.id ? friendship.userBId : friendship.userAId
         return { id: friendId, nick: nick(friendId), avatarUrl: avatar(friendId) }
       }),
     [avatar, currentUser?.id, friends, nick],
@@ -173,24 +190,29 @@ export function useNewBet() {
     log('[handleSubmit] stakePerMatch:', stakePerMatch)
     log('[handleSubmit] selectedFormat:', selectedFormat)
 
-    await createBet({
-      creatorId: currentUser.id,
-      gameTemplate: selectedGame.id,
-      format: selectedFormat,
-      stakeMode,
-      participants: participantRows,
-      globalStake: stakeMode === 'equal' ? stakeAmount : 0,
-      bestOfCount: selectedFormat === 'best_of' ? bestOfCount : undefined,
-      stakePerMatch: selectedFormat === 'per_match' ? stakePerMatch : undefined,
-      stakeAmount: stakeMode === 'equal' ? stakeAmount : undefined,
-      customStakes: stakeMode === 'custom' ? customStakes : undefined,
-      pokerMode: selectedGame.id === 'poker' ? pokerMode : undefined,
-      pokerStack: selectedGame.id === 'poker' ? pokerStack : undefined,
-      pokerRebuyStack: selectedGame.id === 'poker' ? pokerRebuyStack : undefined,
-      participantIds: participants.map(p => p.id),
-    })
+    try {
+      await createBet({
+        creatorId: currentUser.id,
+        gameTemplate: selectedGame.id,
+        format: selectedFormat,
+        stakeMode,
+        participants: participantRows,
+        globalStake: stakeMode === 'equal' ? stakeAmount : 0,
+        bestOfCount: selectedFormat === 'best_of' ? bestOfCount : undefined,
+        stakePerMatch: selectedFormat === 'per_match' ? stakePerMatch : undefined,
+        stakeAmount: stakeMode === 'equal' ? stakeAmount : undefined,
+        customStakes: stakeMode === 'custom' ? customStakes : undefined,
+        pokerMode: selectedGame.id === 'poker' ? pokerMode : undefined,
+        pokerStack: selectedGame.id === 'poker' ? pokerStack : undefined,
+        pokerRebuyStack: selectedGame.id === 'poker' ? pokerRebuyStack : undefined,
+        participantIds: participants.map(p => p.id),
+      })
 
-    navigation.navigate('Home')
+      navigation.navigate('Home')
+    } catch (e) {
+      error('[useNewBet] handleSubmit createBet', e)
+      Alert.alert('Błąd', 'Nie udało się utworzyć zakładu. Spróbuj ponownie.')
+    }
   }, [
     bestOfCount,
     createBet,

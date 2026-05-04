@@ -16,9 +16,10 @@ import {
   drainFriendInvites,
   subscribeFriendInvites,
 } from '../lib/friend-invite-queue'
-import type { FriendshipRow } from '../types/user.types'
+import type { Friendship } from '../types/user.types'
 import { NotificationsService, type BetInviteNotification } from '../services/notifications.service'
 import { BetsService } from '../services/bets.service'
+import { error, log } from '../utils/logger'
 
 function alertForInviteResult(
   result: Awaited<ReturnType<typeof handleFriendInvite>>,
@@ -67,9 +68,9 @@ export function useFriends() {
   const [refreshing, setRefreshing] = useState(false)
   const [me, setMe] = useState<string | null>(null)
   const [myInviteCode, setMyInviteCode] = useState<string | null>(null)
-  const [incoming, setIncoming] = useState<FriendshipRow[]>([])
-  const [outgoing, setOutgoing] = useState<FriendshipRow[]>([])
-  const [friends, setFriends] = useState<FriendshipRow[]>([])
+  const [incoming, setIncoming] = useState<Friendship[]>([])
+  const [outgoing, setOutgoing] = useState<Friendship[]>([])
+  const [friends, setFriends] = useState<Friendship[]>([])
   const [nickById, setNickById] = useState<Record<string, string>>({})
   const [avatarById, setAvatarById] = useState<Record<string, string | null>>({})
   const [codeInput, setCodeInput] = useState('')
@@ -83,22 +84,30 @@ export function useFriends() {
     const userId = await AuthService.getCurrentUserId()
     if (!userId) return
     setMe(userId)
-    const data = await loadFriendships(userId)
-    setIncoming(data.incoming)
-    setOutgoing(data.outgoing)
-    setFriends(data.friends)
-    setNickById(data.nickById)
-    setAvatarById(data.avatarById)
-    const invites = await NotificationsService.getPendingBetInviteNotifications(userId)
-    setBetInvites(invites)
+    try {
+      const data = await loadFriendships(userId)
+      setIncoming(data.incoming)
+      setOutgoing(data.outgoing)
+      setFriends(data.friends)
+      setNickById(data.nickById)
+      setAvatarById(data.avatarById)
+      const invites = await NotificationsService.getPendingBetInviteNotifications(userId)
+      setBetInvites(invites)
+    } catch (err) {
+      log('useFriends reload error:', err)
+    }
   }, [])
 
   const reloadWithCode = useCallback(async () => {
-    await reload()
-    const userId = await AuthService.getCurrentUserId()
-    if (userId) {
-      const code = await ensureMyInviteCode(userId)
-      setMyInviteCode(code)
+    try {
+      await reload()
+      const userId = await AuthService.getCurrentUserId()
+      if (userId) {
+        const code = await ensureMyInviteCode(userId)
+        setMyInviteCode(code)
+      }
+    } catch (e) {
+      error('[useFriends] reloadWithCode', e)
     }
   }, [reload])
 
@@ -113,23 +122,29 @@ export function useFriends() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
-    await reloadWithCode()
-    setRefreshing(false)
+    try {
+      await reloadWithCode()
+    } finally {
+      setRefreshing(false)
+    }
   }, [reloadWithCode])
 
-  // Realtime
   useEffect(() => {
     if (!me) return
     return subscribeFriendshipChanges(me, reload)
   }, [me, reload])
 
-  // Invite queue processing
   const handleInviteFromLink = useCallback(
     async (otherId: string) => {
       const userId = await AuthService.getCurrentUserId()
       if (!userId) return
-      const result = await handleFriendInvite(userId, otherId)
-      alertForInviteResult(result, reload)
+      try {
+        const result = await handleFriendInvite(userId, otherId)
+        alertForInviteResult(result, reload)
+      } catch (e) {
+        error('[useFriends] handleInviteFromLink', e)
+        Alert.alert('Błąd', 'Nie udało się przetworzyć zaproszenia.')
+      }
     },
     [reload],
   )
@@ -146,11 +161,12 @@ export function useFriends() {
     }, [processInviteQueue, reload]),
   )
 
-  useEffect(() => subscribeFriendInvites(processInviteQueue), [processInviteQueue])
+  useEffect(() => {
+    return subscribeFriendInvites(processInviteQueue)
+  }, [processInviteQueue])
 
-  // Actions
   const accept = useCallback(
-    async (row: FriendshipRow) => {
+    async (row: Friendship) => {
       const result = await acceptFriendship(row.id)
       if (result.error) Alert.alert('Błąd', result.error)
       else await reload()
@@ -159,7 +175,7 @@ export function useFriends() {
   )
 
   const reject = useCallback(
-    async (row: FriendshipRow) => {
+    async (row: Friendship) => {
       const result = await rejectFriendship(row.id)
       if (result.error) Alert.alert('Błąd', result.error)
       else await reload()
@@ -174,10 +190,18 @@ export function useFriends() {
       return
     }
     setSendingCode(true)
-    const result = await lookupUserByCode(raw)
-    setSendingCode(false)
+    let result: Awaited<ReturnType<typeof lookupUserByCode>>
+    try {
+      result = await lookupUserByCode(raw)
+    } catch (e) {
+      error('[useFriends] submitCode lookupUserByCode', e)
+      Alert.alert('Błąd', 'Nie udało się sprawdzić kodu.')
+      return
+    } finally {
+      setSendingCode(false)
+    }
     if ('error' in result) {
-      if ((result as any).missingFunction) {
+      if ((result as { missingFunction?: boolean }).missingFunction) {
         Alert.alert('Brak funkcji w bazie', 'Uruchom skrypt supabase/users_invite_code.sql.')
       } else if (result.error === 'not_found') {
         Alert.alert('Nie znaleziono', 'Nie ma takiego kodu.')
@@ -198,9 +222,14 @@ export function useFriends() {
     }
     setSearchingNick(true)
     const userId = await AuthService.getCurrentUserId()
-    const results = await searchUsersByNick(text, userId ?? '')
-    setSearchingNick(false)
-    setNickResults(results)
+    try {
+      const results = await searchUsersByNick(text, userId ?? '')
+      setNickResults(results)
+    } catch (err) {
+      log('searchNick error:', err)
+    } finally {
+      setSearchingNick(false)
+    }
   }, [])
 
   const nick = useCallback((id: string) => nickById[id] ?? '…', [nickById])
@@ -210,14 +239,19 @@ export function useFriends() {
     async (invite: BetInviteNotification) => {
       const userId = await AuthService.getCurrentUserId()
       if (!userId) return
-      const result = await BetsService.confirmParticipation(invite.betId, userId)
-      if (result.error) {
-        Alert.alert('Błąd', result.error)
-        return
+      try {
+        const result = await BetsService.confirmParticipation(invite.betId, userId)
+        if (result.error) {
+          Alert.alert('Błąd', result.error)
+          return
+        }
+        await NotificationsService.markNotificationRead(invite.id)
+        await reload()
+        Alert.alert('Dołączono', 'Zaproszenie do zakładu zostało zaakceptowane.')
+      } catch (e) {
+        error('[useFriends] acceptBetInvite', e)
+        Alert.alert('Błąd', 'Nie udało się zaakceptować zaproszenia do zakładu.')
       }
-      await NotificationsService.markNotificationRead(invite.id)
-      await reload()
-      Alert.alert('Dołączono', 'Zaproszenie do zakładu zostało zaakceptowane.')
     },
     [reload],
   )
@@ -226,14 +260,19 @@ export function useFriends() {
     async (invite: BetInviteNotification) => {
       const userId = await AuthService.getCurrentUserId()
       if (!userId) return
-      const result = await BetsService.rejectParticipation(invite.betId, userId)
-      if (result.error) {
-        Alert.alert('Błąd', result.error)
-        return
+      try {
+        const result = await BetsService.rejectParticipation(invite.betId, userId)
+        if (result.error) {
+          Alert.alert('Błąd', result.error)
+          return
+        }
+        await NotificationsService.markNotificationRead(invite.id)
+        await reload()
+        Alert.alert('Odrzucono', 'Zaproszenie do zakładu zostało odrzucone.')
+      } catch (e) {
+        error('[useFriends] rejectBetInvite', e)
+        Alert.alert('Błąd', 'Nie udało się odrzucić zaproszenia do zakładu.')
       }
-      await NotificationsService.markNotificationRead(invite.id)
-      await reload()
-      Alert.alert('Odrzucono', 'Zaproszenie do zakładu zostało odrzucone.')
     },
     [reload],
   )

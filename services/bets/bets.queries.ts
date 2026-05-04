@@ -234,6 +234,10 @@ export async function getUserBets(userId: string): Promise<BetSummary[]> {
     .map(mapBetRowToBetSummary)
 }
 
+export async function getUserBetSummaries(userId: string): Promise<BetSummary[]> {
+  return getUserBets(userId)
+}
+
 export function historyBadgeAndAmount(
   bet: { status: BetStatus },
   profit: number,

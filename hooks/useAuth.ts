@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { AuthService } from '../services/auth.service'
 import type { UserProfile } from '../types/user.types'
+import { error } from '../utils/logger'
 
 type AuthState = {
   session: Session | null
@@ -51,7 +52,11 @@ export function useAuth() {
       })
 
     const { data: { subscription } } = AuthService.onAuthStateChange(async (_event, session) => {
-      await loadUser(session)
+      try {
+        await loadUser(session)
+      } catch (e) {
+        error('[useAuth] onAuthStateChange loadUser', e)
+      }
     })
     return () => {
       mounted = false
