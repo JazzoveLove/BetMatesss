@@ -27,11 +27,12 @@ export { getDashboardData } from './bets.dashboard'
 export {
   getUserBets,
   getUserBetSummaries,
-  getHistoryForUser,
   getDisciplineStatsForUser,
   getFriendsBalanceLeaderboard,
   getProfileScreenData,
 } from './bets.queries'
+
+export { getHistoryForUser, historyBadgeAndAmount } from './bets.history'
 
 import { createBet, getBetInvitePreview, joinBetFromInvite } from './bets.create'
 import {
@@ -56,11 +57,11 @@ import { getDashboardData } from './bets.dashboard'
 import {
   getUserBets,
   getUserBetSummaries,
-  getHistoryForUser,
   getDisciplineStatsForUser,
   getFriendsBalanceLeaderboard,
   getProfileScreenData,
 } from './bets.queries'
+import { getHistoryForUser } from './bets.history'
 
 export const BetsService = {
   createBet,
