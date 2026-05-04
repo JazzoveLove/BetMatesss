@@ -15,8 +15,6 @@ import {
   subscribeFriendInvites,
 } from '../lib/friend-invite-queue'
 import type { Friendship } from '../types/user.types'
-import { NotificationsService, type BetInviteNotification } from '../services/notifications.service'
-import { BetsService } from '../services/bets.service'
 import { error, log } from '../utils/logger'
 
 function alertForInviteResult(
@@ -72,7 +70,6 @@ export function useFriends() {
   const [friends, setFriends] = useState<Friendship[]>([])
   const [nickById, setNickById] = useState<Record<string, string>>({})
   const [avatarById, setAvatarById] = useState<Record<string, string | null>>({})
-  const [betInvites, setBetInvites] = useState<BetInviteNotification[]>([])
 
   const reload = useCallback(async () => {
     if (!userId) return
@@ -83,8 +80,6 @@ export function useFriends() {
       setFriends(data.friends)
       setNickById(data.nickById)
       setAvatarById(data.avatarById)
-      const invites = await NotificationsService.getPendingBetInviteNotifications(userId)
-      setBetInvites(invites)
     } catch (err) {
       log('useFriends reload error:', err)
     }
@@ -176,46 +171,6 @@ export function useFriends() {
   const nick = useCallback((id: string) => nickById[id] ?? '…', [nickById])
   const avatar = useCallback((id: string) => avatarById[id] ?? null, [avatarById])
 
-  const acceptBetInvite = useCallback(
-    async (invite: BetInviteNotification) => {
-      if (!userId) return
-      try {
-        const result = await BetsService.confirmParticipation(invite.betId, userId)
-        if (result.error) {
-          Alert.alert('Błąd', result.error)
-          return
-        }
-        await NotificationsService.markNotificationRead(invite.id)
-        await reload()
-        Alert.alert('Dołączono', 'Zaproszenie do zakładu zostało zaakceptowane.')
-      } catch (e) {
-        error('[useFriends] acceptBetInvite', e)
-        Alert.alert('Błąd', 'Nie udało się zaakceptować zaproszenia do zakładu.')
-      }
-    },
-    [reload, userId],
-  )
-
-  const rejectBetInvite = useCallback(
-    async (invite: BetInviteNotification) => {
-      if (!userId) return
-      try {
-        const result = await BetsService.rejectParticipation(invite.betId, userId)
-        if (result.error) {
-          Alert.alert('Błąd', result.error)
-          return
-        }
-        await NotificationsService.markNotificationRead(invite.id)
-        await reload()
-        Alert.alert('Odrzucono', 'Zaproszenie do zakładu zostało odrzucone.')
-      } catch (e) {
-        error('[useFriends] rejectBetInvite', e)
-        Alert.alert('Błąd', 'Nie udało się odrzucić zaproszenia do zakładu.')
-      }
-    },
-    [reload, userId],
-  )
-
   return {
     loading,
     refreshing,
@@ -226,12 +181,9 @@ export function useFriends() {
     friends,
     nick,
     avatar,
-    betInvites,
     onRefresh,
     accept,
     reject,
     handleInviteFromLink,
-    acceptBetInvite,
-    rejectBetInvite,
   }
 }

@@ -21,6 +21,7 @@ import {
   handleFriendInvite,
   lookupUserByCode,
 } from "../../services/friends/friends.invite";
+import { type BetInviteNotification } from "../../services/notifications.service";
 import { FriendPendingCard } from "./FriendPendingCard";
 import { FriendStatCard, friendRowSharedStyles } from "./FriendStatCard";
 import { FriendsSearchBar } from "./FriendsSearchBar";
@@ -76,6 +77,9 @@ export type FriendsScreenContentProps = {
   searchText: string;
   setSearchText: (t: string) => void;
   myInviteCode: string | null;
+  betInvites: BetInviteNotification[];
+  acceptBetInvite: (invite: BetInviteNotification) => Promise<void>;
+  rejectBetInvite: (invite: BetInviteNotification) => Promise<void>;
 };
 
 const styles = StyleSheet.create({
@@ -185,6 +189,42 @@ const styles = StyleSheet.create({
   addBtnTextDisabled: { color: Colors.textMuted },
 });
 
+const betInviteStyles = StyleSheet.create({
+  card: {
+    backgroundColor: Colors.card,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: hexToRgba(Colors.accent, 0.3),
+    padding: 16,
+  },
+  top: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 12,
+  },
+  from: { color: Colors.text, fontSize: 15, fontWeight: "700" },
+  game: { color: Colors.textMuted, fontSize: 12, marginTop: 2 },
+  stake: { color: Colors.accentLight, fontSize: 16, fontWeight: "700" },
+  actions: { flexDirection: "row", gap: 8 },
+  acceptBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: hexToRgba(Colors.green, 0.15),
+    alignItems: "center",
+  },
+  acceptText: { color: Colors.green, fontSize: 13, fontWeight: "700" },
+  rejectBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: hexToRgba(Colors.red, 0.15),
+    alignItems: "center",
+  },
+  rejectText: { color: Colors.red, fontSize: 13, fontWeight: "700" },
+});
+
 export function FriendsScreenContent({
   insets,
   navigation,
@@ -202,6 +242,9 @@ export function FriendsScreenContent({
   searchText,
   setSearchText,
   myInviteCode,
+  betInvites,
+  acceptBetInvite,
+  rejectBetInvite,
 }: FriendsScreenContentProps) {
   const [qrOpen, setQrOpen] = useState(false);
   const [addCodeInput, setAddCodeInput] = useState("");
@@ -488,6 +531,43 @@ export function FriendsScreenContent({
             )}
           </Pressable>
         </View>
+
+        {betInvites.length > 0 && (
+          <>
+            <Text style={styles.sectionLabel}>Zaproszenia do zakładów</Text>
+            <View style={styles.listWrap}>
+              {betInvites.map((invite) => (
+                <View key={invite.id} style={betInviteStyles.card}>
+                  <View style={betInviteStyles.top}>
+                    <View>
+                      <Text style={betInviteStyles.from}>{invite.fromNick}</Text>
+                      <Text style={betInviteStyles.game}>{invite.gameTemplate}</Text>
+                    </View>
+                    {invite.stakeAmount > 0 && (
+                      <Text style={betInviteStyles.stake}>
+                        {invite.stakeAmount} zł
+                      </Text>
+                    )}
+                  </View>
+                  <View style={betInviteStyles.actions}>
+                    <Pressable
+                      style={betInviteStyles.acceptBtn}
+                      onPress={() => void acceptBetInvite(invite)}
+                    >
+                      <Text style={betInviteStyles.acceptText}>Dołącz</Text>
+                    </Pressable>
+                    <Pressable
+                      style={betInviteStyles.rejectBtn}
+                      onPress={() => void rejectBetInvite(invite)}
+                    >
+                      <Text style={betInviteStyles.rejectText}>Odrzuć</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </>
+        )}
 
         <Text style={styles.sectionLabel}>
           Twoi rywale — posortowani po liczbie meczów

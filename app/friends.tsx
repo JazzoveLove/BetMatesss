@@ -4,11 +4,13 @@ import { useNavigation } from '@react-navigation/native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { FriendsScreenContent } from '../components/friends/FriendsScreenContent'
 import { Colors } from '../constants/colors'
+import { useBetInvites } from '../hooks/useBetInvites'
 import { useFriends } from '../hooks/useFriends'
 
 export default function FriendsScreen() {
   const navigation = useNavigation<any>()
   const insets = useSafeAreaInsets()
+  const { betInvites, acceptBetInvite, rejectBetInvite } = useBetInvites()
   const {
     loading,
     refreshing,
@@ -54,6 +56,9 @@ export default function FriendsScreen() {
         searchText={searchText}
         setSearchText={setSearchText}
         myInviteCode={myInviteCode}
+        betInvites={betInvites}
+        acceptBetInvite={acceptBetInvite}
+        rejectBetInvite={rejectBetInvite}
       />
     </SafeAreaView>
   )
