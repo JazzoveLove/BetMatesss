@@ -1,7 +1,7 @@
 /** Stan i ładowanie danych szczegółów zakładu */
 
 import { useCallback, useEffect, useState } from 'react'
-import { AuthService } from '../services/auth.service'
+import { useAuthContext } from '../contexts/AuthContext'
 import { BetsService } from '../services/bets.service'
 import type { BetDetail, PendingResult, Settlement } from '../types/bet.types'
 import { error, log } from '../utils/logger'
@@ -29,10 +29,10 @@ const initialActionLoading: ActionLoadingState = {
 }
 
 export function useBetDetailData(betId: string) {
+  const { userId } = useAuthContext()
   const [loading, setLoading] = useState(true)
   const [bet, setBet] = useState<BetDetail | null>(null)
   const [settlements, setSettlements] = useState<Settlement[]>([])
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [score, setScore] = useState('')
   const [pendingResult, setPendingResult] = useState<PendingResult | null>(null)
   const [actionLoading, setActionLoading] = useState<ActionLoadingState>(initialActionLoading)
@@ -44,9 +44,7 @@ export function useBetDetailData(betId: string) {
   const loadData = useCallback(async () => {
     log('[useBetDetail loadData] start', { betId })
     try {
-      const userId = await AuthService.getCurrentUserId()
       if (!userId) return
-      setCurrentUserId(userId)
 
       const [betData, nextSettlements] = await Promise.all([
         BetsService.getBetDetail(betId),
@@ -76,7 +74,7 @@ export function useBetDetailData(betId: string) {
     } catch (e) {
       error('[useBetDetail loadData]', e)
     }
-  }, [betId])
+  }, [betId, userId])
 
   useEffect(() => {
     loadData().finally(() => setLoading(false))
@@ -86,7 +84,7 @@ export function useBetDetailData(betId: string) {
     loading,
     bet,
     settlements,
-    currentUserId,
+    currentUserId: userId,
     score,
     setScore,
     pendingResult,

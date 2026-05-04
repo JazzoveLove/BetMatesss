@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { GAME_MAP } from '../constants/games'
-import { AuthService } from '../services/auth.service'
+import { useAuthContext } from '../contexts/AuthContext'
 import { BetsService } from '../services/bets.service'
 import type { ProfileScreenData } from '../types/bet.types'
 import { error } from '../utils/logger'
@@ -96,12 +96,12 @@ function mapToProfileData(row: ProfileScreenData): ProfileData {
 }
 
 export function useProfile() {
+  const { userId } = useAuthContext()
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [data, setData] = useState<ProfileData | null>(null)
 
   const load = useCallback(async () => {
-    const userId = await AuthService.getCurrentUserId()
     if (!userId) {
       setData(null)
       return
@@ -112,7 +112,7 @@ export function useProfile() {
     } catch (e) {
       error('[useProfile] load', e)
     }
-  }, [])
+  }, [userId])
 
   useEffect(() => {
     load().finally(() => setLoading(false))

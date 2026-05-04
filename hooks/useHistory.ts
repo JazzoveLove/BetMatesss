@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AuthService } from '../services/auth.service'
+import { useAuthContext } from '../contexts/AuthContext'
 import { BetsService } from '../services/bets.service'
 import type { BetStatus, HistoryListItem } from '../types/bet.types'
 import { log } from '../utils/logger'
@@ -15,6 +15,7 @@ function itemMatchesFilter(item: HistoryListItem, filter: HistoryFilter, statusB
 }
 
 export function useHistory(initialFilter: HistoryFilter = 'all') {
+  const { userId } = useAuthContext()
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [items, setItems] = useState<HistoryListItem[]>([])
@@ -22,7 +23,6 @@ export function useHistory(initialFilter: HistoryFilter = 'all') {
   const [filter, setFilter] = useState<HistoryFilter>(initialFilter)
 
   const load = useCallback(async () => {
-    const userId = await AuthService.getCurrentUserId()
     if (!userId) {
       setItems([])
       setStatusById(new Map())
@@ -38,7 +38,7 @@ export function useHistory(initialFilter: HistoryFilter = 'all') {
     } catch (err) {
       log('useHistory load error:', err)
     }
-  }, [])
+  }, [userId])
 
   useEffect(() => {
     load().finally(() => setLoading(false))

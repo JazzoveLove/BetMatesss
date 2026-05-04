@@ -1,10 +1,12 @@
 /** Stan kreatora nowego zakładu */
 
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react'
+import { useAuthContext } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 import { AuthService } from '../services/auth.service'
 import type { GameTemplate } from '../constants/games'
 import type { BetFormat, PokerMode, StakeMode } from '../types/bet.types'
-import type { UserProfile } from '../types/user.types'
+import type { UserProfile, UserProfileRow } from '../types/user.types'
 import { error } from '../utils/logger'
 import type { NewBetStep } from './useNewBet.types'
 
@@ -43,6 +45,7 @@ export type UseNewBetStateReturn = {
 }
 
 export function useNewBetState(preselectedFriend: UserProfile | undefined): UseNewBetStateReturn {
+  const { userId } = useAuthContext()
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null)
   const [step, setStep] = useState<NewBetStep>(1)
   const [selectedGame, setSelectedGame] = useState<GameTemplate | null>(null)
@@ -60,16 +63,21 @@ export function useNewBetState(preselectedFriend: UserProfile | undefined): UseN
   const [searchFocused, setSearchFocused] = useState(false)
 
   useEffect(() => {
+    if (!userId) return
     void (async () => {
       try {
-        const me = await AuthService.getCurrentUserProfile()
-        if (!me) return
-        setCurrentUser(me)
+        const { data, error: qErr } = await supabase
+          .from('users')
+          .select('id, nick, avatar_url, invite_code, created_at, phone')
+          .eq('id', userId)
+          .single()
+        if (qErr) throw qErr
+        if (data) setCurrentUser(AuthService.mapProfileRow(data as UserProfileRow))
       } catch (e) {
-        error('[useNewBet] getCurrentUserProfile', e)
+        error('[useNewBet] load current user profile', e)
       }
     })()
-  }, [])
+  }, [userId])
 
   useEffect(() => {
     if (!preselectedFriend) return

@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BetsService } from '../services/bets.service'
-import { AuthService } from '../services/auth.service'
+import { useAuthContext } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
 import { error as logError } from '../utils/logger'
 import type { BetSummary, CreateBetParams } from '../types/bet.types'
 
 export function useBets() {
+  const { userId } = useAuthContext()
   const [bets, setBets] = useState<BetSummary[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const refreshBets = useCallback(async () => {
     setError(null)
-    const userId = await AuthService.getCurrentUserId()
     if (!userId) {
       setBets([])
       return
@@ -23,7 +23,7 @@ export function useBets() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Nie udalo sie pobrac zakladow')
     }
-  }, [])
+  }, [userId])
 
   useEffect(() => {
     refreshBets().finally(() => setLoading(false))

@@ -5,8 +5,7 @@ import { TamaguiProvider, Text, Button } from 'tamagui'
 import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { Session } from '@supabase/supabase-js'
-import { AuthService } from './services/auth.service'
+import { AuthProvider, useAuthContext } from './contexts/AuthContext'
 import LoginScreen from './app/login'
 import SetupProfileScreen from './app/setup-profile'
 import DashboardScreen from './app/dashboard'
@@ -33,8 +32,6 @@ const navigationRef = createNavigationContainerRef()
 
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
-
-type AppState = 'loading' | 'auth' | 'setup' | 'main'
 
 function TabIcon({ icon, color }: { icon: string; color: string }) {
   return (
@@ -102,31 +99,10 @@ function TabNavigator() {
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
 function AppContent() {
-  const [appState, setAppState] = useState<AppState>('loading')
-  const [session, setSession] = useState<Session | null>(null)
+  const { appState, session, userId, completeSetup } = useAuthContext()
   const [pendingBetInviteCode, setPendingBetInviteCode] = useState<string | null>(null)
-  const appStateRef = useRef<AppState>('loading')
+  const appStateRef = useRef(appState)
   appStateRef.current = appState
-
-  async function checkProfile(sess: Session) {
-    setSession(sess)
-    const hasProfile = await AuthService.hasProfile(sess.user.id)
-    setAppState(hasProfile ? 'main' : 'setup')
-  }
-
-  useEffect(() => {
-    AuthService.getSession().then(({ data: { session } }) => {
-      if (!session) { setAppState('auth'); return }
-      checkProfile(session)
-    })
-
-    const { data: { subscription } } = AuthService.onAuthStateChange((_event, sess) => {
-      if (!sess) { setSession(null); setAppState('auth'); return }
-      checkProfile(sess)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
 
   useEffect(() => {
     if (!pendingBetInviteCode) return
@@ -185,7 +161,7 @@ function AppContent() {
     return (
       <SetupProfileScreen
         userId={session.user.id}
-        onComplete={() => setAppState('main')}
+        onComplete={completeSetup}
       />
     )
   }
@@ -236,7 +212,9 @@ function AppContent() {
 export default function App() {
   return (
     <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </TamaguiProvider>
   )
 }

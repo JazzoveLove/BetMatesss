@@ -1,15 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
-import { AuthService } from '../services/auth.service'
+import { useAuthContext } from '../contexts/AuthContext'
 import {
   loadFriendships,
   ensureMyInviteCode,
   acceptFriendship,
   rejectFriendship,
   handleFriendInvite,
-  lookupUserByCode,
-  searchUsersByNick,
   subscribeFriendshipChanges,
 } from '../services/friends.service'
 import {
@@ -64,26 +62,20 @@ function alertForInviteResult(
 }
 
 export function useFriends() {
+  const { userId } = useAuthContext()
+  const me = userId
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
-  const [me, setMe] = useState<string | null>(null)
   const [myInviteCode, setMyInviteCode] = useState<string | null>(null)
   const [incoming, setIncoming] = useState<Friendship[]>([])
   const [outgoing, setOutgoing] = useState<Friendship[]>([])
   const [friends, setFriends] = useState<Friendship[]>([])
   const [nickById, setNickById] = useState<Record<string, string>>({})
   const [avatarById, setAvatarById] = useState<Record<string, string | null>>({})
-  const [codeInput, setCodeInput] = useState('')
-  const [sendingCode, setSendingCode] = useState(false)
-  const [nickSearch, setNickSearch] = useState('')
-  const [nickResults, setNickResults] = useState<{ id: string; nick: string }[]>([])
-  const [searchingNick, setSearchingNick] = useState(false)
   const [betInvites, setBetInvites] = useState<BetInviteNotification[]>([])
 
   const reload = useCallback(async () => {
-    const userId = await AuthService.getCurrentUserId()
     if (!userId) return
-    setMe(userId)
     try {
       const data = await loadFriendships(userId)
       setIncoming(data.incoming)
@@ -96,12 +88,11 @@ export function useFriends() {
     } catch (err) {
       log('useFriends reload error:', err)
     }
-  }, [])
+  }, [userId])
 
   const reloadWithCode = useCallback(async () => {
     try {
       await reload()
-      const userId = await AuthService.getCurrentUserId()
       if (userId) {
         const code = await ensureMyInviteCode(userId)
         setMyInviteCode(code)
@@ -109,7 +100,7 @@ export function useFriends() {
     } catch (e) {
       error('[useFriends] reloadWithCode', e)
     }
-  }, [reload])
+  }, [reload, userId])
 
   useEffect(() => {
     let cancelled = false
@@ -136,7 +127,6 @@ export function useFriends() {
 
   const handleInviteFromLink = useCallback(
     async (otherId: string) => {
-      const userId = await AuthService.getCurrentUserId()
       if (!userId) return
       try {
         const result = await handleFriendInvite(userId, otherId)
@@ -146,7 +136,7 @@ export function useFriends() {
         Alert.alert('Błąd', 'Nie udało się przetworzyć zaproszenia.')
       }
     },
-    [reload],
+    [reload, userId],
   )
 
   const processInviteQueue = useCallback(() => {
@@ -183,61 +173,11 @@ export function useFriends() {
     [reload],
   )
 
-  const submitCode = useCallback(async () => {
-    const raw = codeInput.trim()
-    if (raw.length < 4) {
-      Alert.alert('Kod', 'Wpisz co najmniej 4 znaki.')
-      return
-    }
-    setSendingCode(true)
-    let result: Awaited<ReturnType<typeof lookupUserByCode>>
-    try {
-      result = await lookupUserByCode(raw)
-    } catch (e) {
-      error('[useFriends] submitCode lookupUserByCode', e)
-      Alert.alert('Błąd', 'Nie udało się sprawdzić kodu.')
-      return
-    } finally {
-      setSendingCode(false)
-    }
-    if ('error' in result) {
-      if ((result as { missingFunction?: boolean }).missingFunction) {
-        Alert.alert('Brak funkcji w bazie', 'Uruchom skrypt supabase/users_invite_code.sql.')
-      } else if (result.error === 'not_found') {
-        Alert.alert('Nie znaleziono', 'Nie ma takiego kodu.')
-      } else {
-        Alert.alert('Błąd', result.error)
-      }
-      return
-    }
-    setCodeInput('')
-    await handleInviteFromLink(result.userId)
-  }, [codeInput, handleInviteFromLink])
-
-  const searchNick = useCallback(async (text: string) => {
-    setNickSearch(text)
-    if (text.trim().length < 2) {
-      setNickResults([])
-      return
-    }
-    setSearchingNick(true)
-    const userId = await AuthService.getCurrentUserId()
-    try {
-      const results = await searchUsersByNick(text, userId ?? '')
-      setNickResults(results)
-    } catch (err) {
-      log('searchNick error:', err)
-    } finally {
-      setSearchingNick(false)
-    }
-  }, [])
-
   const nick = useCallback((id: string) => nickById[id] ?? '…', [nickById])
   const avatar = useCallback((id: string) => avatarById[id] ?? null, [avatarById])
 
   const acceptBetInvite = useCallback(
     async (invite: BetInviteNotification) => {
-      const userId = await AuthService.getCurrentUserId()
       if (!userId) return
       try {
         const result = await BetsService.confirmParticipation(invite.betId, userId)
@@ -253,12 +193,11 @@ export function useFriends() {
         Alert.alert('Błąd', 'Nie udało się zaakceptować zaproszenia do zakładu.')
       }
     },
-    [reload],
+    [reload, userId],
   )
 
   const rejectBetInvite = useCallback(
     async (invite: BetInviteNotification) => {
-      const userId = await AuthService.getCurrentUserId()
       if (!userId) return
       try {
         const result = await BetsService.rejectParticipation(invite.betId, userId)
@@ -274,7 +213,7 @@ export function useFriends() {
         Alert.alert('Błąd', 'Nie udało się odrzucić zaproszenia do zakładu.')
       }
     },
-    [reload],
+    [reload, userId],
   )
 
   return {
@@ -287,18 +226,10 @@ export function useFriends() {
     friends,
     nick,
     avatar,
-    codeInput,
-    setCodeInput,
-    sendingCode,
-    nickSearch,
-    nickResults,
-    searchingNick,
     betInvites,
     onRefresh,
     accept,
     reject,
-    submitCode,
-    searchNick,
     handleInviteFromLink,
     acceptBetInvite,
     rejectBetInvite,

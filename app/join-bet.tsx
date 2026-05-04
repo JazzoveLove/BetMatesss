@@ -3,7 +3,7 @@ import { ActivityIndicator, Alert } from 'react-native'
 import { YStack, XStack, Text, Button } from 'tamagui'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { BetsService } from '../services/bets.service'
-import { AuthService } from '../services/auth.service'
+import { useAuthContext } from '../contexts/AuthContext'
 import { GAME_MAP } from '../constants/games'
 import { ensureFriendshipAccepted } from '../services/friends.service'
 
@@ -22,20 +22,18 @@ export default function JoinBetScreen() {
   const route = useRoute<RouteProp<RootParamList, 'JoinBet'>>()
   const navigation = useNavigation<any>()
   const { code } = route.params
+  const { userId: currentUserId } = useAuthContext()
 
   const [loading, setLoading] = useState(true)
   const [joining, setJoining] = useState(false)
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [preview, setPreview] = useState<InvitePreview | null>(null)
 
   const loadPreview = useCallback(async () => {
-    const userId = await AuthService.getCurrentUserId()
-    if (!userId) {
+    if (!currentUserId) {
       setLoading(false)
       return
     }
-    setCurrentUserId(userId)
-    const res = await BetsService.getBetInvitePreview(code, userId)
+    const res = await BetsService.getBetInvitePreview(code, currentUserId)
     if ('error' in res) {
       Alert.alert('Błąd', res.error)
       setLoading(false)
@@ -50,7 +48,7 @@ export default function JoinBetScreen() {
       alreadyConfirmed: res.alreadyConfirmed,
     })
     setLoading(false)
-  }, [code])
+  }, [code, currentUserId])
 
   useEffect(() => {
     void loadPreview()

@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { ActivityIndicator, Alert, Share, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
-import * as Clipboard from 'expo-clipboard'
 import { FriendsScreenContent } from '../components/friends/FriendsScreenContent'
 import { Colors } from '../constants/colors'
 import { useFriends } from '../hooks/useFriends'
@@ -25,26 +24,6 @@ export default function FriendsScreen() {
   } = useFriends()
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchText, setSearchText] = useState('')
-  const [addModalOpen, setAddModalOpen] = useState(false)
-
-  async function copyInviteLink() {
-    if (!me) return
-    const link = `betmates://friends?add=${encodeURIComponent(me)}`
-    await Clipboard.setStringAsync(link)
-    Alert.alert('Schowek', 'Link skopiowany.')
-  }
-
-  async function shareInvite() {
-    if (!me) return
-    const link = `betmates://friends?add=${encodeURIComponent(me)}`
-    const lines = ['Dodaj mnie w BetMates', link]
-    if (myInviteCode) lines.push(`Kod: ${myInviteCode}`)
-    try {
-      await Share.share({ message: lines.join('\n'), title: 'BetMates' })
-    } catch {
-      Alert.alert('Udostępnianie', 'Nie udało się otworzyć menu udostępniania.')
-    }
-  }
 
   if (loading) {
     return (
@@ -74,11 +53,7 @@ export default function FriendsScreen() {
         setSearchOpen={setSearchOpen}
         searchText={searchText}
         setSearchText={setSearchText}
-        addModalOpen={addModalOpen}
-        setAddModalOpen={setAddModalOpen}
         myInviteCode={myInviteCode}
-        copyInviteLink={copyInviteLink}
-        shareInvite={shareInvite}
       />
     </SafeAreaView>
   )

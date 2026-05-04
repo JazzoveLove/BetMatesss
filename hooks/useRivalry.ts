@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AuthService } from '../services/auth.service'
+import { useAuthContext } from '../contexts/AuthContext'
 import { fetchRivalryData, RivalryFetchError } from '../services/rivalry/loadRivalryMatches'
 import { buildRivalryTotalsFromMatches, buildStatsByDiscipline } from '../services/rivalry/mapRivalryItems'
 import type { RivalryDisciplineStats, RivalryMatchItem } from '../services/rivalry/rivalry.types'
@@ -21,6 +21,7 @@ type UseRivalryResult = {
 }
 
 export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryResult {
+  const { userId } = useAuthContext()
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -34,7 +35,6 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
 
   const load = useCallback(async () => {
     setError(null)
-    const userId = await AuthService.getCurrentUserId()
     if (!userId) {
       setMatches([])
       setFriendNick('Znajomy')
@@ -50,7 +50,7 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
       setError(e instanceof Error ? e.message : 'Nie udało się pobrać rywalizacji.')
       setMatches([])
     }
-  }, [friendId, gameTemplate])
+  }, [friendId, gameTemplate, userId])
 
   useEffect(() => {
     void load().finally(() => setLoading(false))

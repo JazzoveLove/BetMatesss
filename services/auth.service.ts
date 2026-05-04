@@ -72,9 +72,3 @@ export const AuthService = {
   },
 }
 
-export const signIn = AuthService.signIn
-export const signUp = AuthService.signUp
-export const signOut = AuthService.signOut
-export const getSession = AuthService.getSession
-export const getCurrentUserId = AuthService.getCurrentUserId
-export const getCurrentUserProfile = AuthService.getCurrentUserProfile

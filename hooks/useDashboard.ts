@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { AuthService } from '../services/auth.service'
+import { useAuthContext } from '../contexts/AuthContext'
 import { BetsService } from '../services/bets.service'
 import { GAME_MAP } from '../constants/games'
 import { log } from '../utils/logger'
@@ -59,6 +59,7 @@ function mapGame(gameTemplate: string): string {
 }
 
 export function useDashboard() {
+  const { userId } = useAuthContext()
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState<DashboardUser>({ nick: '', avatarInitials: '?' })
   const [stats, setStats] = useState<DashboardStats>({
@@ -72,7 +73,6 @@ export function useDashboard() {
   const [recentMatches, setRecentMatches] = useState<RecentDashboardMatch[]>([])
 
   const load = useCallback(async () => {
-    const userId = await AuthService.getCurrentUserId()
     if (!userId) {
       setUser({ nick: '', avatarInitials: '?' })
       setStats({ wins: 0, losses: 0, winRate: 0, totalMatches: 0, balance: 0 })
@@ -117,7 +117,7 @@ export function useDashboard() {
     } catch (err) {
       log('useDashboard load error:', err)
     }
-  }, [])
+  }, [userId])
 
   useEffect(() => {
     load().finally(() => setLoading(false))
