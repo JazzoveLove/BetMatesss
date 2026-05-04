@@ -22,8 +22,9 @@ export {
   rejectParticipation,
 } from './bets.participants'
 
+export { getDashboardData } from './bets.dashboard'
+
 export {
-  getDashboardData,
   getUserBets,
   getUserBetSummaries,
   getHistoryForUser,
@@ -51,8 +52,8 @@ import {
   confirmParticipation,
   rejectParticipation,
 } from './bets.participants'
+import { getDashboardData } from './bets.dashboard'
 import {
-  getDashboardData,
   getUserBets,
   getUserBetSummaries,
   getHistoryForUser,
