@@ -1,9 +1,8 @@
-// bets.queries importuje supabase — mockujemy żeby testy nie wymagały .env
 jest.mock('../../lib/supabase', () => ({ supabase: {} }))
 jest.mock('../friends.service', () => ({}))
 
 import { historyBadgeAndAmount } from './bets.queries'
-import type { BetRow } from '../../types/bet.types'
+import type { BetRow } from '../../types/bet.row.types'
 
 const baseBet: BetRow = {
   id: '1',

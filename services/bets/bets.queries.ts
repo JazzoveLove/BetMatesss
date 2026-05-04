@@ -2,8 +2,9 @@ import { supabase } from '../../lib/supabase'
 import { parseStakeAmount } from '../../utils/odds'
 import { loadNicksByIds, getAcceptedFriendsList } from '../friends.service'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
+import type { BetRow } from '../../types/bet.row.types'
 import type {
-  BetRow,
+  BetSummary,
   ActiveBetItem,
   RecentResult,
   DashboardStats,
@@ -14,6 +15,27 @@ import type {
   FriendRankRow,
   ProfileScreenData,
 } from '../../types/bet.types'
+
+function mapBetRowToBetSummary(row: BetRow): BetSummary {
+  return {
+    id: row.id,
+    creatorId: row.creator_id,
+    gameTemplate: row.game_template,
+    format: row.format,
+    stakeMode: row.stake_mode,
+    status: row.status,
+    notes: row.notes ?? null,
+    createdAt: row.created_at,
+    stakePerMatch: row.stake_per_match,
+    rivalryId: row.rivalry_id,
+    sessionId: row.session_id,
+    bracketMode: row.bracket_mode,
+    pokerMode: row.poker_mode,
+    pokerStack: row.poker_stack,
+    pokerRebuyStack: row.poker_rebuy_stack,
+    bestOfCount: row.best_of_count,
+  }
+}
 
 type DashboardStatsExtended = DashboardStats & {
   wins: number
@@ -191,7 +213,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
   }
 }
 
-export async function getUserBets(userId: string): Promise<BetRow[]> {
+export async function getUserBets(userId: string): Promise<BetSummary[]> {
   const [createdRes, participantsRes] = await Promise.all([
     supabase.from('bets').select('*').eq('creator_id', userId).order('created_at', { ascending: false }),
     supabase
@@ -207,11 +229,13 @@ export async function getUserBets(userId: string): Promise<BetRow[]> {
     .flatMap(row => (Array.isArray(row.bets) ? row.bets : row.bets ? [row.bets] : []))
   const byId = new Map<string, BetRow>()
   for (const bet of [...created, ...participated]) byId.set(bet.id, bet)
-  return [...byId.values()].sort((a, b) => b.created_at.localeCompare(a.created_at))
+  return [...byId.values()]
+    .sort((a, b) => b.created_at.localeCompare(a.created_at))
+    .map(mapBetRowToBetSummary)
 }
 
 export function historyBadgeAndAmount(
-  bet: BetRow,
+  bet: { status: BetStatus },
   profit: number,
   hadSettlement: boolean,
 ): { badge: HistoryBadgeLabel; amountLabel: string } {
@@ -299,8 +323,8 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
 
     items.push({
       id: bet.id,
-      gameTemplate: bet.game_template,
-      createdAt: bet.created_at,
+      gameTemplate: bet.gameTemplate,
+      createdAt: bet.createdAt,
       opponentNick,
       badge,
       amountLabel,
@@ -352,7 +376,7 @@ export async function getDisciplineStatsForUser(userId: string): Promise<Discipl
     const won = rel.some(s => s.creditor_id === userId)
     const lost = rel.some(s => s.debtor_id === userId)
     if (!won && !lost) continue
-    const tmpl = bet.game_template
+    const tmpl = bet.gameTemplate
     const agg = byTemplate.get(tmpl) ?? { w: 0, l: 0 }
     if (won) agg.w += 1
     else if (lost) agg.l += 1

@@ -104,7 +104,7 @@ export function useNewBet() {
   )
 
   const recentGames = useMemo(() => {
-    const ids = [...new Set(bets.map(b => b.game_template))].slice(0, 3)
+    const ids = [...new Set(bets.map(b => b.gameTemplate))].slice(0, 3)
     return ids.map(id => GAME_TEMPLATES.find(g => g.id === id)).filter(Boolean) as GameTemplate[]
   }, [bets])
 
