@@ -1,7 +1,15 @@
 import type { PropsWithChildren } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, type CompositeNavigationProp } from '@react-navigation/native'
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Colors } from '../../constants/colors'
+import type { RootStackParamList, TabParamList } from '../../navigation/types'
+
+type DashboardNavProp = CompositeNavigationProp<
+  BottomTabNavigationProp<TabParamList, 'Home'>,
+  NativeStackNavigationProp<RootStackParamList>
+>
 
 export type DashboardGreetingProps = PropsWithChildren<{
   nick: string
@@ -9,7 +17,7 @@ export type DashboardGreetingProps = PropsWithChildren<{
 }>
 
 export function DashboardGreeting({ nick, avatarInitials, children }: DashboardGreetingProps) {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<DashboardNavProp>()
   return (
     <View style={styles.header}>
       <View style={styles.headerLeft}>

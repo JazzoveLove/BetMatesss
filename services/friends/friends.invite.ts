@@ -2,9 +2,7 @@ import { supabase } from '../../lib/supabase'
 import { generateInviteCode } from '../../lib/invite-code'
 import type { FriendshipRow } from '../../types/user.types'
 
-type InviteCodeRow = {
-  invite_code?: string | null
-}
+type InviteCodeResult = { invite_code: string | null }
 
 export async function ensureMyInviteCode(userId: string): Promise<string | null> {
   const { data, error } = await supabase
@@ -12,10 +10,11 @@ export async function ensureMyInviteCode(userId: string): Promise<string | null>
     .select('invite_code')
     .eq('id', userId)
     .maybeSingle()
+    .returns<InviteCodeResult>()
 
   if (error) return null
 
-  const existing = (data as { invite_code?: string | null } | null)?.invite_code
+  const existing = data?.invite_code ?? null
   if (existing) return existing
 
   for (let i = 0; i < 12; i++) {
@@ -27,9 +26,10 @@ export async function ensureMyInviteCode(userId: string): Promise<string | null>
       .is('invite_code', null)
       .select('invite_code')
       .maybeSingle()
+      .returns<InviteCodeResult>()
 
-    if (!upErr && row && (row as { invite_code?: string }).invite_code) {
-      return (row as { invite_code: string }).invite_code
+    if (!upErr && row != null && row.invite_code) {
+      return row.invite_code
     }
 
     if (upErr?.code === '23505') continue
@@ -39,13 +39,16 @@ export async function ensureMyInviteCode(userId: string): Promise<string | null>
       .select('invite_code')
       .eq('id', userId)
       .maybeSingle()
+      .returns<InviteCodeResult>()
     if (againErr) return null
-    const c = (again as InviteCodeRow | null)?.invite_code
+    const c = again?.invite_code
     if (c) return c
   }
 
   return null
 }
+
+type LookupRow = { user_id: string; user_nick: string }
 
 export async function lookupUserByCode(
   code: string,
@@ -56,7 +59,7 @@ export async function lookupUserByCode(
       error.message?.includes('lookup_user_by_invite_code') || error.code === 'PGRST202'
     return { error: error.message, missingFunction }
   }
-  const rows = data as { user_id: string; user_nick: string }[] | null
+  const rows = data as LookupRow[] | null
   const first = rows?.[0]
   if (!first) return { error: 'not_found' }
   return { userId: first.user_id, nick: first.user_nick }
@@ -100,10 +103,11 @@ export async function handleFriendInvite(
       `and(user_a.eq.${userId},user_b.eq.${otherId}),and(user_a.eq.${otherId},user_b.eq.${userId})`,
     )
     .maybeSingle()
+    .returns<FriendshipRow>()
   if (anyRowErr) return { type: 'error', message: anyRowErr.message }
 
   if (anyRow) {
-    const r = anyRow as FriendshipRow
+    const r = anyRow
     if (r.status === 'accepted') return { type: 'already_friends' }
     if (r.user_a === otherId && r.user_b === userId) {
       const { error } = await supabase

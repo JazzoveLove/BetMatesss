@@ -2,10 +2,12 @@ import { useCallback, useEffect, useState } from 'react'
 import { ActivityIndicator, Alert } from 'react-native'
 import { YStack, XStack, Text, Button } from 'tamagui'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BetsService } from '../services/bets.service'
 import { useAuthContext } from '../contexts/AuthContext'
 import { GAME_MAP } from '../constants/games'
 import { ensureFriendshipAccepted } from '../services/friends.service'
+import type { RootStackParamList } from '../navigation/types'
 
 type RootParamList = { JoinBet: { code: string } }
 
@@ -20,7 +22,7 @@ type InvitePreview = {
 
 export default function JoinBetScreen() {
   const route = useRoute<RouteProp<RootParamList, 'JoinBet'>>()
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const { code } = route.params
   const { userId: currentUserId } = useAuthContext()
 

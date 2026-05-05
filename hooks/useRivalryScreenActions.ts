@@ -9,7 +9,7 @@ type Params = {
   friendId: string
   friendNick: string
   matches: RivalryMatchItem[]
-  navigation: { navigate: (...args: any[]) => void }
+  navigation: { navigate: (screen: string, params?: object) => void }
 }
 
 export function useRivalryScreenActions({ friendId, friendNick, matches, navigation }: Params) {
@@ -45,8 +45,7 @@ export function useRivalryScreenActions({ friendId, friendNick, matches, navigat
       globalStake: meStake,
       stakeAmount: meStake,
       participantIds: [friendId],
-      bestOfCount: (detail as any).bestOfCount ?? undefined,
-      stakePerMatch: (detail as any).stakePerMatch ?? undefined,
+      stakePerMatch: detail.stakePerMatch,
     })
     Alert.alert('Gotowe', 'Rewanż został utworzony.')
     navigation.navigate('Tabs', { screen: 'Home' })

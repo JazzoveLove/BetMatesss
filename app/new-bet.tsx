@@ -1,15 +1,23 @@
 import { useCallback } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation, type CompositeNavigationProp } from '@react-navigation/native'
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNewBet } from '../hooks/useNewBet'
 import { Colors } from '../constants/colors'
 import { StepGame } from '../components/new-bet/StepGame'
 import { StepFormat } from '../components/new-bet/StepFormat'
 import { StepStake } from '../components/new-bet/StepStake'
+import type { RootStackParamList, TabParamList } from '../navigation/types'
+
+type NewBetNavProp = CompositeNavigationProp<
+  BottomTabNavigationProp<TabParamList, 'Nowy'>,
+  NativeStackNavigationProp<RootStackParamList>
+>
 
 export default function NewBetScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<NewBetNavProp>()
   const { step, state, handlers } = useNewBet()
   const { resetNewBet, setParticipants } = handlers
 
@@ -35,7 +43,7 @@ export default function NewBetScreen() {
             style={styles.navBtn}
             onPress={() => {
               try {
-                navigation.navigate('Dashboard')
+                navigation.navigate('Dashboard' as never)
               } catch {
                 navigation.navigate('Home')
               }

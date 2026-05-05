@@ -1,0 +1,5 @@
+1. co oznacza mutowalny
+
+
+Do uwzględnienia:
+1. Dodać React Query 

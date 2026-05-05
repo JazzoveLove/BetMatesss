@@ -31,8 +31,9 @@ async function loadProfilesByIds(ids: string[]): Promise<UserProfileMini[]> {
     .from('users')
     .select('id, nick, avatar_url')
     .in('id', uniq)
+    .returns<UserProfileMini[]>()
   if (error || !data) return []
-  return data as UserProfileMini[]
+  return data ?? []
 }
 
 export async function loadFriendships(userId: string): Promise<FriendshipsData> {
@@ -40,10 +41,11 @@ export async function loadFriendships(userId: string): Promise<FriendshipsData> 
     .from('friendships')
     .select('id, user_a, user_b, status')
     .or(`user_a.eq.${userId},user_b.eq.${userId}`)
+    .returns<FriendshipRow[]>()
 
   if (error) return { incoming: [], outgoing: [], friends: [], nickById: {}, avatarById: {} }
 
-  const rows = (data ?? []) as FriendshipRow[]
+  const rows = data ?? []
   const incoming = rows
     .filter(r => r.status === 'pending' && r.user_b === userId)
     .map(mapFriendshipRowToFriendship)
@@ -81,10 +83,11 @@ export async function getAcceptedFriendsList(
     .select('id, user_a, user_b, status')
     .eq('status', 'accepted')
     .or(`user_a.eq.${userId},user_b.eq.${userId}`)
+    .returns<FriendshipRow[]>()
 
   if (error) return []
 
-  const friendRows = (rows ?? []) as FriendshipRow[]
+  const friendRows = rows ?? []
   const mapped = friendRows.map(mapFriendshipRowToFriendship)
   const otherIds = mapped
     .map(f => (f.userAId === userId ? f.userBId : f.userBId === userId ? f.userAId : null))
@@ -92,15 +95,10 @@ export async function getAcceptedFriendsList(
   const uniqIds = [...new Set(otherIds)]
   if (uniqIds.length === 0) return []
 
-  const { data: profiles, error: profilesError } = await supabase
-    .from('users')
-    .select('id, nick, avatar_url')
-    .in('id', uniqIds)
-
-  if (profilesError || !profiles) return []
+  const profiles = await loadProfilesByIds(uniqIds)
 
   const byId = new Map(
-    profiles.map(p => [p.id, { nick: p.nick, avatar_url: p.avatar_url as string | null | undefined }]),
+    profiles.map(p => [p.id, { nick: p.nick, avatar_url: p.avatar_url }]),
   )
 
   const out: FriendProfile[] = uniqIds

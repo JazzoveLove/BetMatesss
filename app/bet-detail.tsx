@@ -5,6 +5,7 @@ import {
   useRoute,
   type RouteProp,
 } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -16,6 +17,7 @@ import { BetScoreModal, parsePendingScore } from "../components/bet-detail/BetSc
 import { Colors } from "../constants/colors";
 import { GAME_MAP, GAME_TEMPLATES } from "../constants/games";
 import { useBetDetail } from "../hooks/useBetDetail";
+import type { RootStackParamList } from "../navigation/types";
 import type { BetStatus } from "../types/bet.types";
 import { hexToRgba } from "../utils/colors";
 import { styles } from "./bet-detail.styles";
@@ -23,7 +25,7 @@ import { styles } from "./bet-detail.styles";
 export default function BetDetailScreen() {
   const insets = useSafeAreaInsets();
   const route = useRoute<RouteProp<{ BetDetail: { betId: string } }, "BetDetail">>();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { betId } = route.params;
   const {
     loading,

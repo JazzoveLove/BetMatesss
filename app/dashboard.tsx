@@ -1,5 +1,7 @@
 import { ScrollView, StyleSheet, Text } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, type CompositeNavigationProp } from '@react-navigation/native'
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDashboard } from '../hooks/useDashboard'
 import { Colors } from '../constants/colors'
@@ -7,9 +9,15 @@ import { DashboardGreeting } from '../components/dashboard/DashboardGreeting'
 import { DashboardStatsRow, DashboardStatsRowSkeleton } from '../components/dashboard/DashboardStatsRow'
 import { DashboardActiveBetsSection } from '../components/dashboard/DashboardActiveBetsSection'
 import { DashboardRecentResultsSection } from '../components/dashboard/DashboardRecentResultsSection'
+import type { RootStackParamList, TabParamList } from '../navigation/types'
+
+type DashboardNavProp = CompositeNavigationProp<
+  BottomTabNavigationProp<TabParamList, 'Home'>,
+  NativeStackNavigationProp<RootStackParamList>
+>
 
 export default function DashboardScreen() {
-  const navigation = useNavigation<any>()
+  const navigation = useNavigation<DashboardNavProp>()
   const { loading, user, stats, activeBets, recentMatches } = useDashboard()
 
   return (

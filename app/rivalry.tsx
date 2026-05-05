@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { RivalryBottomActions } from '../components/rivalry/RivalryBottomActions'
 import { RivalryMatchesList } from '../components/rivalry/RivalryMatchesList'
@@ -9,14 +10,15 @@ import { rivalryScreenStyles as styles } from '../components/rivalry/rivalryScre
 import { Colors } from '../constants/colors'
 import { useRivalry } from '../hooks/useRivalry'
 import { useRivalryScreenActions } from '../hooks/useRivalryScreenActions'
+import type { RootStackParamList } from '../navigation/types'
 
-type RivalryRouteParams = { friendId: string }
+type RivalryRouteProp = RouteProp<RootStackParamList, 'Rivalry'>
 
 export default function RivalryScreen() {
-  const navigation = useNavigation<any>()
-  const route = useRoute()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const route = useRoute<RivalryRouteProp>()
   const insets = useSafeAreaInsets()
-  const { friendId } = (route.params ?? {}) as RivalryRouteParams
+  const { friendId } = route.params
   const { loading, refreshing, matches, friendNick, onRefresh } = useRivalry(friendId)
   const { openNewBet, handleRematch } = useRivalryScreenActions({
     friendId,

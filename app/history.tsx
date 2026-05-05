@@ -1,14 +1,24 @@
-import { ActivityIndicator, RefreshControl } from 'react-native'
-import { ScrollView, YStack, Text } from 'tamagui'
+import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet } from 'react-native'
+import { YStack, Text } from 'tamagui'
 import { useNavigation, useRoute } from '@react-navigation/native'
+import type { RouteProp } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useHistory } from '../hooks/useHistory'
 import { HistoryFilterBar } from '../components/history/HistoryFilterBar'
 import { HistoryListItem } from '../components/history/HistoryListItem'
 import { HistoryEmptyState } from '../components/history/HistoryEmptyState'
 
+type HistoryStackParamList = {
+  Historia: { initialFilter?: 'active' | 'all' } | undefined
+}
+type HistoryNavProp = NativeStackNavigationProp<
+  HistoryStackParamList & { BetDetail: { betId: string } }
+>
+type HistoryRouteProp = RouteProp<HistoryStackParamList, 'Historia'>
+
 export default function HistoryScreen() {
-  const navigation = useNavigation<any>()
-  const route = useRoute<any>()
+  const navigation = useNavigation<HistoryNavProp>()
+  const route = useRoute<HistoryRouteProp>()
   const initialFilter = route.params?.initialFilter === 'active' ? 'active' : 'all'
   const { loading, refreshing, items, filter, setFilter, onRefresh } = useHistory(initialFilter)
 
@@ -22,9 +32,8 @@ export default function HistoryScreen() {
 
   return (
     <ScrollView
-      flex={1}
-      style={{ backgroundColor: '#0f1117' }}
-      contentContainerStyle={{ padding: 20, paddingTop: 56, paddingBottom: 40 } as any}
+      style={{ flex: 1, backgroundColor: '#0f1117' }}
+      contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl
@@ -56,3 +65,11 @@ export default function HistoryScreen() {
     </ScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  scrollContent: {
+    padding: 20,
+    paddingTop: 56,
+    paddingBottom: 40,
+  },
+})

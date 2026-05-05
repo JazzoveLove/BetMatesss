@@ -1,4 +1,7 @@
-import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { useMemo, useState } from "react";
+import type { CompositeNavigationProp } from "@react-navigation/native";
+import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   ActivityIndicator,
   Alert,
@@ -22,10 +25,16 @@ import {
   lookupUserByCode,
 } from "../../services/friends/friends.invite";
 import { type BetInviteNotification } from "../../services/notifications.service";
+import type { RootStackParamList, TabParamList } from "../../navigation/types";
 import { FriendPendingCard } from "./FriendPendingCard";
 import { FriendStatCard, friendRowSharedStyles } from "./FriendStatCard";
 import { FriendsSearchBar } from "./FriendsSearchBar";
 import { InviteQrModal } from "./InviteQrModal";
+
+type FriendsNavProp = CompositeNavigationProp<
+  BottomTabNavigationProp<TabParamList, "Znajomi">,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 
 function otherId(row: Friendship, me: string): string {
   return row.userAId === me ? row.userBId : row.userAId;
@@ -62,7 +71,7 @@ function inviteResultSuccessMessage(
 
 export type FriendsScreenContentProps = {
   insets: EdgeInsets;
-  navigation: { navigate: (...args: unknown[]) => void };
+  navigation: FriendsNavProp;
   refreshing: boolean;
   onRefresh: () => void;
   me: string | null;
@@ -72,10 +81,6 @@ export type FriendsScreenContentProps = {
   nick: (id: string) => string;
   accept: (row: Friendship) => void | Promise<void>;
   reject: (row: Friendship) => void | Promise<void>;
-  searchOpen: boolean;
-  setSearchOpen: Dispatch<SetStateAction<boolean>>;
-  searchText: string;
-  setSearchText: (t: string) => void;
   myInviteCode: string | null;
   betInvites: BetInviteNotification[];
   acceptBetInvite: (invite: BetInviteNotification) => Promise<void>;
@@ -237,15 +242,13 @@ export function FriendsScreenContent({
   nick,
   accept,
   reject,
-  searchOpen,
-  setSearchOpen,
-  searchText,
-  setSearchText,
   myInviteCode,
   betInvites,
   acceptBetInvite,
   rejectBetInvite,
 }: FriendsScreenContentProps) {
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
   const [qrOpen, setQrOpen] = useState(false);
   const [addCodeInput, setAddCodeInput] = useState("");
   const [addLoading, setAddLoading] = useState(false);
