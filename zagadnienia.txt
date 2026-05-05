@@ -13,3 +13,18 @@ Do uwzględnienia:
 
 Poprawki:
 1. W ekranie Znajomi dodać myślnik żeby byl w przykładowym "dodaj znajomego" czyli ma być format xxxx-xxxx
+
+
+Do dodania
+
+1)## BACKLOG: Osobna zakładka "Rozliczenia"
+
+Feature do dodania w przyszłości:
+- Nowy ekran "Rozliczenia" dostępny z bottom navigation lub profilu
+- Lista wszystkich settlements ze wszystkimi znajomymi
+- Filtrowanie: nierozliczone / zapłacone / wszystkie
+- Per znajomy: rozwijalny widok z historią per zakład
+- Eksport / podsumowanie miesięczne
+
+
+2) 

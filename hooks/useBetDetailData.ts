@@ -14,6 +14,8 @@ export type ActionLoadingState = {
   rejecting: boolean
   completingSession: boolean
   markingPaid: string | null
+  confirmingPayment: string | null
+  rejectingPayment: string | null
   reminding: string | null
 }
 
@@ -25,6 +27,8 @@ const initialActionLoading: ActionLoadingState = {
   rejecting: false,
   completingSession: false,
   markingPaid: null,
+  confirmingPayment: null,
+  rejectingPayment: null,
   reminding: null,
 }
 

@@ -10,7 +10,9 @@ export {
   confirmBetResult,
   disputeBetResult,
   getSettlements,
-  markSettlementPaid,
+  markAsPaid,
+  confirmPayment,
+  rejectPayment,
 } from './bets.resolve'
 export type { PendingBetResult } from './bets.resolve'
 
@@ -44,7 +46,9 @@ import {
   confirmBetResult,
   disputeBetResult,
   getSettlements,
-  markSettlementPaid,
+  markAsPaid,
+  confirmPayment,
+  rejectPayment,
 } from './bets.resolve'
 import {
   searchUsers,
@@ -84,7 +88,9 @@ export const BetsService = {
   getPendingBetResult,
   confirmBetResult,
   disputeBetResult,
-  markSettlementPaid,
+  markAsPaid,
+  confirmPayment,
+  rejectPayment,
   getDashboardData,
   searchUsers,
 }

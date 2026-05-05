@@ -123,11 +123,22 @@ export function BetDetailScrollBody({
             {settlements.map((s) => (
               <View
                 key={s.id}
-                style={[styles.settlementRow, s.paid && { opacity: 0.5 }]}
+                style={[styles.settlementRow, s.paymentStatus === "paid" && { opacity: 0.5 }]}
               >
-                <Text style={styles.bodyText}>
-                  {s.debtorNick} jest winien {s.creditorNick}
-                </Text>
+                <View>
+                  <Text style={styles.bodyText}>
+                    {s.debtorNick} jest winien {s.creditorNick}
+                  </Text>
+                  <Text style={styles.muted}>
+                    {s.debtorId === currentUserId && s.paymentStatus === "unpaid" && "Kliknij \"Zapłacono ✓\" po przelewie."}
+                    {s.debtorId === currentUserId && s.paymentStatus === "pending_confirmation" && "Oczekuje na potwierdzenie..."}
+                    {s.debtorId === currentUserId && s.paymentStatus === "paid" && "Zapłacono ✅"}
+                    {s.creditorId === currentUserId && s.paymentStatus === "unpaid" && "Oczekuje na płatność"}
+                    {s.creditorId === currentUserId && s.paymentStatus === "pending_confirmation" && `${s.debtorNick} twierdzi że zapłacił ${s.amount} PLN`}
+                    {s.creditorId === currentUserId && s.paymentStatus === "paid" && "Otrzymano ✅"}
+                    {s.creditorId === currentUserId && s.paymentStatus === "disputed" && "Spór 🔴"}
+                  </Text>
+                </View>
                 <Text
                   style={[
                     styles.bodyText,

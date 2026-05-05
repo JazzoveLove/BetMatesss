@@ -157,7 +157,7 @@ export function useBetDetailActions(
       log('[useBetDetail markPaid] start', { settlementId, debtorId })
       setAction('markingPaid', settlementId)
       try {
-        const result = await BetsService.markSettlementPaid(settlementId, debtorId)
+        const result = await BetsService.markAsPaid(settlementId, debtorId)
         log('[useBetDetail markPaid] result', result)
         if (result.error) {
           Alert.alert('Błąd', result.error)
@@ -173,6 +173,50 @@ export function useBetDetailActions(
       }
     },
     [betId, currentUserId, setAction],
+  )
+
+  const confirmPayment = useCallback(
+    async (settlementId: string, creditorId: string) => {
+      if (!currentUserId || creditorId !== currentUserId) return
+      setAction('confirmingPayment', settlementId)
+      try {
+        const result = await BetsService.confirmPayment(settlementId, creditorId)
+        if (result.error) {
+          Alert.alert('Błąd', result.error)
+          return
+        }
+        const settlData = await BetsService.getSettlements(betId)
+        setSettlements(settlData)
+      } catch (e) {
+        error('[useBetDetail] confirmPayment', e)
+        Alert.alert('Błąd', 'Nie udało się potwierdzić płatności.')
+      } finally {
+        setAction('confirmingPayment', null)
+      }
+    },
+    [betId, currentUserId, setAction, setSettlements],
+  )
+
+  const rejectPayment = useCallback(
+    async (settlementId: string, creditorId: string) => {
+      if (!currentUserId || creditorId !== currentUserId) return
+      setAction('rejectingPayment', settlementId)
+      try {
+        const result = await BetsService.rejectPayment(settlementId, creditorId)
+        if (result.error) {
+          Alert.alert('Błąd', result.error)
+          return
+        }
+        const settlData = await BetsService.getSettlements(betId)
+        setSettlements(settlData)
+      } catch (e) {
+        error('[useBetDetail] rejectPayment', e)
+        Alert.alert('Błąd', 'Nie udało się odrzucić zgłoszenia płatności.')
+      } finally {
+        setAction('rejectingPayment', null)
+      }
+    },
+    [betId, currentUserId, setAction, setSettlements],
   )
 
   const acceptBet = useCallback(async (): Promise<boolean> => {
@@ -248,6 +292,8 @@ export function useBetDetailActions(
     confirmResult,
     disputeResult,
     markPaid,
+    confirmPayment,
+    rejectPayment,
     acceptBet,
     rejectBet,
     sendReminder,

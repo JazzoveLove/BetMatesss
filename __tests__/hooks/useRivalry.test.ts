@@ -47,6 +47,11 @@ describe('useRivalry', () => {
           outcome: 'loss',
         },
       ],
+      payments: [
+        { betId: 'b1', fromUserId: 'me', toUserId: 'friend-1', amount: 20, paymentStatus: 'paid' },
+        { betId: 'b2', fromUserId: 'friend-1', toUserId: 'me', amount: 40, paymentStatus: 'paid' },
+        { betId: 'b3', fromUserId: 'me', toUserId: 'friend-1', amount: 10, paymentStatus: 'unpaid' },
+      ],
     })
   })
 
@@ -120,5 +125,60 @@ describe('useRivalry', () => {
     // Assert
     expect(result.current.error).toBe('failed fetch')
     expect(result.current.matches).toEqual([])
+  })
+
+  it('paymentSummary should return correct paid totals', async () => {
+    const { result } = renderHook(() => useRivalry('friend-1'))
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    expect(result.current.paymentSummary.totalPaidByMe).toBe(20)
+    expect(result.current.paymentSummary.totalPaidByRival).toBe(40)
+    expect(result.current.paymentSummary.settledBetsCount).toBe(2)
+  })
+
+  it('paymentSummary should set pendingAmount to 0 when everything is settled', async () => {
+    ;(fetchRivalryData as jest.Mock).mockResolvedValueOnce({
+      friendNick: 'Alex',
+      matches: [],
+      payments: [
+        { betId: 'b1', fromUserId: 'me', toUserId: 'friend-1', amount: 20, paymentStatus: 'paid' },
+        { betId: 'b2', fromUserId: 'friend-1', toUserId: 'me', amount: 40, paymentStatus: 'paid' },
+      ],
+    })
+    const { result } = renderHook(() => useRivalry('friend-1'))
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    expect(result.current.paymentSummary.pendingAmount).toBe(0)
+  })
+
+  it('paymentSummary should set pendingStatus to clear when no outstanding debt', async () => {
+    ;(fetchRivalryData as jest.Mock).mockResolvedValueOnce({
+      friendNick: 'Alex',
+      matches: [],
+      payments: [
+        { betId: 'b1', fromUserId: 'me', toUserId: 'friend-1', amount: 20, paymentStatus: 'paid' },
+      ],
+    })
+    const { result } = renderHook(() => useRivalry('friend-1'))
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    expect(result.current.paymentSummary.pendingStatus).toBe('clear')
+  })
+
+  it('paymentSummary should count paid totals independently for both directions', async () => {
+    ;(fetchRivalryData as jest.Mock).mockResolvedValueOnce({
+      friendNick: 'Alex',
+      matches: [],
+      payments: [
+        { betId: 'b1', fromUserId: 'me', toUserId: 'friend-1', amount: 10, paymentStatus: 'paid' },
+        { betId: 'b2', fromUserId: 'me', toUserId: 'friend-1', amount: 15, paymentStatus: 'paid' },
+        { betId: 'b3', fromUserId: 'friend-1', toUserId: 'me', amount: 25, paymentStatus: 'paid' },
+      ],
+    })
+    const { result } = renderHook(() => useRivalry('friend-1'))
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    expect(result.current.paymentSummary.totalPaidByMe).toBe(25)
+    expect(result.current.paymentSummary.totalPaidByRival).toBe(25)
   })
 })

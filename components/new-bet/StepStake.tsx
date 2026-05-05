@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native'
 import type { NewBetHandlers, NewBetState } from '../../hooks/useNewBet'
 import { StakeCustomRows } from './stake/StakeCustomRows'
@@ -15,6 +15,8 @@ import { stepStakeStyles as styles } from './stake/stepStake.styles'
 type Props = { state: NewBetState; handlers: NewBetHandlers }
 
 export function StepStake({ state, handlers }: Props) {
+  const [stakeTouched, setStakeTouched] = useState(false)
+  const [submitAttempted, setSubmitAttempted] = useState(false)
   const {
     selectedGame,
     selectedFormat,
@@ -24,7 +26,13 @@ export function StepStake({ state, handlers }: Props) {
     currentUser,
     participants,
     loading,
+    betsError,
   } = state
+  const isStakeAmountValid = Number.isFinite(stakeAmount) && stakeAmount > 0
+  const showStakeValidation = stakeMode === 'equal' && !isStakeAmountValid && (stakeTouched || submitAttempted)
+  const stakeValidationError = showStakeValidation ? 'Stawka musi być większa niż 0 PLN' : null
+  const canSubmit = participants.length > 0 && !loading && (stakeMode !== 'equal' || isStakeAmountValid)
+  const canPressSubmit = participants.length > 0 && !loading
 
   const totalPlayers = participants.length + 1
   const myCustomStake = Number(customStakes[currentUser?.id ?? ''] ?? 0)
@@ -46,7 +54,13 @@ export function StepStake({ state, handlers }: Props) {
         <ScrollView style={{ flex: 1 }} bounces showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16, paddingBottom: 100 }}>
           <StakeModePicker stakeMode={stakeMode} onChange={handlers.setStakeMode} />
           {stakeMode === 'equal' && (
-            <StakeEqualRow amount={stakeAmount} onChange={handlers.setStakeAmount} totalPlayers={totalPlayers} />
+            <StakeEqualRow
+              amount={stakeAmount}
+              onChange={handlers.setStakeAmount}
+              onBlur={() => setStakeTouched(true)}
+              totalPlayers={totalPlayers}
+              errorMessage={stakeValidationError}
+            />
           )}
           {stakeMode === 'custom' && (
             <StakeCustomRows currentUser={currentUser} participants={participants} customStakes={customStakes} onChange={patchCustom} />
@@ -70,7 +84,15 @@ export function StepStake({ state, handlers }: Props) {
         </ScrollView>
       </KeyboardAvoidingView>
 
-      <StepStakeFooter participants={participants} loading={loading} handlers={handlers} />
+      <StepStakeFooter
+        participants={participants}
+        loading={loading}
+        canSubmit={canSubmit}
+        canPressSubmit={canPressSubmit}
+        errorMessage={stakeValidationError ?? betsError}
+        onSubmitAttempt={() => setSubmitAttempted(true)}
+        handlers={handlers}
+      />
     </View>
   )
 }

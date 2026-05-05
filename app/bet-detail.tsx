@@ -39,6 +39,8 @@ export default function BetDetailScreen() {
     accepting,
     rejecting,
     markingPaid,
+    confirmingPayment,
+    rejectingPayment,
     reminding,
     submitResult,
     confirmResult,
@@ -46,6 +48,8 @@ export default function BetDetailScreen() {
     acceptBet,
     rejectBet,
     markPaid,
+    confirmPayment,
+    rejectPayment,
     sendReminder,
   } = useBetDetail(betId);
 
@@ -96,10 +100,10 @@ export default function BetDetailScreen() {
       ? me.stakeAmount + opponent.stakeAmount
       : null;
   const myDebt =
-    settlements.find((s) => s.debtorId === currentUserId && !s.paid) ?? null;
+    settlements.find((s) => s.debtorId === currentUserId && s.paymentStatus !== "paid") ?? null;
   const myCredit =
-    settlements.find((s) => s.creditorId === currentUserId && !s.paid) ?? null;
-  const allPaid = settlements.length > 0 && settlements.every((s) => s.paid);
+    settlements.find((s) => s.creditorId === currentUserId && s.paymentStatus !== "paid") ?? null;
+  const allPaid = settlements.length > 0 && settlements.every((s) => s.paymentStatus === "paid");
   const badge = getStatusBadge(status);
 
   return (
@@ -138,6 +142,8 @@ export default function BetDetailScreen() {
         disputing={disputing}
         resolving={resolving}
         markingPaid={markingPaid}
+        confirmingPayment={confirmingPayment}
+        rejectingPayment={rejectingPayment}
         reminding={reminding}
         myDebt={myDebt}
         myCredit={myCredit}
@@ -148,6 +154,8 @@ export default function BetDetailScreen() {
         onConfirm={() => void confirmResult()}
         onDispute={() => void disputeResult()}
         onMarkPaid={markPaid}
+        onConfirmPayment={confirmPayment}
+        onRejectPayment={rejectPayment}
         onRemind={sendReminder}
         onOpenScoreModal={() => setScoreModalOpen(true)}
         paddingBottom={insets.bottom + 12}

@@ -15,6 +15,13 @@ export type RivalryMatchesListProps = {
   chips: string[]
   selectedDiscipline: string | null
   onSelectDiscipline: (d: string | null) => void
+  paymentSummary: {
+    totalPaidByMe: number
+    totalPaidByRival: number
+    pendingAmount: number
+    pendingStatus: 'unpaid' | 'pending_confirmation' | 'clear'
+    settledBetsCount: number
+  }
 }
 
 export function RivalryMatchesList({
@@ -26,6 +33,7 @@ export function RivalryMatchesList({
   chips,
   selectedDiscipline,
   onSelectDiscipline,
+  paymentSummary,
 }: RivalryMatchesListProps) {
   return (
     <FlatList
@@ -57,6 +65,25 @@ export function RivalryMatchesList({
             selected={selectedDiscipline}
             onSelect={onSelectDiscipline}
           />
+          <Text style={styles.sectionLabel}>ROZLICZENIA</Text>
+          <View style={styles.settlementCard}>
+            <Text style={styles.settlementText}>Ty zapłaciłeś {friendNick}</Text>
+            <Text style={styles.settlementValue}>
+              łącznie: {paymentSummary.totalPaidByMe} PLN ({paymentSummary.settledBetsCount} zakładów) ✅
+            </Text>
+            <Text style={[styles.settlementText, { marginTop: 10 }]}>{friendNick} zapłacił Tobie</Text>
+            <Text style={styles.settlementValue}>łącznie: {paymentSummary.totalPaidByRival} PLN</Text>
+            <Text style={[styles.settlementText, { marginTop: 10 }]}>
+              Aktualnie nierozliczone: {paymentSummary.pendingAmount} PLN
+            </Text>
+            <Text style={styles.settlementStatus}>
+              {paymentSummary.pendingStatus === 'pending_confirmation'
+                ? '⏳ Oczekuje na potwierdzenie'
+                : paymentSummary.pendingStatus === 'unpaid'
+                  ? 'Do zapłaty'
+                  : 'Brak zaległości ✅'}
+            </Text>
+          </View>
           <Text style={styles.sectionLabel}>OSTATNIE MECZE</Text>
         </>
       }

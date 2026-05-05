@@ -70,7 +70,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
       .eq('user_id', userId),
     supabase
       .from('settlements')
-      .select('id, amount, paid, debtor_id, creditor_id, bet_id')
+      .select('id, amount, paid, payment_status, debtor_id, creditor_id, bet_id')
       .or(`debtor_id.eq.${userId},creditor_id.eq.${userId}`),
   ])
   if (profileRes.error) throw profileRes.error
@@ -83,12 +83,15 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
     id: string
     amount: number
     paid: boolean
+    payment_status: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed' | null
     debtor_id: string
     creditor_id: string
     bet_id: string
   }[]
 
-  const balance = settlements.reduce((acc, s) => {
+  const activeSettlements = settlements.filter(s => (s.payment_status ?? (s.paid ? 'paid' : 'unpaid')) !== 'paid')
+
+  const balance = activeSettlements.reduce((acc, s) => {
     if (s.creditor_id === userId) return acc + s.amount
     if (s.debtor_id === userId) return acc - s.amount
     return acc
@@ -173,13 +176,13 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
   }
 
   const completedIds = new Set(completed.map(b => b.id))
-  const wins = settlements.filter(s => s.creditor_id === userId && completedIds.has(s.bet_id)).length
+  const wins = activeSettlements.filter(s => s.creditor_id === userId && completedIds.has(s.bet_id)).length
   const totalMatches = completedIds.size
   const losses = Math.max(0, totalMatches - wins)
   const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0
 
   const recentResults: (RecentResult & { timeLabel: string })[] = completed.slice(0, 3).map(b => {
-    const s = settlements.find(s => s.bet_id === b.id)
+    const s = activeSettlements.find(s => s.bet_id === b.id)
     const profit = s ? (s.creditor_id === userId ? s.amount : -s.amount) : 0
     return {
       id: b.id,

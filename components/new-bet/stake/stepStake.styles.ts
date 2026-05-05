@@ -137,4 +137,12 @@ export const stepStakeStyles = StyleSheet.create({
   submitMain: { color: Colors.white, fontSize: 15, fontWeight: '700' },
   submitMainDisabled: { color: Colors.textMuted },
   submitSub: { color: rgbaFromHex(Colors.text, 0.6), fontSize: 11 },
+  footerError: {
+    marginTop: 8,
+    marginBottom: 8,
+    color: '#ff6b6b',
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
 })

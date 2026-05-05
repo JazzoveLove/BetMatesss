@@ -2,7 +2,7 @@
 
 import { supabase } from '../../lib/supabase'
 import { mapBetRowsToRivalryMatchItems } from './mapRivalryItems'
-import type { RivalryData } from './rivalry.types'
+import type { RivalryData, RivalryPaymentRow } from './rivalry.types'
 
 type FriendRow = { nick: string }
 
@@ -31,6 +31,7 @@ type SettlementRow = {
   debtor_id: string
   creditor_id: string
   amount: number
+  payment_status?: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed' | null
 }
 
 type ParticipantRow = {
@@ -85,13 +86,26 @@ export async function fetchRivalryData(
     : oneOnOneRivalries
 
   if (filteredByTemplate.length === 0) {
-    return { friendNick, matches: [] }
+    const { data: pairSettlements } = await supabase
+      .from('settlements')
+      .select('bet_id, debtor_id, creditor_id, amount, payment_status')
+      .or(`and(debtor_id.eq.${userId},creditor_id.eq.${friendId}),and(debtor_id.eq.${friendId},creditor_id.eq.${userId})`)
+      .returns<SettlementRow[]>()
+
+    const payments: RivalryPaymentRow[] = (pairSettlements ?? []).map(row => ({
+      betId: row.bet_id,
+      fromUserId: row.debtor_id,
+      toUserId: row.creditor_id,
+      amount: Number(row.amount) || 0,
+      paymentStatus: row.payment_status ?? 'unpaid',
+    }))
+    return { friendNick, matches: [], payments }
   }
 
   const rivalryById = new Map(filteredByTemplate.map(r => [r.id, r]))
   const rivalryIds = filteredByTemplate.map(r => r.id)
 
-  const [{ data: bets, error: betsError }, { data: results, error: resultsError }, { data: settlements, error: settlementsError }, { data: betParticipants, error: participantsError }] =
+  const [{ data: bets, error: betsError }, { data: results, error: resultsError }, { data: settlements, error: settlementsError }, { data: betParticipants, error: participantsError }, { data: pairSettlements, error: pairSettlementsError }] =
     await Promise.all([
       supabase
         .from('bets')
@@ -107,21 +121,27 @@ export async function fetchRivalryData(
         .returns<ResultRow[]>(),
       supabase
         .from('settlements')
-        .select('bet_id, debtor_id, creditor_id, amount')
+        .select('bet_id, debtor_id, creditor_id, amount, payment_status')
         .returns<SettlementRow[]>(),
       supabase
         .from('bet_participants')
         .select('bet_id, user_id, stake_amount')
         .eq('user_id', userId)
         .returns<ParticipantRow[]>(),
+      supabase
+        .from('settlements')
+        .select('bet_id, debtor_id, creditor_id, amount, payment_status')
+        .or(`and(debtor_id.eq.${userId},creditor_id.eq.${friendId}),and(debtor_id.eq.${friendId},creditor_id.eq.${userId})`)
+        .returns<SettlementRow[]>(),
     ])
 
-  if (betsError || resultsError || settlementsError || participantsError) {
+  if (betsError || resultsError || settlementsError || participantsError || pairSettlementsError) {
     throw new RivalryFetchError(
       betsError?.message ??
         resultsError?.message ??
         settlementsError?.message ??
         participantsError?.message ??
+        pairSettlementsError?.message ??
         'Nie udało się pobrać rywalizacji.',
       friendNick,
     )
@@ -159,5 +179,13 @@ export async function fetchRivalryData(
     userId,
   )
 
-  return { friendNick, matches }
+  const payments: RivalryPaymentRow[] = (pairSettlements ?? []).map(row => ({
+    betId: row.bet_id,
+    fromUserId: row.debtor_id,
+    toUserId: row.creditor_id,
+    amount: Number(row.amount) || 0,
+    paymentStatus: row.payment_status ?? 'unpaid',
+  }))
+
+  return { friendNick, matches, payments }
 }

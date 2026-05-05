@@ -18,6 +18,7 @@ export type RivalryDisciplineStats = {
 export type RivalryData = {
   friendNick: string
   matches: RivalryMatchItem[]
+  payments: RivalryPaymentRow[]
 }
 
 export type RivalryTotals = {
@@ -25,4 +26,12 @@ export type RivalryTotals = {
   losses: number
   winRatePct: number
   balance: number
+}
+
+export type RivalryPaymentRow = {
+  betId: string
+  fromUserId: string
+  toUserId: string
+  amount: number
+  paymentStatus: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed'
 }

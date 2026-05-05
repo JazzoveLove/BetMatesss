@@ -1,4 +1,4 @@
-import { calculateSettlements, settlementDraftsFromPairBalances } from '../../utils/settlements'
+import { calculateActiveBalance, calculateSettlements, confirmPayment, markAsPaid, rejectPayment, settlementDraftsFromPairBalances, type SettlementHandshake } from '../../utils/settlements'
 
 describe('calculateSettlements', () => {
   it('should return correct settlement when winner takes all with equal stakes', () => {
@@ -135,5 +135,48 @@ describe('settlementDraftsFromPairBalances', () => {
 
     // Assert
     expect(drafts).toEqual([{ debtorId: 'b', creditorId: 'a', amount: 10 }])
+  })
+})
+
+describe('payment handshake transitions', () => {
+  const baseSettlement: SettlementHandshake = {
+    id: 's1',
+    debtorId: 'u2',
+    creditorId: 'u1',
+    amount: 20,
+    paymentStatus: 'unpaid',
+  }
+
+  it('markAsPaid should change status to pending_confirmation', () => {
+    const result = markAsPaid(baseSettlement, 'u2')
+    expect(result.paymentStatus).toBe('pending_confirmation')
+  })
+
+  it('confirmPayment should change status to paid only for creditor', () => {
+    const pending = { ...baseSettlement, paymentStatus: 'pending_confirmation' as const }
+    const result = confirmPayment(pending, 'u1')
+    expect(result.paymentStatus).toBe('paid')
+  })
+
+  it('rejectPayment should change status to disputed', () => {
+    const pending = { ...baseSettlement, paymentStatus: 'pending_confirmation' as const }
+    const result = rejectPayment(pending, 'u1')
+    expect(result.paymentStatus).toBe('disputed')
+  })
+
+  it('debtor should not be able to call confirmPayment', () => {
+    const pending = { ...baseSettlement, paymentStatus: 'pending_confirmation' as const }
+    expect(() => confirmPayment(pending, 'u2')).toThrow('Tylko wierzyciel może potwierdzić płatność')
+  })
+
+  it('profile balance should ignore settlements with paid status', () => {
+    const settlements: SettlementHandshake[] = [
+      { ...baseSettlement, id: 's-unpaid', paymentStatus: 'unpaid' },
+      { ...baseSettlement, id: 's-pending', paymentStatus: 'pending_confirmation' },
+      { ...baseSettlement, id: 's-paid', paymentStatus: 'paid' },
+    ]
+
+    expect(calculateActiveBalance(settlements, 'u1')).toBe(40)
+    expect(calculateActiveBalance(settlements, 'u2')).toBe(-40)
   })
 })

@@ -68,6 +68,14 @@ export function useBets() {
   const createBet = useCallback(async (params: CreateBetParams) => {
     setError(null)
     try {
+      const normalizedStake =
+        params.stakeMode === 'equal'
+          ? Number(params.stakeAmount ?? params.globalStake)
+          : Number(params.globalStake)
+      if (params.stakeMode === 'equal' && (!Number.isFinite(normalizedStake) || normalizedStake <= 0)) {
+        throw new Error('Stawka musi być większa niż 0 PLN')
+      }
+
       const result = await BetsService.createBet(params)
       if ('error' in result) {
         setError(result.error)

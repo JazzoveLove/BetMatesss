@@ -13,14 +13,14 @@ export function useNewBet() {
   const route = useRoute<NewBetRoute>()
   const preselectedFriend = route.params?.preselectedFriend
   const { friends, nick, avatar } = useFriends()
-  const { bets, createBet, loading } = useBets()
+  const { bets, createBet, loading, error: betsError } = useBets()
   const st = useNewBetState(preselectedFriend)
   const derived = useNewBetDerived(st, friends, nick, avatar, bets)
   const handlers = useNewBetActions(st, derived, navigation, createBet)
   return {
     step: st.step,
     state: {
-      currentUser: st.currentUser, selectedGame: st.selectedGame, participants: st.participants, selectedFormat: st.selectedFormat, bestOfCount: st.bestOfCount, stakeMode: st.stakeMode, stakeAmount: st.stakeAmount, customStakes: st.customStakes, pokerMode: st.pokerMode, pokerStack: st.pokerStack, pokerRebuyStack: st.pokerRebuyStack, stakePerMatch: st.stakePerMatch, searchQuery: st.searchQuery, searchFocused: st.searchFocused, preselectedFriend: st.preselectedFriend, ...derived, loading,
+      currentUser: st.currentUser, selectedGame: st.selectedGame, participants: st.participants, selectedFormat: st.selectedFormat, bestOfCount: st.bestOfCount, stakeMode: st.stakeMode, stakeAmount: st.stakeAmount, customStakes: st.customStakes, pokerMode: st.pokerMode, pokerStack: st.pokerStack, pokerRebuyStack: st.pokerRebuyStack, stakePerMatch: st.stakePerMatch, searchQuery: st.searchQuery, searchFocused: st.searchFocused, preselectedFriend: st.preselectedFriend, ...derived, loading, betsError,
     } as NewBetState,
     handlers,
   }

@@ -13,6 +13,9 @@ export type SettlementListDbRow = {
   amount: number | string
   paid: boolean
   paid_at: string | null
+  payment_status: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed' | null
+  confirmed_by: string | null
+  confirmed_at: string | null
   debtor_id: string
   creditor_id: string
 }

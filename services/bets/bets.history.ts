@@ -42,7 +42,7 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
       .from('bet_participants')
       .select('bet_id, user_id, users ( nick )')
       .in('bet_id', betIds),
-    supabase.from('settlements').select('bet_id, debtor_id, creditor_id, amount').in('bet_id', betIds),
+    supabase.from('settlements').select('bet_id, debtor_id, creditor_id, amount, paid, payment_status').in('bet_id', betIds),
   ])
   if (partsRes.error) throw partsRes.error
   if (settlementsRes.error) throw settlementsRes.error
@@ -55,6 +55,8 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
     debtor_id: string
     creditor_id: string
     amount: number
+    paid?: boolean
+    payment_status?: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed' | null
   }[]
 
   const partsList = ((parts ?? []) as unknown as {
@@ -83,7 +85,9 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
     if (opponent?.user_id) betOpponentId.set(bet.id, opponent.user_id)
     const opponentNick = joinNick ?? 'Przeciwnik'
 
-    const betSettle = settlementsList.filter(s => s.bet_id === bet.id)
+    const betSettle = settlementsList.filter(
+      s => s.bet_id === bet.id && (s.payment_status ?? (s.paid ? 'paid' : 'unpaid')) !== 'paid',
+    )
     let profit = 0
     for (const s of betSettle) {
       if (s.creditor_id === userId) profit += Number(s.amount)

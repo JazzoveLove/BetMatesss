@@ -41,6 +41,7 @@ export type NewBetState = {
   totalPlayers: number
   sectionData: { title: string; data: GameTemplate[]; show: boolean }[]
   loading: boolean
+  betsError: string | null
 }
 
 export type NewBetHandlers = {

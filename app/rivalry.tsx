@@ -19,7 +19,7 @@ export default function RivalryScreen() {
   const route = useRoute<RivalryRouteProp>()
   const insets = useSafeAreaInsets()
   const { friendId } = route.params
-  const { loading, refreshing, matches, friendNick, onRefresh } = useRivalry(friendId)
+  const { loading, refreshing, matches, friendNick, paymentSummary, onRefresh } = useRivalry(friendId)
   const { openNewBet, handleRematch } = useRivalryScreenActions({
     friendId,
     friendNick,
@@ -78,6 +78,7 @@ export default function RivalryScreen() {
         chips={chips}
         selectedDiscipline={activeGameId}
         onSelectDiscipline={setActiveGameId}
+        paymentSummary={paymentSummary}
       />
       <RivalryBottomActions
         paddingBottom={insets.bottom + 16}

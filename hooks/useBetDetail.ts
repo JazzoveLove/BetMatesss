@@ -17,7 +17,18 @@ export function useBetDetail(betId: string) {
     data.setSettlements,
   )
 
-  const { resolving, confirming, disputing, accepting, rejecting, completingSession, markingPaid, reminding } =
+  const {
+    resolving,
+    confirming,
+    disputing,
+    accepting,
+    rejecting,
+    completingSession,
+    markingPaid,
+    confirmingPayment,
+    rejectingPayment,
+    reminding,
+  } =
     data.actionLoading
 
   return {
@@ -31,12 +42,16 @@ export function useBetDetail(betId: string) {
     confirming,
     disputing,
     markingPaid,
+    confirmingPayment,
+    rejectingPayment,
     reminding,
     pendingResult: data.pendingResult,
     submitResult: actions.submitResult,
     confirmResult: actions.confirmResult,
     disputeResult: actions.disputeResult,
     markPaid: actions.markPaid,
+    confirmPayment: actions.confirmPayment,
+    rejectPayment: actions.rejectPayment,
     sendReminder: actions.sendReminder,
     acceptBet: actions.acceptBet,
     rejectBet: actions.rejectBet,

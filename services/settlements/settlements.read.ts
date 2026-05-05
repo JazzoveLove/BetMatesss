@@ -9,7 +9,7 @@ import type { SettlementListDbRow } from './settlements.types'
 export async function getSettlements(betId: string): Promise<Settlement[]> {
   const { data: rows, error } = await supabase
     .from('settlements')
-    .select('id, amount, paid, paid_at, debtor_id, creditor_id')
+    .select('id, amount, paid, paid_at, payment_status, confirmed_by, confirmed_at, debtor_id, creditor_id')
     .eq('bet_id', betId)
 
   if (error) {
@@ -38,8 +38,11 @@ export async function getSettlements(betId: string): Promise<Settlement[]> {
         creditorId: s.creditor_id,
         creditorNick: nickById[s.creditor_id] ?? 'Nieznany',
         amount: Number.isFinite(amount) ? amount : 0,
-        paid: s.paid,
+        paid: s.payment_status === 'paid' || s.paid,
         paidAt: s.paid_at ?? undefined,
+        paymentStatus: s.payment_status ?? (s.paid ? 'paid' : 'unpaid'),
+        confirmedBy: s.confirmed_by ?? undefined,
+        confirmedAt: s.confirmed_at ?? undefined,
       }
     })
     .filter(s => s.amount > 0)

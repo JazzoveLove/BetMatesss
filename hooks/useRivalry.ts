@@ -2,8 +2,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useAuthContext } from '../contexts/AuthContext'
 import { fetchRivalryData, RivalryFetchError } from '../services/rivalry/loadRivalryMatches'
 import { buildRivalryTotalsFromMatches, buildStatsByDiscipline } from '../services/rivalry/mapRivalryItems'
-import type { RivalryDisciplineStats, RivalryMatchItem } from '../services/rivalry/rivalry.types'
+import type { RivalryDisciplineStats, RivalryMatchItem, RivalryPaymentRow } from '../services/rivalry/rivalry.types'
 import { error as logError } from '../utils/logger'
+
+type RivalryPaymentSummary = {
+  totalPaidByMe: number
+  totalPaidByRival: number
+  pendingAmount: number
+  pendingStatus: 'unpaid' | 'pending_confirmation' | 'clear'
+  settledBetsCount: number
+}
 
 type UseRivalryResult = {
   loading: boolean
@@ -17,6 +25,7 @@ type UseRivalryResult = {
   filteredMatches: RivalryMatchItem[]
   statsByDiscipline: RivalryDisciplineStats[]
   totals: { wins: number; losses: number; winRatePct: number; balance: number }
+  paymentSummary: RivalryPaymentSummary
   onRefresh: () => Promise<void>
 }
 
@@ -27,6 +36,7 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
   const [error, setError] = useState<string | null>(null)
   const [friendNick, setFriendNick] = useState('Znajomy')
   const [matches, setMatches] = useState<RivalryMatchItem[]>([])
+  const [payments, setPayments] = useState<RivalryPaymentRow[]>([])
   const [selectedDiscipline, setSelectedDiscipline] = useState<string | null>(gameTemplate ?? null)
 
   useEffect(() => {
@@ -37,18 +47,21 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
     setError(null)
     if (!userId) {
       setMatches([])
+      setPayments([])
       setFriendNick('Znajomy')
       return
     }
     try {
       const data = await fetchRivalryData(userId, friendId, gameTemplate ?? null)
       setMatches(data.matches)
+      setPayments(data.payments)
       setFriendNick(data.friendNick)
     } catch (e) {
       logError('[useRivalry] load', e)
       if (e instanceof RivalryFetchError) setFriendNick(e.friendNick)
       setError(e instanceof Error ? e.message : 'Nie udało się pobrać rywalizacji.')
       setMatches([])
+      setPayments([])
     }
   }, [friendId, gameTemplate, userId])
 
@@ -79,6 +92,43 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
 
   const statsByDiscipline = useMemo(() => buildStatsByDiscipline(matches), [matches])
   const totals = useMemo(() => buildRivalryTotalsFromMatches(filteredMatches), [filteredMatches])
+  const paymentSummary = useMemo<RivalryPaymentSummary>(() => {
+    if (!userId) {
+      return {
+        totalPaidByMe: 0,
+        totalPaidByRival: 0,
+        pendingAmount: 0,
+        pendingStatus: 'clear',
+        settledBetsCount: 0,
+      }
+    }
+
+    const paidRows = payments.filter(p => p.paymentStatus === 'paid')
+    const totalPaidByMe = paidRows
+      .filter(p => p.fromUserId === userId)
+      .reduce((sum, p) => sum + p.amount, 0)
+    const totalPaidByRival = paidRows
+      .filter(p => p.fromUserId === friendId)
+      .reduce((sum, p) => sum + p.amount, 0)
+    const pendingRows = payments.filter(
+      p => p.paymentStatus === 'unpaid' || p.paymentStatus === 'pending_confirmation',
+    )
+    const pendingAmount = pendingRows.reduce((sum, p) => sum + p.amount, 0)
+    const pendingStatus = pendingRows.some(p => p.paymentStatus === 'pending_confirmation')
+      ? 'pending_confirmation'
+      : pendingRows.some(p => p.paymentStatus === 'unpaid')
+        ? 'unpaid'
+        : 'clear'
+    const settledBetsCount = new Set(paidRows.map(p => p.betId)).size
+
+    return {
+      totalPaidByMe,
+      totalPaidByRival,
+      pendingAmount,
+      pendingStatus,
+      settledBetsCount,
+    }
+  }, [friendId, payments, userId])
 
   return {
     loading,
@@ -92,6 +142,7 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
     filteredMatches,
     statsByDiscipline,
     totals,
+    paymentSummary,
     onRefresh,
   }
 }

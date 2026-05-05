@@ -3,7 +3,9 @@ import {
   createNavigationContainerRef,
   type ParamListBase,
 } from '@react-navigation/native'
+import { useEffect } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import * as Notifications from 'expo-notifications'
 import { TamaguiProvider } from 'tamagui'
 import { ErrorBoundary } from 'react-error-boundary'
 import { AuthProvider, useAuthContext } from './contexts/AuthContext'
@@ -17,6 +19,17 @@ import tamaguiConfig from './tamagui.config'
 import { AppErrorFallback } from './components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
 import { useDeepLinks } from './hooks/useDeepLinks'
+import { registerAndSyncPushToken } from './lib/notifications'
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+})
 
 const navigationRef = createNavigationContainerRef<ParamListBase>()
 
@@ -29,6 +42,23 @@ function AppContent() {
     appState,
     navigationRef,
   })
+
+  useEffect(() => {
+    if (appState !== 'main' || !userId) return
+    void registerAndSyncPushToken(userId)
+  }, [appState, userId])
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
+      const data = response.notification.request.content.data as { betId?: string }
+      if (!data.betId || !navigationRef.isReady()) return
+      ;(navigationRef as { navigate: (a: string, b?: object) => void }).navigate('BetDetail', {
+        betId: data.betId,
+      })
+    })
+
+    return () => subscription.remove()
+  }, [])
 
   if (appState === 'loading') return null
   if (appState === 'auth') return <LoginScreen />

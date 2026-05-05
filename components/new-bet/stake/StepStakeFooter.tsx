@@ -7,17 +7,38 @@ import { stepStakeStyles as styles } from './stepStake.styles'
 export type StepStakeFooterProps = {
   participants: UserProfile[]
   loading: boolean
+  canSubmit: boolean
+  canPressSubmit: boolean
+  errorMessage?: string | null
+  onSubmitAttempt?: () => void
   handlers: Pick<NewBetHandlers, 'handleSubmit'>
 }
 
-export function StepStakeFooter({ participants, loading, handlers }: StepStakeFooterProps) {
-  const canSubmit = participants.length > 0 && !loading
+export function StepStakeFooter({
+  participants,
+  loading,
+  canSubmit,
+  canPressSubmit,
+  errorMessage,
+  onSubmitAttempt,
+  handlers,
+}: StepStakeFooterProps) {
   const firstNick = participants[0]?.nick ?? 'znajomego'
 
   return (
     <View style={[styles.footer, { paddingBottom: 6 }]}>
       <View style={styles.footerFade} />
-      <Pressable onPress={() => void handlers.handleSubmit()} disabled={!canSubmit} style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}>
+      <Pressable
+        onPress={() => {
+          if (!canSubmit) {
+            onSubmitAttempt?.()
+            return
+          }
+          void handlers.handleSubmit()
+        }}
+        disabled={!canPressSubmit}
+        style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}
+      >
         {loading ? (
           <ActivityIndicator color={Colors.white} />
         ) : (
@@ -37,6 +58,7 @@ export function StepStakeFooter({ participants, loading, handlers }: StepStakeFo
           </>
         )}
       </Pressable>
+      {!!errorMessage && <Text style={styles.footerError}>{errorMessage}</Text>}
     </View>
   )
 }

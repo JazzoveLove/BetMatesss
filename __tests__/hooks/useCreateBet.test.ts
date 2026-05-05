@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react-native'
+import { Alert } from 'react-native'
 import type { UseNewBetStateReturn } from '../../hooks/useNewBetState'
 import { useNewBetActions } from '../../hooks/useNewBetActions'
 
@@ -112,6 +113,25 @@ describe('useCreateBet (currently covered via useNewBetActions)', () => {
 
     // Assert
     expect(createBet).not.toHaveBeenCalled()
+  })
+
+  it('should block submit and show stake validation error for non-positive equal stake', async () => {
+    // Arrange
+    const state = { ...buildState(), stakeAmount: 0, stakeMode: 'equal' as const }
+    const createBet = jest.fn(async () => ({}))
+    const alertSpy = jest.spyOn(Alert, 'alert')
+    const { result } = renderHook(() =>
+      useNewBetActions(state as never, {} as never, navigation, createBet),
+    )
+
+    // Act
+    await act(async () => {
+      await result.current.handleSubmit()
+    })
+
+    // Assert
+    expect(createBet).not.toHaveBeenCalled()
+    expect(alertSpy).toHaveBeenCalledWith('Błąd', 'Stawka musi być większa niż 0 PLN')
   })
 
   it('should reset wizard state to initial defaults', () => {

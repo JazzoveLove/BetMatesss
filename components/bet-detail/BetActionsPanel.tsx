@@ -18,6 +18,8 @@ export type BetActionsPanelProps = {
   disputing: boolean;
   resolving: boolean;
   markingPaid: string | null;
+  confirmingPayment: string | null;
+  rejectingPayment: string | null;
   reminding: string | null;
   myDebt: Settlement | null;
   myCredit: Settlement | null;
@@ -28,6 +30,8 @@ export type BetActionsPanelProps = {
   onConfirm: () => void;
   onDispute: () => void;
   onMarkPaid: (id: string, debtorId: string) => void;
+  onConfirmPayment: (id: string, creditorId: string) => void;
+  onRejectPayment: (id: string, creditorId: string) => void;
   onRemind: (settlement: Settlement) => void;
   onOpenScoreModal: () => void;
   paddingBottom: number;
@@ -42,6 +46,8 @@ export function BetActionsPanel({
   disputing,
   resolving: _resolving,
   markingPaid,
+  confirmingPayment,
+  rejectingPayment,
   reminding,
   myDebt,
   myCredit,
@@ -52,6 +58,8 @@ export function BetActionsPanel({
   onConfirm,
   onDispute,
   onMarkPaid,
+  onConfirmPayment,
+  onRejectPayment,
   onRemind,
   onOpenScoreModal,
   paddingBottom,
@@ -107,7 +115,7 @@ export function BetActionsPanel({
 
       {status === "completed" && !allPaid && (
         <View style={styles.gap8}>
-          {myDebt ? (
+          {myDebt && myDebt.paymentStatus === "unpaid" ? (
             <Pressable
               style={styles.primaryAction}
               onPress={() => void onMarkPaid(myDebt.id, myDebt.debtorId)}
@@ -119,7 +127,45 @@ export function BetActionsPanel({
               )}
             </Pressable>
           ) : null}
-          {myCredit ? (
+
+          {myDebt && myDebt.paymentStatus === "pending_confirmation" ? (
+            <View style={styles.secondaryAction}>
+              <Text style={styles.muted}>Oczekuje na potwierdzenie...</Text>
+            </View>
+          ) : null}
+
+          {myDebt && myDebt.paymentStatus === "paid" ? (
+            <View style={styles.secondaryAction}>
+              <Text style={styles.allPaidText}>Zapłacono ✅</Text>
+            </View>
+          ) : null}
+
+          {myCredit && myCredit.paymentStatus === "pending_confirmation" ? (
+            <View style={styles.gap8}>
+              <Pressable
+                style={[styles.primaryAction, { backgroundColor: Colors.green }]}
+                onPress={() => void onConfirmPayment(myCredit.id, myCredit.creditorId)}
+              >
+                {confirmingPayment === myCredit.id ? (
+                  <ActivityIndicator color={Colors.white} />
+                ) : (
+                  <Text style={styles.primaryActionText}>Potwierdź otrzymanie ✓</Text>
+                )}
+              </Pressable>
+              <Pressable
+                style={styles.secondaryAction}
+                onPress={() => void onRejectPayment(myCredit.id, myCredit.creditorId)}
+              >
+                {rejectingPayment === myCredit.id ? (
+                  <ActivityIndicator color={Colors.red} />
+                ) : (
+                  <Text style={styles.rejectText}>Odrzuć</Text>
+                )}
+              </Pressable>
+            </View>
+          ) : null}
+
+          {myCredit && myCredit.paymentStatus === "unpaid" ? (
             <Pressable
               style={styles.secondaryAction}
               onPress={() => void onRemind(myCredit)}
@@ -130,6 +176,18 @@ export function BetActionsPanel({
                 <Text style={styles.muted}>Przypomnij {opponent.nick} →</Text>
               )}
             </Pressable>
+          ) : null}
+
+          {myCredit && myCredit.paymentStatus === "paid" ? (
+            <View style={styles.secondaryAction}>
+              <Text style={styles.allPaidText}>Otrzymano ✅</Text>
+            </View>
+          ) : null}
+
+          {myCredit && myCredit.paymentStatus === "disputed" ? (
+            <View style={styles.secondaryAction}>
+              <Text style={styles.rejectText}>Spór 🔴</Text>
+            </View>
           ) : null}
         </View>
       )}

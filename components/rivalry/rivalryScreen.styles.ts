@@ -30,6 +30,30 @@ export const rivalryScreenStyles = StyleSheet.create({
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
+  settlementCard: {
+    marginHorizontal: 16,
+    backgroundColor: Colors.card,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.borderSoft,
+    padding: 14,
+  },
+  settlementText: {
+    color: Colors.textMuted,
+    fontSize: 13,
+  },
+  settlementValue: {
+    color: Colors.text,
+    fontSize: 14,
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  settlementStatus: {
+    marginTop: 6,
+    color: Colors.accentLight,
+    fontSize: 13,
+    fontWeight: '600',
+  },
   emptyRow: { paddingHorizontal: 16, paddingVertical: 12 },
   emptyText: { color: Colors.textMuted, fontSize: 13 },
   bottomActions: {

@@ -25,6 +25,16 @@ export type ParticipantStake = {
   stakeAmount: number
 }
 
+export type PaymentStatus = 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed'
+
+export type SettlementHandshake = {
+  id: string
+  debtorId: string
+  creditorId: string
+  amount: number
+  paymentStatus: PaymentStatus
+}
+
 /**
  * Przegrani (wszyscy oprócz zwycięzcy) z stake_amount > 0 płacą zwycięzcy swoją stawkę.
  * Przy stake_mode === 'none' brak rozliczeń pieniężnych.
@@ -59,4 +69,34 @@ export function settlementDraftsFromPairBalances(
   if (balA === 0) return []
   if (balA > 0) return [{ debtorId: b, creditorId: a, amount: balA }]
   return [{ debtorId: a, creditorId: b, amount: -balA }]
+}
+
+export function markAsPaid(settlement: SettlementHandshake, actorUserId: string): SettlementHandshake {
+  if (settlement.debtorId !== actorUserId) throw new Error('Tylko dłużnik może zgłosić zapłatę')
+  if (settlement.paymentStatus !== 'unpaid') throw new Error('Można zgłosić zapłatę tylko dla nieopłaconego długu')
+  return { ...settlement, paymentStatus: 'pending_confirmation' }
+}
+
+export function confirmPayment(settlement: SettlementHandshake, actorUserId: string): SettlementHandshake {
+  if (settlement.creditorId !== actorUserId) throw new Error('Tylko wierzyciel może potwierdzić płatność')
+  if (settlement.paymentStatus !== 'pending_confirmation') throw new Error('Płatność nie oczekuje na potwierdzenie')
+  return { ...settlement, paymentStatus: 'paid' }
+}
+
+export function rejectPayment(settlement: SettlementHandshake, actorUserId: string): SettlementHandshake {
+  if (settlement.creditorId !== actorUserId) throw new Error('Tylko wierzyciel może odrzucić płatność')
+  if (settlement.paymentStatus !== 'pending_confirmation') throw new Error('Płatność nie oczekuje na potwierdzenie')
+  return { ...settlement, paymentStatus: 'disputed' }
+}
+
+export function calculateActiveBalance(
+  settlements: SettlementHandshake[],
+  userId: string,
+): number {
+  return settlements.reduce((acc, s) => {
+    if (s.paymentStatus === 'paid') return acc
+    if (s.creditorId === userId) return acc + s.amount
+    if (s.debtorId === userId) return acc - s.amount
+    return acc
+  }, 0)
 }

@@ -58,7 +58,7 @@ export async function getDisciplineStatsForUser(userId: string): Promise<Discipl
   const betIds = completed.map(b => b.id)
   const { data: settlements, error: settlementsErr } = await supabase
     .from('settlements')
-    .select('bet_id, debtor_id, creditor_id')
+    .select('bet_id, debtor_id, creditor_id, paid, payment_status')
     .in('bet_id', betIds)
   if (settlementsErr) throw settlementsErr
 
@@ -66,11 +66,13 @@ export async function getDisciplineStatsForUser(userId: string): Promise<Discipl
     bet_id: string
     debtor_id: string
     creditor_id: string
+    paid?: boolean
+    payment_status?: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed' | null
   }[]
 
   const byTemplate = new Map<string, { w: number; l: number }>()
   for (const bet of completed) {
-    const rel = settlementsList.filter(s => s.bet_id === bet.id)
+    const rel = settlementsList.filter(s => s.bet_id === bet.id && (s.payment_status ?? (s.paid ? 'paid' : 'unpaid')) !== 'paid')
     if (rel.length === 0) continue
     const won = rel.some(s => s.creditor_id === userId)
     const lost = rel.some(s => s.debtor_id === userId)
@@ -98,28 +100,31 @@ export async function getFriendsBalanceLeaderboard(userId: string): Promise<Frie
 
   const ids = friends.map(f => f.id)
   const [debtorRes, creditorRes] = await Promise.all([
-    supabase.from('settlements').select('id, amount, debtor_id, creditor_id').in('debtor_id', ids),
-    supabase.from('settlements').select('id, amount, debtor_id, creditor_id').in('creditor_id', ids),
+    supabase.from('settlements').select('id, amount, debtor_id, creditor_id, paid, payment_status').in('debtor_id', ids),
+    supabase.from('settlements').select('id, amount, debtor_id, creditor_id, paid, payment_status').in('creditor_id', ids),
   ])
   if (debtorRes.error) throw debtorRes.error
   if (creditorRes.error) throw creditorRes.error
 
   const seen = new Set<string>()
-  const rows: { amount: number; debtor_id: string; creditor_id: string }[] = []
+  const rows: { amount: number; debtor_id: string; creditor_id: string; paid?: boolean; payment_status?: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed' | null }[] = []
   for (const list of [debtorRes.data ?? [], creditorRes.data ?? []]) {
-    for (const r of list as { id: string; amount: number; debtor_id: string; creditor_id: string }[]) {
+    for (const r of list as { id: string; amount: number; debtor_id: string; creditor_id: string; paid?: boolean; payment_status?: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed' | null }[]) {
       if (seen.has(r.id)) continue
       seen.add(r.id)
       rows.push({
         amount: Number(r.amount),
         debtor_id: r.debtor_id,
         creditor_id: r.creditor_id,
+        paid: r.paid,
+        payment_status: r.payment_status,
       })
     }
   }
 
   const balanceById: Record<string, number> = Object.fromEntries(ids.map(i => [i, 0]))
   for (const s of rows) {
+    if ((s.payment_status ?? (s.paid ? 'paid' : 'unpaid')) === 'paid') continue
     if (ids.includes(s.creditor_id)) balanceById[s.creditor_id] += s.amount
     if (ids.includes(s.debtor_id)) balanceById[s.debtor_id] -= s.amount
   }

@@ -70,6 +70,12 @@ export function useNewBetActions(
 
   const handleSubmit = useCallback(async () => {
     if (!selectedGame || !selectedFormat || !currentUser) return
+    if (stakeMode === 'equal' && (!Number.isFinite(stakeAmount) || stakeAmount <= 0)) {
+      const stakeError = new Error('Stawka musi być większa niż 0 PLN')
+      error('[useNewBet] handleSubmit validation', stakeError)
+      Alert.alert('Błąd', stakeError.message)
+      return
+    }
     const allParticipants = [currentUser, ...participants]
     const participantRows = allParticipants.map(player => ({
       id: player.id,
@@ -101,7 +107,8 @@ export function useNewBetActions(
       navigation.navigate('Home')
     } catch (e) {
       error('[useNewBet] handleSubmit createBet', e)
-      Alert.alert('Błąd', 'Nie udało się utworzyć zakładu. Spróbuj ponownie.')
+      const message = e instanceof Error ? e.message : 'Nie udało się utworzyć zakładu. Spróbuj ponownie.'
+      Alert.alert('Błąd', message)
     }
   }, [
     bestOfCount,

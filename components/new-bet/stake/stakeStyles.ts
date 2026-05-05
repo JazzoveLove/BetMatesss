@@ -55,6 +55,13 @@ export const stakeStepStyles = StyleSheet.create({
   },
   equalSuffix: { color: Colors.textMuted, fontSize: 14 },
   poolAccent: { color: Colors.accentLight, fontSize: 14, fontWeight: '600' },
+  inlineError: {
+    width: '100%',
+    marginTop: 8,
+    color: '#ff6b6b',
+    fontSize: 12,
+    fontWeight: '600',
+  },
   customStakeRow: { marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 8 },
   customStakeLabel: { color: Colors.textMuted, fontSize: 14, flex: 1 },
   customStakeInput: {

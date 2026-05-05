@@ -61,6 +61,9 @@ export type Settlement = {
   amount: number
   paid: boolean
   paidAt?: string
+  paymentStatus?: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed'
+  confirmedBy?: string
+  confirmedAt?: string
 }
 
 export type BetDetail = {
