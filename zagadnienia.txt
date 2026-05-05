@@ -1,5 +1,15 @@
 1. co oznacza mutowalny
+2. Co to jest CI/CD 
 
+
+Rodzaje testów:
+1) Unit testy 
+2) Integracyjne
+3) E2E 
+4) Komponenty
 
 Do uwzględnienia:
 1. Dodać React Query 
+
+Poprawki:
+1. W ekranie Znajomi dodać myślnik żeby byl w przykładowym "dodaj znajomego" czyli ma być format xxxx-xxxx
