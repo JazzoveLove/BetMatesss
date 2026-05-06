@@ -60,7 +60,7 @@ export async function createSettlements(betId: string): Promise<{ error?: string
     return { error: betErr?.message ?? 'Nie znaleziono zakładu.' }
   }
 
-  const stakeMode = (bet as { stake_mode: StakeMode }).stake_mode
+  let stakeMode = (bet as { stake_mode: StakeMode }).stake_mode
   const betFormat = (bet as { format?: string }).format
   const stakePerMatch = Number((bet as { stake_per_match?: number | string }).stake_per_match ?? 0)
   log('[createSettlements] step 4 stake_mode', stakeMode)
@@ -101,8 +101,20 @@ export async function createSettlements(betId: string): Promise<{ error?: string
   }
 
   if (stakeMode === 'none') {
-    log('[createSettlements] step 4b stake_mode=none — no settlement rows')
-    return {}
+    // Last-line-of-defence: if any participant has a stake_amount > 0, the bet was meant to have money on it
+    const { data: checkPart } = await supabase
+      .from('bet_participants')
+      .select('stake_amount')
+      .eq('bet_id', betId)
+      .gt('stake_amount', 0)
+      .limit(1)
+    if (checkPart && checkPart.length > 0) {
+      log('[createSettlements] step 4b stake_mode=none but participants have stake_amount>0 — treating as equal')
+      stakeMode = 'equal'
+    } else {
+      log('[createSettlements] step 4b stake_mode=none — no settlement rows')
+      return {}
+    }
   }
 
   log('[createSettlements] step 5 fetch bet_participants (user_id, stake_amount)')

@@ -498,7 +498,7 @@ export function FriendsScreenContent({
             style={styles.codeInput}
             value={addCodeInput}
             onChangeText={onCodeChange}
-            placeholder="ABC-DEFGH"
+            placeholder="ABCD-EFGH"
             placeholderTextColor={Colors.textFaint}
             autoCapitalize="characters"
             autoCorrect={false}

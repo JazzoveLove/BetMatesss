@@ -52,7 +52,7 @@ export function useNewBetState(preselectedFriend: UserProfile | undefined): UseN
   const [participants, setParticipants] = useState<UserProfile[]>([])
   const [selectedFormat, setSelectedFormat] = useState<BetFormat | null>(null)
   const [bestOfCount, setBestOfCount] = useState<3 | 5 | 7>(3)
-  const [stakeMode, setStakeMode] = useState<StakeMode>('none')
+  const [stakeMode, setStakeMode] = useState<StakeMode>('equal')
   const [stakeAmount, setStakeAmount] = useState<number>(0)
   const [customStakes, setCustomStakes] = useState<Record<string, number>>({})
   const [pokerMode, setPokerMode] = useState<PokerMode>('winner_takes_all')

@@ -70,7 +70,15 @@ export function useNewBetActions(
 
   const handleSubmit = useCallback(async () => {
     if (!selectedGame || !selectedFormat || !currentUser) return
-    if (stakeMode === 'equal' && (!Number.isFinite(stakeAmount) || stakeAmount <= 0)) {
+
+    // Guard: if user typed an amount but mode was never explicitly changed from 'none', treat as 'equal'
+    const stakeModeToSend: typeof stakeMode =
+      stakeMode === 'none' && stakeAmount > 0 ? 'equal' : stakeMode
+
+    log('[handleSubmit] stakeMode before send:', stakeModeToSend)
+    log('[handleSubmit] globalStake:', stakeAmount)
+
+    if (stakeModeToSend === 'equal' && (!Number.isFinite(stakeAmount) || stakeAmount <= 0)) {
       const stakeError = new Error('Stawka musi być większa niż 0 PLN')
       error('[useNewBet] handleSubmit validation', stakeError)
       Alert.alert('Błąd', stakeError.message)
@@ -80,7 +88,7 @@ export function useNewBetActions(
     const participantRows = allParticipants.map(player => ({
       id: player.id,
       nick: player.nick,
-      customStake: stakeMode === 'custom' ? customStakes[player.id] ?? 0 : stakeAmount,
+      customStake: stakeModeToSend === 'custom' ? customStakes[player.id] ?? 0 : stakeAmount,
     }))
 
     log('[handleSubmit] stakePerMatch:', stakePerMatch)
@@ -91,13 +99,13 @@ export function useNewBetActions(
         creatorId: currentUser.id,
         gameTemplate: selectedGame.id,
         format: selectedFormat,
-        stakeMode,
+        stakeMode: stakeModeToSend,
         participants: participantRows,
-        globalStake: stakeMode === 'equal' ? stakeAmount : 0,
+        globalStake: stakeModeToSend === 'equal' ? stakeAmount : 0,
         bestOfCount: selectedFormat === 'best_of' ? bestOfCount : undefined,
         stakePerMatch: selectedFormat === 'per_match' ? stakePerMatch : undefined,
-        stakeAmount: stakeMode === 'equal' ? stakeAmount : undefined,
-        customStakes: stakeMode === 'custom' ? customStakes : undefined,
+        stakeAmount: stakeModeToSend === 'equal' ? stakeAmount : undefined,
+        customStakes: stakeModeToSend === 'custom' ? customStakes : undefined,
         pokerMode: selectedGame.id === 'poker' ? pokerMode : undefined,
         pokerStack: selectedGame.id === 'poker' ? pokerStack : undefined,
         pokerRebuyStack: selectedGame.id === 'poker' ? pokerRebuyStack : undefined,
@@ -133,7 +141,7 @@ export function useNewBetActions(
     setParticipants([])
     setSelectedFormat(null)
     setBestOfCount(3)
-    setStakeMode('none')
+    setStakeMode('equal')
     setStakeAmount(0)
     setStakePerMatch(0)
     setCustomStakes({})
