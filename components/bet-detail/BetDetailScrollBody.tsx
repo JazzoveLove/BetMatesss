@@ -90,7 +90,9 @@ export function BetDetailScrollBody({
             ]}
           >
             <Text style={styles.scoreNick}>{me.nick}</Text>
-            <Text style={styles.scoreValue}>{scoreState.myScore ?? "?"}</Text>
+            <Text style={styles.scoreValue}>
+              {scoreState.myScore ?? (status === "rejected" ? "—" : "?")}
+            </Text>
           </View>
           <Text style={styles.scoreColon}>:</Text>
           <View
@@ -101,7 +103,7 @@ export function BetDetailScrollBody({
           >
             <Text style={styles.scoreNick}>{opponent.nick}</Text>
             <Text style={styles.scoreValue}>
-              {scoreState.opponentScore ?? "?"}
+              {scoreState.opponentScore ?? (status === "rejected" ? "—" : "?")}
             </Text>
           </View>
         </View>
@@ -113,6 +115,7 @@ export function BetDetailScrollBody({
           {status === "awaiting_confirmation" &&
             "Wynik wpisany. Potwierdź lub zgłoś spór."}
           {status === "completed" && "Mecz zakończony."}
+          {status === "rejected" && "Zakład odrzucony."}
         </Text>
       </View>
 

@@ -15,6 +15,7 @@ export type BetStatus =
   | 'awaiting_confirmation'
   | 'completed'
   | 'disputed'
+  | 'rejected'
 export type ResultType = 'score' | 'legs' | 'sets' | 'winner_only' | 'chips'
 export type PokerMode = 'winner_takes_all' | 'chip_count'
 
@@ -50,6 +51,7 @@ export type BetSummary = {
   pokerStack?: number
   pokerRebuyStack?: number
   bestOfCount?: number
+  rejectedAt?: string
 }
 
 export type Settlement = {
@@ -105,7 +107,7 @@ export interface CreateBetParams {
   participantIds?: string[]
 }
 
-export type HistoryBadgeLabel = 'aktywny' | 'wygrany' | 'przegrany' | 'oczekuje' | 'spór' | 'zakończony'
+export type HistoryBadgeLabel = 'aktywny' | 'wygrany' | 'przegrany' | 'oczekuje' | 'spór' | 'zakończony' | 'odrzucony'
 
 export type HistoryListItem = {
   id: string

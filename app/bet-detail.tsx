@@ -156,7 +156,7 @@ export default function BetDetailScreen() {
         allPaid={allPaid}
         opponent={{ nick: opponent.nick }}
         onAccept={() => void acceptBet()}
-        onReject={() => void rejectBet()}
+        onReject={async () => { const ok = await rejectBet(); if (ok) navigation.goBack() }}
         onConfirm={() => void confirmResult()}
         onDispute={() => void disputeResult()}
         onMarkPaid={markPaid}
@@ -196,5 +196,7 @@ function getStatusBadge(status: BetStatus) {
     return { label: "Czeka na potwierdzenie", bg: hexToRgba(Colors.textMuted, 0.15), text: Colors.textMuted, border: hexToRgba(Colors.textMuted, 0.2) };
   if (status === "completed")
     return { label: "Zakończony", bg: hexToRgba(Colors.accent, 0.15), text: Colors.accentLight, border: hexToRgba(Colors.accent, 0.2) };
+  if (status === "rejected")
+    return { label: "Odrzucony", bg: hexToRgba(Colors.red, 0.15), text: Colors.red, border: hexToRgba(Colors.red, 0.2) };
   return { label: "Spór", bg: hexToRgba(Colors.red, 0.15), text: Colors.red, border: hexToRgba(Colors.red, 0.2) };
 }

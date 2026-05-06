@@ -76,10 +76,22 @@ export async function confirmParticipation(betId: string, userId: string): Promi
 }
 
 export async function rejectParticipation(betId: string, userId: string): Promise<{ error?: string }> {
-  const { error } = await supabase
+  const { data: participant, error: checkErr } = await supabase
     .from('bet_participants')
-    .delete()
+    .select('user_id')
     .eq('bet_id', betId)
     .eq('user_id', userId)
-  return error ? { error: error.message } : {}
+    .maybeSingle()
+
+  if (checkErr) return { error: checkErr.message }
+  if (!participant) return { error: 'Nie jesteś uczestnikiem tego zakładu.' }
+
+  const { error: updateErr } = await supabase
+    .from('bets')
+    .update({ status: 'rejected', rejected_at: new Date().toISOString() })
+    .eq('id', betId)
+    .eq('status', 'pending')
+
+  if (updateErr) return { error: updateErr.message }
+  return {}
 }

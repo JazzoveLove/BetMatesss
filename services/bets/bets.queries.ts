@@ -22,6 +22,7 @@ function mapBetRowToBetSummary(row: BetRow): BetSummary {
     pokerStack: row.poker_stack,
     pokerRebuyStack: row.poker_rebuy_stack,
     bestOfCount: row.best_of_count,
+    rejectedAt: row.rejected_at ?? undefined,
   }
 }
 

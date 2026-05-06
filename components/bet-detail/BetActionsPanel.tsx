@@ -195,6 +195,10 @@ export function BetActionsPanel({
       {status === "completed" && allPaid && (
         <Text style={styles.allPaidText}>Zakład rozliczony ✓</Text>
       )}
+
+      {status === "rejected" && (
+        <Text style={styles.rejectedText}>Zakład odrzucony 🚫</Text>
+      )}
     </View>
   );
 }
@@ -228,6 +232,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   rejectText: { color: Colors.red, fontSize: 14, fontWeight: "600" },
+  rejectedText: { color: Colors.red, textAlign: "center", fontWeight: "600" },
   muted: { color: Colors.textMuted, fontSize: 13 },
   allPaidText: { color: Colors.green, textAlign: "center" },
 });

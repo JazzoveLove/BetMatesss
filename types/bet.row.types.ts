@@ -18,6 +18,8 @@ export interface BetRow {
     | 'awaiting_confirmation'
     | 'completed'
     | 'disputed'
+    | 'rejected'
+  rejected_at?: string | null
   best_of_count?: number
   stake_per_match?: number
   session_id?: string

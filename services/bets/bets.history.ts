@@ -12,6 +12,7 @@ export function historyBadgeAndAmount(
 ): { badge: HistoryBadgeLabel; amountLabel: string } {
   const st = bet.status
   if (st === 'pending') return { badge: 'oczekuje', amountLabel: '—' }
+  if (st === 'rejected') return { badge: 'odrzucony', amountLabel: '—' }
   if (st === 'disputed') return { badge: 'spór', amountLabel: '—' }
   if (st === 'active' || st === 'in_progress' || st === 'awaiting_confirmation') {
     return { badge: 'aktywny', amountLabel: '—' }
@@ -32,8 +33,16 @@ export function historyBadgeAndAmount(
   return { badge: 'oczekuje', amountLabel: '—' }
 }
 
+const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000
+
 export async function getHistoryForUser(userId: string): Promise<HistoryListItem[]> {
-  const bets = await getUserBets(userId)
+  const allBets = await getUserBets(userId)
+  // Rejected bets: show for 24h after rejection, then hide
+  const bets = allBets.filter(b => {
+    if (b.status !== 'rejected') return true
+    if (!b.rejectedAt) return false
+    return Date.now() - new Date(b.rejectedAt).getTime() < TWENTY_FOUR_HOURS_MS
+  })
   if (bets.length === 0) return []
 
   const betIds = bets.map(b => b.id)

@@ -248,6 +248,7 @@ export function useBetDetailActions(
         Alert.alert('Błąd', result.error)
         return false
       }
+      Alert.alert('Zakład odrzucony', 'Zakład został odrzucony.')
       return true
     } catch (e) {
       error('[useBetDetail] rejectBet', e)

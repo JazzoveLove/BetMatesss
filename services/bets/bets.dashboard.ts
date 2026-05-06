@@ -149,6 +149,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
     const { bet } = r
     if (seenBetIds.has(bet.id)) continue
     seenBetIds.add(bet.id)
+    if (bet.status === 'rejected') continue
     const opponentNick = opponentNickFor(r)
     if (
       bet.status === 'active' ||
@@ -193,9 +194,11 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
     }
   })
 
+  const totalBets = dashRows.filter(r => r.bet.status !== 'rejected').length
+
   return {
     nick,
-    stats: { balance, totalBets: participations.length, winRate, wins, losses, totalMatches },
+    stats: { balance, totalBets, winRate, wins, losses, totalMatches },
     activeBets: active.slice(0, 3),
     recentResults,
   }
