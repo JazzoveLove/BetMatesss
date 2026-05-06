@@ -126,7 +126,7 @@ export default function ProfileScreen() {
         text: 'Wyloguj',
         style: 'destructive',
         onPress: () => {
-          void AuthService.signOut().finally(() => navigation.replace('Login'))
+          void AuthService.signOut()
         },
       },
     ])

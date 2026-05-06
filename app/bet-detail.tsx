@@ -93,8 +93,14 @@ export default function BetDetailScreen() {
   };
   const gameTemplate = GAME_TEMPLATES.find((g) => g.id === bet.gameTemplate);
   const resultType = gameTemplate?.resultType ?? "score";
-  const scoreState = parsePendingScore(pendingResult?.score ?? "");
-  const winnerId = pendingResult?.winnerId ?? null;
+  const confirmedResult =
+    status === "completed" && bet.format !== "per_match"
+      ? (bet.results.find((r) => r.confirmed) ?? null)
+      : null;
+  const scoreState = parsePendingScore(
+    pendingResult?.score ?? confirmedResult?.scores?.score ?? "",
+  );
+  const winnerId = pendingResult?.winnerId ?? confirmedResult?.winner_id ?? null;
   const totalPool =
     me.stakeAmount > 0 && opponent.stakeAmount > 0
       ? me.stakeAmount + opponent.stakeAmount

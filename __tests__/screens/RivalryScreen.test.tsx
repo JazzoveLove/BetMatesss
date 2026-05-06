@@ -55,6 +55,7 @@ describe('RivalryScreen', () => {
       refreshing: false,
       friendNick: 'Kasia',
       onRefresh: jest.fn(),
+      paymentSummary: { totalPaidByMe: 60, totalPaidByRival: 20, pendingAmount: 0, pendingStatus: 'clear', settledBetsCount: 4 },
       matches: [
         { betId: '1', rivalryId: 'r1', gameTemplate: 'pool', createdAt: '2026-05-01T00:00:00Z', score: '2:1', stakeAmount: 20, profit: 20, outcome: 'win' },
         { betId: '2', rivalryId: 'r1', gameTemplate: 'pool', createdAt: '2026-05-02T00:00:00Z', score: '3:1', stakeAmount: 20, profit: 20, outcome: 'win' },
@@ -86,6 +87,7 @@ describe('RivalryScreen', () => {
       refreshing: false,
       friendNick: 'Kasia',
       onRefresh: jest.fn(),
+      paymentSummary: { totalPaidByMe: 0, totalPaidByRival: 0, pendingAmount: 0, pendingStatus: 'clear', settledBetsCount: 0 },
       matches: [
         { betId: '1', rivalryId: 'r1', gameTemplate: 'pool', createdAt: '2026-05-01T00:00:00Z', score: '2:1', stakeAmount: 20, profit: 20, outcome: 'win' },
         { betId: '2', rivalryId: 'r1', gameTemplate: 'fifa', createdAt: '2026-05-02T00:00:00Z', score: '1:2', stakeAmount: 20, profit: -20, outcome: 'loss' },
@@ -107,6 +109,7 @@ describe('RivalryScreen', () => {
       refreshing: false,
       friendNick: 'Kasia',
       onRefresh: jest.fn(),
+      paymentSummary: { totalPaidByMe: 0, totalPaidByRival: 40, pendingAmount: 40, pendingStatus: 'unpaid', settledBetsCount: 0 },
       matches: [
         { betId: '1', rivalryId: 'r1', gameTemplate: 'pool', createdAt: '2026-05-01T00:00:00Z', score: '0:2', stakeAmount: 20, profit: -20, outcome: 'loss' },
         { betId: '2', rivalryId: 'r1', gameTemplate: 'pool', createdAt: '2026-05-02T00:00:00Z', score: '1:3', stakeAmount: 20, profit: -20, outcome: 'loss' },
@@ -127,6 +130,7 @@ describe('RivalryScreen', () => {
       refreshing: false,
       friendNick: 'Kasia',
       onRefresh: jest.fn(),
+      paymentSummary: { totalPaidByMe: 0, totalPaidByRival: 0, pendingAmount: 0, pendingStatus: 'clear', settledBetsCount: 0 },
       matches: [],
     })
 
