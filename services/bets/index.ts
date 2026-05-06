@@ -36,6 +36,8 @@ export {
 
 export { getHistoryForUser, historyBadgeAndAmount } from './bets.history'
 
+export { getProfileStatsV2 } from './bets.profile'
+
 import { createBet, getBetInvitePreview, joinBetFromInvite } from './bets.create'
 import {
   getBetDetail,
@@ -66,6 +68,7 @@ import {
   getProfileScreenData,
 } from './bets.queries'
 import { getHistoryForUser } from './bets.history'
+import { getProfileStatsV2 } from './bets.profile'
 
 export const BetsService = {
   createBet,
@@ -92,5 +95,6 @@ export const BetsService = {
   confirmPayment,
   rejectPayment,
   getDashboardData,
+  getProfileStatsV2,
   searchUsers,
 }

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { GAME_MAP } from '../constants/games'
 import { useAuthContext } from '../contexts/AuthContext'
 import { BetsService } from '../services/bets.service'
-import type { ProfileScreenData } from '../types/bet.types'
+import type { ProfileScreenData, ProfileStatSection } from '../types/bet.types'
 import { error } from '../utils/logger'
 
 export interface ProfileData {
@@ -35,6 +35,8 @@ export interface ProfileData {
     balance: number
     hasStake: boolean
   }>
+  moneyStats: ProfileStatSection | null
+  friendlyStats: ProfileStatSection | null
   loading: boolean
 }
 
@@ -53,8 +55,16 @@ function formatMemberSince(dateInput: string | null): string {
 }
 
 function mapToProfileData(row: ProfileScreenData): ProfileData {
-  const disciplineStats = row.disciplines.map(item => {
+  const { overall, money } = row.statsV2
+
+  // Discipline list: all completed bets; money balance from money section if available
+  const moneyBalanceByTemplate = new Map<string, number>(
+    (money?.disciplines ?? []).map(d => [d.gameTemplate, d.balance]),
+  )
+
+  const disciplineStats = overall.disciplines.map(item => {
     const game = GAME_MAP[item.gameTemplate] ?? { label: item.gameTemplate, emoji: '🎲' }
+    const moneyBalance = moneyBalanceByTemplate.get(item.gameTemplate) ?? 0
     return {
       gameId: item.gameTemplate,
       gameName: game.label,
@@ -63,13 +73,10 @@ function mapToProfileData(row: ProfileScreenData): ProfileData {
       losses: item.losses,
       total: item.wins + item.losses,
       winRate: item.winPct,
-      balance: 0,
-      hasStake: false,
+      balance: moneyBalance,
+      hasStake: moneyBalance !== 0,
     }
   })
-
-  const wins = disciplineStats.reduce((acc, item) => acc + item.wins, 0)
-  const losses = disciplineStats.reduce((acc, item) => acc + item.losses, 0)
 
   return {
     user: {
@@ -81,16 +88,18 @@ function mapToProfileData(row: ProfileScreenData): ProfileData {
       showBalance: true,
     },
     stats: {
-      totalMatches: row.stats.totalBets,
-      winRate: row.stats.winRate,
+      totalMatches: overall.wins + overall.losses,
+      winRate: overall.winRate,
       balance: row.stats.balance,
       disciplines: disciplineStats.length,
       friends: row.friendsRank.length,
       currentStreak: 0,
-      wins,
-      losses,
+      wins: overall.wins,
+      losses: overall.losses,
     },
     disciplineStats,
+    moneyStats: row.statsV2.money,
+    friendlyStats: row.statsV2.friendly,
     loading: false,
   }
 }

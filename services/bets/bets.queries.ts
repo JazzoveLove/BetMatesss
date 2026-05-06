@@ -1,6 +1,7 @@
 import { supabase } from '../../lib/supabase'
 import { getAcceptedFriendsList } from '../friends.service'
 import { getDashboardData } from './bets.dashboard'
+import { getProfileStatsV2 } from './bets.profile'
 import type { BetRow } from '../../types/bet.row.types'
 import type { BetSummary, DisciplineStatRow, FriendRankRow, ProfileScreenData } from '../../types/bet.types'
 
@@ -144,10 +145,11 @@ export async function getProfileScreenData(userId: string): Promise<ProfileScree
 
   if (userErr || !userRow) return null
 
-  const [dashboard, disciplines, friendsRank] = await Promise.all([
+  const [dashboard, disciplines, friendsRank, statsV2] = await Promise.all([
     getDashboardData(userId),
     getDisciplineStatsForUser(userId),
     getFriendsBalanceLeaderboard(userId),
+    getProfileStatsV2(userId),
   ])
 
   return {
@@ -156,5 +158,6 @@ export async function getProfileScreenData(userId: string): Promise<ProfileScree
     stats: dashboard.stats,
     disciplines,
     friendsRank,
+    statsV2,
   }
 }

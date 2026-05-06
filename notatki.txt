@@ -1,0 +1,7 @@
+- notes na razie jest zbedne 
+- tak samo czat na razie jst zbedny 
+
+- w zakladce historia powinno byc odswiezanie w czasei rzeczywistym 
+- nie dziala odrzuczenie zakladu 
+- czyli w profilu pokazywane sa statystyki tylko dla meczow na pieniadze gdy nie am kursu to nie pokazuje tego w statystykach ->
+-> Tutaj w sumie sie warto zastanawoic jak powinno to dzialac czy tylko dla zakladow na kase 

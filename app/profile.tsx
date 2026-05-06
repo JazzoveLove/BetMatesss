@@ -15,9 +15,11 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../constants/colors'
+import { StatsSectionCard } from '../components/profile/StatsSectionCard'
 import { useProfile } from '../hooks/useProfile'
 import { AuthService } from '../services/auth.service'
 import { hexToRgba } from '../utils/colors'
+import { formatBalance, getBalanceColor } from '../utils/money'
 
 const ImagePicker: any = require('expo-image-picker')
 
@@ -26,17 +28,6 @@ type Nav = {
   replace: (screen: string) => void
 }
 
-function formatBalance(value: number): string {
-  if (value > 0) return `+${value} zł`
-  if (value < 0) return `${value} zł`
-  return '0 zł'
-}
-
-function getBalanceColor(value: number): string {
-  if (value > 0) return Colors.green
-  if (value < 0) return Colors.red
-  return Colors.textMuted
-}
 
 function getWinRateColor(rate: number): string {
   if (rate >= 60) return Colors.green
@@ -247,6 +238,27 @@ export default function ProfileScreen() {
                   </View>
                 </View>
               </View>
+
+              {profile.moneyStats && (
+                <StatsSectionCard
+                  icon="💰"
+                  title="Zakłady na pieniądze"
+                  wins={profile.moneyStats.wins}
+                  losses={profile.moneyStats.losses}
+                  winrate={profile.moneyStats.winRate}
+                  balance={profile.moneyStats.balance}
+                />
+              )}
+
+              {profile.friendlyStats && (
+                <StatsSectionCard
+                  icon="🤝"
+                  title="Mecze towarzyskie"
+                  wins={profile.friendlyStats.wins}
+                  losses={profile.friendlyStats.losses}
+                  winrate={profile.friendlyStats.winRate}
+                />
+              )}
 
               <Text style={styles.sectionLabel}>WYNIKI PER DYSCYPLINA</Text>
               {disciplines.map(item => {
