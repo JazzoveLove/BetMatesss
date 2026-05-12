@@ -1,10 +1,16 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useAuthContext } from '../contexts/AuthContext'
+import { queryKeys } from '../lib/queryKeys'
 import { BetsService } from '../services/bets.service'
 import type { BetStatus, HistoryListItem } from '../types/bet.types'
-import { log } from '../utils/logger'
 
 export type HistoryFilter = 'all' | 'active' | 'completed'
+
+type HistoryQueryResult = {
+  items: HistoryListItem[]
+  statusById: Map<string, BetStatus>
+}
 
 function itemMatchesFilter(item: HistoryListItem, filter: HistoryFilter, statusById: Map<string, BetStatus>): boolean {
   const st = statusById.get(item.id)
@@ -16,57 +22,35 @@ function itemMatchesFilter(item: HistoryListItem, filter: HistoryFilter, statusB
 
 export function useHistory(initialFilter: HistoryFilter = 'all') {
   const { userId } = useAuthContext()
-  const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
-  const [items, setItems] = useState<HistoryListItem[]>([])
-  const [statusById, setStatusById] = useState<Map<string, BetStatus>>(new Map())
   const [filter, setFilter] = useState<HistoryFilter>(initialFilter)
 
-  const load = useCallback(async () => {
-    if (!userId) {
-      setItems([])
-      setStatusById(new Map())
-      return
-    }
-    try {
-      const [list, bets] = await Promise.all([
-        BetsService.getHistoryForUser(userId),
-        BetsService.getUserBets(userId),
+  const { data, isLoading, isRefetching, refetch } = useQuery<HistoryQueryResult>({
+    queryKey: queryKeys.history(userId ?? ''),
+    queryFn: async () => {
+      const [items, bets] = await Promise.all([
+        BetsService.getHistoryForUser(userId!),
+        BetsService.getUserBets(userId!),
       ])
-      setItems(list)
-      setStatusById(new Map(bets.map(b => [b.id, b.status])))
-    } catch (err) {
-      log('useHistory load error:', err)
-    }
-  }, [userId])
-
-  useEffect(() => {
-    load().finally(() => setLoading(false))
-  }, [load])
-
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true)
-    try {
-      await load()
-    } catch (err) {
-      log('useHistory onRefresh error:', err)
-    } finally {
-      setRefreshing(false)
-    }
-  }, [load])
+      return {
+        items,
+        statusById: new Map(bets.map(b => [b.id, b.status])),
+      }
+    },
+    enabled: !!userId,
+  })
 
   const filteredItems = useMemo(
-    () => items.filter(item => itemMatchesFilter(item, filter, statusById)),
-    [items, filter, statusById],
+    () => (data?.items ?? []).filter(item => itemMatchesFilter(item, filter, data?.statusById ?? new Map())),
+    [data, filter],
   )
 
   return {
-    loading,
-    refreshing,
+    loading: isLoading,
+    refreshing: isRefetching,
     items: filteredItems,
     filter,
     setFilter,
-    onRefresh,
-    reload: load,
+    onRefresh: refetch,
+    reload: refetch,
   }
 }

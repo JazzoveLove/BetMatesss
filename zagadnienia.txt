@@ -1,5 +1,7 @@
 1. co oznacza mutowalny
 2. Co to jest CI/CD 
+3. Co to jest modal 
+
 
 
 Rodzaje testów:
@@ -10,9 +12,6 @@ Rodzaje testów:
 
 Do uwzględnienia:
 1. Dodać React Query 
-
-Poprawki:
-1. W ekranie Znajomi dodać myślnik żeby byl w przykładowym "dodaj znajomego" czyli ma być format xxxx-xxxx
 
 
 Do dodania
@@ -25,6 +24,3 @@ Feature do dodania w przyszłości:
 - Filtrowanie: nierozliczone / zapłacone / wszystkie
 - Per znajomy: rozwijalny widok z historią per zakład
 - Eksport / podsumowanie miesięczne
-
-
-2) 

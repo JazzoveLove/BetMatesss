@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useAuthContext } from '../contexts/AuthContext'
+import { queryKeys } from '../lib/queryKeys'
 import { fetchRivalryData, RivalryFetchError } from '../services/rivalry/loadRivalryMatches'
 import { buildRivalryTotalsFromMatches, buildStatsByDiscipline } from '../services/rivalry/mapRivalryItems'
 import type { RivalryDisciplineStats, RivalryMatchItem, RivalryPaymentRow } from '../services/rivalry/rivalry.types'
-import { error as logError } from '../utils/logger'
 
 type RivalryPaymentSummary = {
   totalPaidByMe: number
@@ -31,54 +32,32 @@ type UseRivalryResult = {
 
 export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryResult {
   const { userId } = useAuthContext()
-  const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [friendNick, setFriendNick] = useState('Znajomy')
-  const [matches, setMatches] = useState<RivalryMatchItem[]>([])
-  const [payments, setPayments] = useState<RivalryPaymentRow[]>([])
   const [selectedDiscipline, setSelectedDiscipline] = useState<string | null>(gameTemplate ?? null)
 
   useEffect(() => {
     setSelectedDiscipline(gameTemplate ?? null)
   }, [gameTemplate])
 
-  const load = useCallback(async () => {
-    setError(null)
-    if (!userId) {
-      setMatches([])
-      setPayments([])
-      setFriendNick('Znajomy')
-      return
-    }
-    try {
-      const data = await fetchRivalryData(userId, friendId, gameTemplate ?? null)
-      setMatches(data.matches)
-      setPayments(data.payments)
-      setFriendNick(data.friendNick)
-    } catch (e) {
-      logError('[useRivalry] load', e)
-      if (e instanceof RivalryFetchError) setFriendNick(e.friendNick)
-      setError(e instanceof Error ? e.message : 'Nie udało się pobrać rywalizacji.')
-      setMatches([])
-      setPayments([])
-    }
-  }, [friendId, gameTemplate, userId])
+  // gameTemplate is intentionally excluded from queryKey — we filter locally to avoid
+  // extra fetches when the user switches discipline tabs
+  const { data, isLoading, isRefetching, refetch, error: queryError } = useQuery({
+    queryKey: queryKeys.rivalry(userId ?? '', friendId),
+    queryFn: () => fetchRivalryData(userId!, friendId, null),
+    enabled: !!userId && !!friendId,
+  })
 
-  useEffect(() => {
-    void load().finally(() => setLoading(false))
-  }, [load])
+  const error = useMemo(() => {
+    if (!queryError) return null
+    return queryError instanceof Error ? queryError.message : 'Nie udało się pobrać rywalizacji.'
+  }, [queryError])
 
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true)
-    try {
-      await load()
-    } catch (e) {
-      logError('[useRivalry] onRefresh', e)
-    } finally {
-      setRefreshing(false)
-    }
-  }, [load])
+  const friendNick = useMemo(() => {
+    if (queryError instanceof RivalryFetchError) return queryError.friendNick
+    return data?.friendNick ?? 'Znajomy'
+  }, [data, queryError])
+
+  const matches = data?.matches ?? ([] as RivalryMatchItem[])
+  const payments = data?.payments ?? ([] as RivalryPaymentRow[])
 
   const disciplines = useMemo(
     () => [...new Set(matches.map(m => m.gameTemplate))].sort((a, b) => a.localeCompare(b)),
@@ -92,27 +71,16 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
 
   const statsByDiscipline = useMemo(() => buildStatsByDiscipline(matches), [matches])
   const totals = useMemo(() => buildRivalryTotalsFromMatches(filteredMatches), [filteredMatches])
+
   const paymentSummary = useMemo<RivalryPaymentSummary>(() => {
     if (!userId) {
-      return {
-        totalPaidByMe: 0,
-        totalPaidByRival: 0,
-        pendingAmount: 0,
-        pendingStatus: 'clear',
-        settledBetsCount: 0,
-      }
+      return { totalPaidByMe: 0, totalPaidByRival: 0, pendingAmount: 0, pendingStatus: 'clear', settledBetsCount: 0 }
     }
 
     const paidRows = payments.filter(p => p.paymentStatus === 'paid')
-    const totalPaidByMe = paidRows
-      .filter(p => p.fromUserId === userId)
-      .reduce((sum, p) => sum + p.amount, 0)
-    const totalPaidByRival = paidRows
-      .filter(p => p.fromUserId === friendId)
-      .reduce((sum, p) => sum + p.amount, 0)
-    const pendingRows = payments.filter(
-      p => p.paymentStatus === 'unpaid' || p.paymentStatus === 'pending_confirmation',
-    )
+    const totalPaidByMe = paidRows.filter(p => p.fromUserId === userId).reduce((sum, p) => sum + p.amount, 0)
+    const totalPaidByRival = paidRows.filter(p => p.fromUserId === friendId).reduce((sum, p) => sum + p.amount, 0)
+    const pendingRows = payments.filter(p => p.paymentStatus === 'unpaid' || p.paymentStatus === 'pending_confirmation')
     const pendingAmount = pendingRows.reduce((sum, p) => sum + p.amount, 0)
     const pendingStatus = pendingRows.some(p => p.paymentStatus === 'pending_confirmation')
       ? 'pending_confirmation'
@@ -121,18 +89,12 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
         : 'clear'
     const settledBetsCount = new Set(paidRows.map(p => p.betId)).size
 
-    return {
-      totalPaidByMe,
-      totalPaidByRival,
-      pendingAmount,
-      pendingStatus,
-      settledBetsCount,
-    }
+    return { totalPaidByMe, totalPaidByRival, pendingAmount, pendingStatus, settledBetsCount }
   }, [friendId, payments, userId])
 
   return {
-    loading,
-    refreshing,
+    loading: isLoading,
+    refreshing: isRefetching,
     error,
     friendNick,
     matches,
@@ -143,7 +105,7 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
     statsByDiscipline,
     totals,
     paymentSummary,
-    onRefresh,
+    onRefresh: async () => { await refetch() },
   }
 }
 

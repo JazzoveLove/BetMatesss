@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { GAME_MAP } from '../constants/games'
 import { useAuthContext } from '../contexts/AuthContext'
+import { queryKeys } from '../lib/queryKeys'
 import { BetsService } from '../services/bets.service'
 import type { ProfileScreenData, ProfileStatSection } from '../types/bet.types'
-import { error } from '../utils/logger'
 
 export interface ProfileData {
   user: {
@@ -57,7 +58,6 @@ function formatMemberSince(dateInput: string | null): string {
 function mapToProfileData(row: ProfileScreenData): ProfileData {
   const { overall, money } = row.statsV2
 
-  // Discipline list: all completed bets; money balance from money section if available
   const moneyBalanceByTemplate = new Map<string, number>(
     (money?.disciplines ?? []).map(d => [d.gameTemplate, d.balance]),
   )
@@ -106,35 +106,20 @@ function mapToProfileData(row: ProfileScreenData): ProfileData {
 
 export function useProfile() {
   const { userId } = useAuthContext()
-  const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
-  const [data, setData] = useState<ProfileData | null>(null)
 
-  const load = useCallback(async () => {
-    if (!userId) {
-      setData(null)
-      return
-    }
-    try {
-      const row = await BetsService.getProfileScreenData(userId)
-      setData(row ? mapToProfileData(row) : null)
-    } catch (e) {
-      error('[useProfile] load', e)
-    }
-  }, [userId])
+  const { data: raw, isLoading, isRefetching, refetch } = useQuery({
+    queryKey: queryKeys.profile(userId ?? ''),
+    queryFn: () => BetsService.getProfileScreenData(userId!),
+    enabled: !!userId,
+  })
 
-  useEffect(() => {
-    load().finally(() => setLoading(false))
-  }, [load])
+  const data = useMemo(() => (raw ? mapToProfileData(raw) : null), [raw])
 
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true)
-    try {
-      await load()
-    } finally {
-      setRefreshing(false)
-    }
-  }, [load])
-
-  return { loading, refreshing, data, onRefresh, reload: load }
+  return {
+    loading: isLoading,
+    refreshing: isRefetching,
+    data,
+    onRefresh: refetch,
+    reload: refetch,
+  }
 }

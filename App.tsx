@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as Notifications from 'expo-notifications'
 import { TamaguiProvider } from 'tamagui'
 import { ErrorBoundary } from 'react-error-boundary'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuthContext } from './contexts/AuthContext'
 import LoginScreen from './app/login'
 import SetupProfileScreen from './app/setup-profile'
@@ -20,6 +21,16 @@ import { AppErrorFallback } from './components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
 import { useDeepLinks } from './hooks/useDeepLinks'
 import { registerAndSyncPushToken } from './lib/notifications'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 30,
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -120,11 +131,13 @@ function AppContent() {
 export default function App() {
   return (
     <ErrorBoundary FallbackComponent={AppErrorFallback}>
-      <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </TamaguiProvider>
+      <QueryClientProvider client={queryClient}>
+        <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </TamaguiProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   )
 }

@@ -1,63 +1,61 @@
-import { useCallback, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuthContext } from '../contexts/AuthContext'
+import { queryKeys } from '../lib/queryKeys'
 import { BetsService } from '../services/bets.service'
 import { NotificationsService, type BetInviteNotification } from '../services/notifications.service'
 import { error } from '../utils/logger'
 
 export function useBetInvites() {
   const { userId } = useAuthContext()
-  const [betInvites, setBetInvites] = useState<BetInviteNotification[]>([])
+  const queryClient = useQueryClient()
 
-  const reload = useCallback(async () => {
-    if (!userId) return
-    const invites = await NotificationsService.getPendingBetInviteNotifications(userId)
-    setBetInvites(invites)
-  }, [userId])
+  const { data: betInvites = [] } = useQuery({
+    queryKey: queryKeys.betInvites(userId ?? ''),
+    queryFn: () => NotificationsService.getPendingBetInviteNotifications(userId!),
+    enabled: !!userId,
+  })
 
-  useEffect(() => {
-    void reload()
-  }, [reload])
-
-  const acceptBetInvite = useCallback(
-    async (invite: BetInviteNotification) => {
-      if (!userId) return
-      try {
-        const result = await BetsService.confirmParticipation(invite.betId, userId)
-        if (result.error) {
-          Alert.alert('Błąd', result.error)
-          return
-        }
-        await NotificationsService.markNotificationRead(invite.id)
-        await reload()
-        Alert.alert('Dołączono', 'Zaproszenie do zakładu zostało zaakceptowane.')
-      } catch (e) {
-        error('[useBetInvites] acceptBetInvite', e)
-        Alert.alert('Błąd', 'Nie udało się zaakceptować zaproszenia do zakładu.')
-      }
+  const acceptBetInvite = useMutation({
+    mutationFn: async (invite: BetInviteNotification) => {
+      const result = await BetsService.confirmParticipation(invite.betId, userId!)
+      if (result.error) throw new Error(result.error)
+      await NotificationsService.markNotificationRead(invite.id)
     },
-    [reload, userId],
-  )
-
-  const rejectBetInvite = useCallback(
-    async (invite: BetInviteNotification) => {
-      if (!userId) return
-      try {
-        const result = await BetsService.rejectParticipation(invite.betId, userId)
-        if (result.error) {
-          Alert.alert('Błąd', result.error)
-          return
-        }
-        await NotificationsService.markNotificationRead(invite.id)
-        await reload()
-        Alert.alert('Odrzucono', 'Zaproszenie do zakładu zostało odrzucone.')
-      } catch (e) {
-        error('[useBetInvites] rejectBetInvite', e)
-        Alert.alert('Błąd', 'Nie udało się odrzucić zaproszenia do zakładu.')
-      }
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.betInvites(userId!) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard(userId!) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.bets(userId!) })
+      Alert.alert('Dołączono', 'Zaproszenie do zakładu zostało zaakceptowane.')
     },
-    [reload, userId],
-  )
+    onError: (e) => {
+      error('[useBetInvites] acceptBetInvite', e)
+      Alert.alert('Błąd', e instanceof Error ? e.message : 'Nie udało się zaakceptować zaproszenia do zakładu.')
+    },
+  })
 
-  return { betInvites, acceptBetInvite, rejectBetInvite }
+  const rejectBetInvite = useMutation({
+    mutationFn: async (invite: BetInviteNotification) => {
+      const result = await BetsService.rejectParticipation(invite.betId, userId!)
+      if (result.error) throw new Error(result.error)
+      await NotificationsService.markNotificationRead(invite.id)
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.betInvites(userId!) })
+      Alert.alert('Odrzucono', 'Zaproszenie do zakładu zostało odrzucone.')
+    },
+    onError: (e) => {
+      error('[useBetInvites] rejectBetInvite', e)
+      Alert.alert('Błąd', 'Nie udało się odrzucić zaproszenia do zakładu.')
+    },
+  })
+
+  return {
+    betInvites,
+    // mutateAsync so callers receive Promise<void>; errors are handled by onError (Alert)
+    acceptBetInvite: (invite: BetInviteNotification): Promise<void> =>
+      acceptBetInvite.mutateAsync(invite).catch(() => undefined),
+    rejectBetInvite: (invite: BetInviteNotification): Promise<void> =>
+      rejectBetInvite.mutateAsync(invite).catch(() => undefined),
+  }
 }
