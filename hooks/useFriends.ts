@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
+import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query'
 import { Alert } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
 import { useAuthContext } from '../contexts/AuthContext'
@@ -16,6 +17,7 @@ import {
 } from '../lib/friend-invite-queue'
 import type { Friendship } from '../types/user.types'
 import { error, log } from '../utils/logger'
+import { queryKeys } from '../lib/queryKeys'
 
 function alertForInviteResult(
   result: Awaited<ReturnType<typeof handleFriendInvite>>,
@@ -60,78 +62,44 @@ function alertForInviteResult(
 }
 
 export function useFriends() {
-  const { userId } = useAuthContext()
+  const queryClient = useQueryClient()
+  const { userId} = useAuthContext()
   const me = userId
-  const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
-  const [myInviteCode, setMyInviteCode] = useState<string | null>(null)
-  const [incoming, setIncoming] = useState<Friendship[]>([])
-  const [outgoing, setOutgoing] = useState<Friendship[]>([])
-  const [friends, setFriends] = useState<Friendship[]>([])
-  const [nickById, setNickById] = useState<Record<string, string>>({})
-  const [avatarById, setAvatarById] = useState<Record<string, string | null>>({})
 
-  const reload = useCallback(async () => {
-    if (!userId) return
-    try {
-      const data = await loadFriendships(userId)
-      setIncoming(data.incoming)
-      setOutgoing(data.outgoing)
-      setFriends(data.friends)
-      setNickById(data.nickById)
-      setAvatarById(data.avatarById)
-    } catch (err) {
-      log('useFriends reload error:', err)
-    }
-  }, [userId])
-
-  const reloadWithCode = useCallback(async () => {
-    try {
-      await reload()
-      if (userId) {
-        const code = await ensureMyInviteCode(userId)
-        setMyInviteCode(code)
-      }
-    } catch (e) {
-      error('[useFriends] reloadWithCode', e)
-    }
-  }, [reload, userId])
-
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      await reloadWithCode()
-      if (!cancelled) setLoading(false)
-    })()
-    return () => { cancelled = true }
-  }, [reloadWithCode])
+  const { data, isLoading, refetch, isRefetching } = useQuery({
+    queryKey: queryKeys.friends(userId ?? ''),
+    queryFn: () => loadFriendships(userId!),
+    enabled: !!userId,
+  })
 
   const onRefresh = useCallback(async () => {
-    setRefreshing(true)
+    if (!userId) return
     try {
-      await reloadWithCode()
-    } finally {
-      setRefreshing(false)
+      await refetch()
+    } catch (err) {
+      error('[useFriends] onRefresh', err)
     }
-  }, [reloadWithCode])
+  }, [userId, refetch])
 
   useEffect(() => {
     if (!me) return
-    return subscribeFriendshipChanges(me, reload)
-  }, [me, reload])
+    return subscribeFriendshipChanges(me, () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.friends(me) })
+    )
+  }, [me, queryClient])
 
   const handleInviteFromLink = useCallback(
     async (otherId: string) => {
       if (!userId) return
       try {
         const result = await handleFriendInvite(userId, otherId)
-        alertForInviteResult(result, reload)
+        alertForInviteResult(result, refetch)
       } catch (e) {
         error('[useFriends] handleInviteFromLink', e)
         Alert.alert('Błąd', 'Nie udało się przetworzyć zaproszenia.')
       }
     },
-    [reload, userId],
+    [refetch, userId],
   )
 
   const processInviteQueue = useCallback(() => {
@@ -142,48 +110,55 @@ export function useFriends() {
   useFocusEffect(
     useCallback(() => {
       processInviteQueue()
-      void reload()
-    }, [processInviteQueue, reload]),
+      void refetch()
+    }, [processInviteQueue, refetch]),
   )
 
   useEffect(() => {
     return subscribeFriendInvites(processInviteQueue)
   }, [processInviteQueue])
 
-  const accept = useCallback(
-    async (row: Friendship) => {
+  const acceptMutation = useMutation({
+    mutationFn: async (row: Friendship) => {
       const result = await acceptFriendship(row.id)
-      if (result.error) Alert.alert('Błąd', result.error)
-      else await reload()
+      if (result.error) throw new Error(result.error)
     },
-    [reload],
-  )
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.friends(userId!) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard(userId!) })
+    },
+    onError: (err: Error) => {
+      Alert.alert('Błąd', err.message)
+    },
+  })
 
-  const reject = useCallback(
-    async (row: Friendship) => {
+  const rejectMutation = useMutation({
+    mutationFn: async (row: Friendship) => {
       const result = await rejectFriendship(row.id)
-      if (result.error) Alert.alert('Błąd', result.error)
-      else await reload()
+      if (result.error) throw new Error(result.error)
     },
-    [reload],
-  )
-
-  const nick = useCallback((id: string) => nickById[id] ?? '…', [nickById])
-  const avatar = useCallback((id: string) => avatarById[id] ?? null, [avatarById])
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.friends(userId!) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard(userId!) })
+    },
+    onError: (err: Error) => {
+      Alert.alert('Błąd', err.message)
+    },
+  })
 
   return {
-    loading,
-    refreshing,
+    loading: isLoading,
+    refreshing: isRefetching,
     me,
-    myInviteCode,
-    incoming,
-    outgoing,
-    friends,
-    nick,
-    avatar,
+    myInviteCode: ensureMyInviteCode(userId!) ?? null,
+    incoming: data?.incoming ?? [],
+    outgoing: data?.outgoing ?? [],
+    friends: data?.friends ?? [],
+    nickById: data?.nickById ?? {},
+    avatarById: data?.avatarById ?? {},
     onRefresh,
-    accept,
-    reject,
+    accept: (row: Friendship) => acceptMutation.mutate(row),
+    reject: (row: Friendship) => rejectMutation.mutate(row),
     handleInviteFromLink,
   }
 }

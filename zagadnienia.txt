@@ -24,3 +24,6 @@ Feature do dodania w przyszłości:
 - Filtrowanie: nierozliczone / zapłacone / wszystkie
 - Per znajomy: rozwijalny widok z historią per zakład
 - Eksport / podsumowanie miesięczne
+
+Do naprawy ale niskie prio 
+- Require cycles
