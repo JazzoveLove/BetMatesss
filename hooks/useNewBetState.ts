@@ -2,11 +2,10 @@
 
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react'
 import { useAuthContext } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
-import { AuthService } from '../services/auth.service'
+import { UsersService } from '../services/users.service'
 import type { GameTemplate } from '../constants/games'
 import type { BetFormat, PokerMode, StakeMode } from '../types/bet.types'
-import type { UserProfile, UserProfileRow } from '../types/user.types'
+import type { UserProfile } from '../types/user.types'
 import { error } from '../utils/logger'
 import type { NewBetStep } from './useNewBet.types'
 
@@ -66,13 +65,8 @@ export function useNewBetState(preselectedFriend: UserProfile | undefined): UseN
     if (!userId) return
     void (async () => {
       try {
-        const { data, error: qErr } = await supabase
-          .from('users')
-          .select('id, nick, avatar_url, invite_code, created_at, phone')
-          .eq('id', userId)
-          .single()
-        if (qErr) throw qErr
-        if (data) setCurrentUser(AuthService.mapProfileRow(data as UserProfileRow))
+        const profile = await UsersService.getFullProfile(userId)
+        if (profile) setCurrentUser(profile)
       } catch (e) {
         error('[useNewBet] load current user profile', e)
       }
