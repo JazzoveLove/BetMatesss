@@ -3,10 +3,10 @@ import { useBets } from './useBets'
 import { useFriends } from './useFriends'
 import { useNewBetActions } from './useNewBetActions'
 import { useNewBetDerived } from './useNewBetDerived'
-import type { NewBetNavigation, NewBetRoute, NewBetState } from './useNewBet.types'
+import type { NewBetNavigation, NewBetRoute, NewBetState } from '../types/new-bet.types'
 import { useNewBetState } from './useNewBetState'
 
-export type { NewBetHandlers, NewBetState, NewBetStep, NewBetNavigation, NewBetRoute, NewBetTabParamList } from './useNewBet.types'
+export type { NewBetHandlers, NewBetState, NewBetStep, NewBetNavigation, NewBetRoute } from '../types/new-bet.types'
 
 export function useNewBet() {
   const navigation = useNavigation<NewBetNavigation>()

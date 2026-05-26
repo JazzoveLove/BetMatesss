@@ -7,7 +7,7 @@ import type { GameTemplate } from '../constants/games'
 import type { BetFormat, PokerMode, StakeMode } from '../types/bet.types'
 import type { UserProfile } from '../types/user.types'
 import { error } from '../utils/logger'
-import type { NewBetStep } from './useNewBet.types'
+import type { NewBetStep } from '../types/new-bet.types'
 
 export type UseNewBetStateReturn = {
   step: NewBetStep

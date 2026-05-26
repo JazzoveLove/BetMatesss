@@ -4,17 +4,10 @@ import type { RouteProp } from '@react-navigation/native'
 import type { GameTemplate } from '../constants/games'
 import type { BetFormat, PokerMode, StakeMode } from '../types/bet.types'
 import type { UserProfile } from '../types/user.types'
+import type { TabParamList } from '../navigation/types'
 
-export type NewBetTabParamList = {
-  Home: undefined
-  Historia: undefined
-  Nowy: { preselectedFriend?: UserProfile } | undefined
-  Znajomi: undefined
-  Profil: undefined
-}
-
-export type NewBetNavigation = BottomTabNavigationProp<NewBetTabParamList, 'Nowy'>
-export type NewBetRoute = RouteProp<NewBetTabParamList, 'Nowy'>
+export type NewBetNavigation = BottomTabNavigationProp<TabParamList, 'Nowy'>
+export type NewBetRoute = RouteProp<TabParamList, 'Nowy'>
 
 export type NewBetStep = 1 | 2 | 3
 

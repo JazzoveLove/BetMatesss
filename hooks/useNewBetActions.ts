@@ -6,7 +6,7 @@ import type { GameTemplate } from '../constants/games'
 import type { CreateBetParams } from '../types/bet.types'
 import type { UserProfile } from '../types/user.types'
 import { error, log } from '../utils/logger'
-import type { NewBetHandlers, NewBetNavigation, NewBetStep } from './useNewBet.types'
+import type { NewBetHandlers, NewBetNavigation, NewBetStep } from '../types/new-bet.types'
 import type { UseNewBetDerivedReturn } from './useNewBetDerived'
 import type { UseNewBetStateReturn } from './useNewBetState'
 
