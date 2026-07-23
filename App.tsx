@@ -3,7 +3,7 @@ import {
   createNavigationContainerRef,
   type ParamListBase,
 } from '@react-navigation/native'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as Notifications from 'expo-notifications'
 import { TamaguiProvider } from 'tamagui'
@@ -11,6 +11,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuthContext } from './contexts/AuthContext'
 import LoginScreen from './app/login'
+import RegisterScreen from './app/register'
 import SetupProfileScreen from './app/setup-profile'
 import BetDetailScreen from './app/bet-detail'
 import JoinBetScreen from './app/join-bet'
@@ -48,6 +49,7 @@ const Stack = createNativeStackNavigator()
 
 function AppContent() {
   const { appState, session, userId, completeSetup } = useAuthContext()
+  const [authScreen, setAuthScreen] = useState<'login' | 'register'>('login')
 
   const { pendingBetCodeRef } = useDeepLinks({
     appState,
@@ -72,7 +74,11 @@ function AppContent() {
   }, [])
 
   if (appState === 'loading') return null
-  if (appState === 'auth') return <LoginScreen />
+  if (appState === 'auth') {
+    return authScreen === 'login'
+      ? <LoginScreen onGoToRegister={() => setAuthScreen('register')} />
+      : <RegisterScreen onGoToLogin={() => setAuthScreen('login')} />
+  }
   if (appState === 'setup' && session) {
     return (
       <SetupProfileScreen

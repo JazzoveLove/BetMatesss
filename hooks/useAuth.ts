@@ -1,120 +1,61 @@
-import { useCallback, useEffect, useState } from 'react'
-import type { Session } from '@supabase/supabase-js'
+import { useCallback, useState } from 'react'
 import { AuthService } from '../services/auth.service'
-import type { UserProfile } from '../types/user.types'
-import { error } from '../utils/logger'
-
-type AuthState = {
-  session: Session | null
-  user: UserProfile | null
-  loading: boolean
-  error: string | null
-}
+import { credentialsSchema, getFirstValidationError } from '../utils/auth/authValidation'
+import { mapAuthError } from '../utils/auth/authErrors'
+import type { AuthActionState } from '../types/auth.types'
 
 export function useAuth() {
-  const [state, setState] = useState<AuthState>({
-    session: null,
-    user: null,
-    loading: true,
-    error: null,
-  })
-
-  const loadUser = useCallback(async (session: Session | null) => {
-    if (!session) {
-      setState(prev => ({ ...prev, session: null, user: null }))
-      return
-    }
-    try {
-      const profile = await AuthService.getCurrentUserProfile()
-      setState(prev => ({
-        ...prev,
-        session,
-        user: profile ? { id: profile.id, nick: profile.nick } : null,
-      }))
-    } catch (err) {
-      setState(prev => ({
-        ...prev,
-        error: err instanceof Error ? err.message : 'Błąd ładowania profilu',
-      }))
-    }
-  }, [])
-
-  useEffect(() => {
-    let mounted = true
-    AuthService.getSession()
-      .then(async ({ data }) => {
-        if (!mounted) return
-        await loadUser(data.session)
-        if (mounted) setState(prev => ({ ...prev, loading: false }))
-      })
-      .catch(err => {
-        if (mounted) setState(prev => ({ ...prev, loading: false, error: err.message }))
-      })
-
-    const { data: { subscription } } = AuthService.onAuthStateChange(async (_event, session) => {
-      try {
-        await loadUser(session)
-      } catch (e) {
-        error('[useAuth] onAuthStateChange loadUser', e)
-      }
-    })
-    return () => {
-      mounted = false
-      subscription.unsubscribe()
-    }
-  }, [loadUser])
+  const [state, setState] = useState<AuthActionState>({ loading: false, error: null })
 
   const signIn = useCallback(async (email: string, password: string) => {
-    setState(prev => ({ ...prev, error: null }))
+    const validationError = getFirstValidationError(credentialsSchema.safeParse({ email, password }))
+    if (validationError) {
+      setState({ loading: false, error: validationError })
+      throw new Error(validationError)
+    }
+    setState({ loading: true, error: null })
     const { error } = await AuthService.signIn(email, password)
     if (error) {
-      setState(prev => ({ ...prev, error: error.message }))
-      throw new Error(error.message)
+      const message = mapAuthError(error)
+      setState({ loading: false, error: message })
+      throw new Error(message)
     }
+    setState({ loading: false, error: null })
   }, [])
 
   const signUp = useCallback(async (email: string, password: string) => {
-    setState(prev => ({ ...prev, error: null }))
+    const validationError = getFirstValidationError(credentialsSchema.safeParse({ email, password }))
+    if (validationError) {
+      setState({ loading: false, error: validationError })
+      throw new Error(validationError)
+    }
+    setState({ loading: true, error: null })
     const { error } = await AuthService.signUp(email, password)
     if (error) {
-      setState(prev => ({ ...prev, error: error.message }))
-      throw new Error(error.message)
+      const message = mapAuthError(error)
+      setState({ loading: false, error: message })
+      throw new Error(message)
     }
+    setState({ loading: false, error: null })
   }, [])
 
   const signOut = useCallback(async () => {
-    setState(prev => ({ ...prev, error: null }))
+    setState({ loading: true, error: null })
     const { error } = await AuthService.signOut()
     if (error) {
-      setState(prev => ({ ...prev, error: error.message }))
-      throw new Error(error.message)
+      const message = mapAuthError(error)
+      setState({ loading: false, error: message })
+      throw new Error(message)
     }
+    setState({ loading: false, error: null })
   }, [])
 
   const completeProfile = useCallback(async (userId: string, nick: string) => {
-    setState(prev => ({ ...prev, error: null }))
+    setState({ loading: true, error: null })
     const result = await AuthService.createProfile(userId, nick)
-    if (result.error) {
-      setState(prev => ({ ...prev, error: result.error ?? 'Profile create failed' }))
-      return result
-    }
-    try {
-      const profile = await AuthService.getCurrentUserProfile()
-      setState(prev => ({ ...prev, user: profile ? { id: profile.id, nick: profile.nick } : prev.user }))
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Nie udało się pobrać profilu użytkownika',
-      }))
-    }
+    setState({ loading: false, error: result.error ?? null })
     return result
   }, [])
 
-  return {
-    ...state,
-    signIn,
-    signUp,
-    signOut,
-    completeProfile,
-  }
+  return { ...state, signIn, signUp, signOut, completeProfile }
 }

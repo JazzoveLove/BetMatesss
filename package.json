@@ -42,7 +42,8 @@
     "react-native-screens": "~4.16.0",
     "react-native-web": "^0.21.0",
     "tamagui": "^2.0.0-rc.41",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "zod": "^4.4.3"
   },
   "private": true,
   "devDependencies": {

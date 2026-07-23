@@ -1,29 +1,6 @@
-1. co oznacza mutowalny
-2. Co to jest CI/CD 
-3. Co to jest modal 
-
-
-
-Rodzaje testów:
-1) Unit testy 
-2) Integracyjne
-3) E2E 
-4) Komponenty
-
-Do uwzględnienia:
-1. Dodać React Query 
-
-
-Do dodania
-
-1)## BACKLOG: Osobna zakładka "Rozliczenia"
-
-Feature do dodania w przyszłości:
-- Nowy ekran "Rozliczenia" dostępny z bottom navigation lub profilu
-- Lista wszystkich settlements ze wszystkimi znajomymi
-- Filtrowanie: nierozliczone / zapłacone / wszystkie
-- Per znajomy: rozwijalny widok z historią per zakład
-- Eksport / podsumowanie miesięczne
-
-Do naprawy ale niskie prio 
-- Require cycles
+22.07.2026
+1. anon key 
+2. RLS (Row Level Security)
+3. infinite recursion
+4. prop drilling 
+5. 
