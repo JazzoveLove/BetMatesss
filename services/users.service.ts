@@ -13,4 +13,10 @@ export const UsersService = {
     if (!data) return null
     return mapUserProfileRow(data as UserProfileRow)
   },
+
+  async updateNick(userId: string, nick: string): Promise<{ error?: string; code?: string }> {
+    const { error } = await supabase.from('users').update({ nick }).eq('id', userId)
+    if (error) return { error: error.message, code: error.code }
+    return {}
+  },
 }
