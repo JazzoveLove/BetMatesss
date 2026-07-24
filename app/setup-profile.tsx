@@ -1,35 +1,25 @@
 import { useState } from 'react'
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, TextInput } from 'react-native'
-import { YStack, Text, Button } from 'tamagui'
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput } from 'react-native'
+import { YStack, Button } from 'tamagui'
 import { useAuth } from '../hooks/useAuth'
+import { nickSchema } from '../utils/user/nickValidation'
+import { getFirstValidationError } from '../utils/validation'
 import { Colors } from '../constants/colors'
 
-type Props = {
-  userId: string
-  onComplete: () => void
-}
+type Props = { userId: string; onComplete: () => void }
 
 export default function SetupProfileScreen({ userId, onComplete }: Props) {
-  const { completeProfile } = useAuth()
+  const { completeProfile, loading } = useAuth()
   const [nick, setNick] = useState('')
-  const [loading, setLoading] = useState(false)
 
   async function saveNick() {
-    const trimmed = nick.trim()
-    if (trimmed.length < 2) {
-      Alert.alert('Za krótki nick', 'Nick musi mieć co najmniej 2 znaki.')
-      return
-    }
-    if (trimmed.length > 20) {
-      Alert.alert('Za długi nick', 'Nick może mieć maksymalnie 20 znaków.')
+    const validationError = getFirstValidationError(nickSchema.safeParse(nick))
+    if (validationError) {
+      Alert.alert('Nieprawidłowy nick', validationError)
       return
     }
 
-    setLoading(true)
-
-    const result = await completeProfile(userId, trimmed)
-    setLoading(false)
-
+    const result = await completeProfile(userId, nick.trim())
     if (result.error) {
       if (result.code === '23505') {
         Alert.alert('Nick zajęty', 'Ten nick jest już używany. Wybierz inny.')
@@ -38,38 +28,18 @@ export default function SetupProfileScreen({ userId, onComplete }: Props) {
       }
       return
     }
-
     onComplete()
   }
 
-  const canSave = !loading && nick.trim().length >= 2
+  const canSave = !loading && nick.trim().length >= 5
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#0f1117' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 28 }}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
+    <KeyboardAvoidingView style={styles.safe} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <YStack flex={1}>
-          <Text style={{ fontSize: 48, textAlign: 'center', marginBottom: 16 }}>👋</Text>
-          <Text style={{ fontSize: 26, fontWeight: '700', color: '#e8e6e0', textAlign: 'center', marginBottom: 8 }}>
-            Jak masz na imię?
-          </Text>
-          <Text
-            style={{
-              fontSize: 14,
-              color: 'rgba(232,230,224,0.5)',
-              textAlign: 'center',
-              marginBottom: 40,
-              lineHeight: 20,
-            }}
-          >
-            Twój nick będą widzieć znajomi przy zakładach
-          </Text>
+          <Text style={styles.emoji}>👋</Text>
+          <Text style={styles.title}>Jak masz na imię?</Text>
+          <Text style={styles.subtitle}>Twój nick będą widzieć znajomi przy zakładach</Text>
 
           <TextInput
             value={nick}
@@ -78,43 +48,41 @@ export default function SetupProfileScreen({ userId, onComplete }: Props) {
             placeholderTextColor={Colors.textMuted}
             autoCapitalize="none"
             autoCorrect={false}
-            maxLength={20}
+            maxLength={10}
             returnKeyType="done"
             onSubmitEditing={saveNick}
-            style={{
-              backgroundColor: Colors.cardAlt,
-              borderWidth: 1,
-              borderColor: Colors.border,
-              borderRadius: 12,
-              paddingHorizontal: 16,
-              paddingVertical: 14,
-              fontSize: 18,
-              color: Colors.text,
-              textAlign: 'center',
-              letterSpacing: 0.5,
-            }}
+            style={styles.input}
           />
+          <Text style={styles.counter}>{nick.trim().length} / 10</Text>
 
-          <Text style={{ fontSize: 12, color: 'rgba(232,230,224,0.3)', textAlign: 'right', marginTop: 6, marginBottom: 32 }}>
-            {nick.trim().length} / 20
-          </Text>
-
-          <Button
-            disabled={!canSave}
-            onPress={saveNick}
-            style={{
-              backgroundColor: '#534AB7',
-              borderRadius: 12,
-              height: 52,
-              opacity: canSave ? 1 : 0.4,
-            }}
-          >
-            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>
-              {loading ? 'Zapisywanie...' : 'Gotowe'}
-            </Text>
+          <Button disabled={!canSave} onPress={saveNick} style={[styles.saveButton, { opacity: canSave ? 1 : 0.4 }]}>
+            <Text style={styles.saveButtonText}>{loading ? 'Zapisywanie...' : 'Gotowe'}</Text>
           </Button>
         </YStack>
       </ScrollView>
     </KeyboardAvoidingView>
   )
 }
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: Colors.background },
+  content: { flexGrow: 1, justifyContent: 'center', padding: 28 },
+  emoji: { fontSize: 48, textAlign: 'center', marginBottom: 16 },
+  title: { fontSize: 26, fontWeight: '700', color: Colors.text, textAlign: 'center', marginBottom: 8 },
+  subtitle: { fontSize: 14, color: Colors.textMuted, textAlign: 'center', marginBottom: 40, lineHeight: 20 },
+  input: {
+    backgroundColor: Colors.cardAlt,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 18,
+    color: Colors.text,
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  },
+  counter: { fontSize: 12, color: Colors.textFaint, textAlign: 'right', marginTop: 6, marginBottom: 32 },
+  saveButton: { backgroundColor: Colors.accent, borderRadius: 12, height: 52 },
+  saveButtonText: { color: Colors.white, fontSize: 16, fontWeight: '600' },
+})

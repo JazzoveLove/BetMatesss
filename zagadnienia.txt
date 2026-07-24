@@ -4,3 +4,26 @@
 3. infinite recursion
 4. prop drilling 
 5. 
+
+23.07.2026
+
+Generyki (<T>) — parametr typu, nie wartości. Funkcja/typ może działać z różnymi typami, a Ty decydujesz z jakim, wywołując ją.
+
+extends w generykach — ogranicza jaki typ może być podstawiony pod generyk (np. <Schema extends z.ZodTypeAny> = "Schema musi być jakimś schematem Zod, nie czymkolwiek").
+
+Typ indeksowany (Typ['pole']) — odczytanie typu konkretnego pola/metody z innego typu, odpowiednik obiekt.pole ale na poziomie typów, nie wartości.
+
+ReturnType<T> — wbudowany w TypeScript "utility type": bierze typ funkcji, zwraca typ tego, co ta funkcja zwraca.
+
+Union type (A | B) — "albo A, albo B" (np. string | null).
+
+Discriminated union — obiekt z polem rozróżniającym wariant (tu: success: true vs success: false), po którym TypeScript sam wie, jakich innych pól się spodziewać w danym wariancie.
+
+Optional chaining (?.) — "sięgnij głębiej, ale jeśli po drodze jest null/undefined, nie wywalaj błędu, zwróć undefined".
+
+Nullish coalescing (??) — "jeśli lewa strona to null albo undefined, weź prawą stronę jako wartość domyślną".
+
+Zod safeParse vs parse — parse rzuca wyjątek przy błędzie, safeParse zwraca obiekt wynikowy ({success, data} albo {success, error}) zamiast rzucać.
+
+
+Poczytac o tym 
