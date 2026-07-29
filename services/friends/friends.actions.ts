@@ -23,7 +23,7 @@ export async function ensureFriendshipAccepted(userId: string, otherId: string):
     .select('id, status')
     .or(`and(user_a.eq.${userId},user_b.eq.${otherId}),and(user_a.eq.${otherId},user_b.eq.${userId})`)
     .maybeSingle()
-    .returns<ExistingFriendship>()
+    .overrideTypes<ExistingFriendship, { merge: false }>()
 
   if (existingError) return { error: existingError.message }
 
@@ -41,7 +41,10 @@ export async function ensureFriendshipAccepted(userId: string, otherId: string):
     user_b: otherId,
     status: 'accepted',
   })
-  if (insertError) return { error: insertError.message }
+  if (insertError) {
+    if (insertError.code === '23505') return {}
+    return { error: insertError.message }
+  }
 
   return {}
 }

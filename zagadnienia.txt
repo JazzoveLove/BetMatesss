@@ -26,4 +26,17 @@ Nullish coalescing (??) — "jeśli lewa strona to null albo undefined, weź pra
 Zod safeParse vs parse — parse rzuca wyjątek przy błędzie, safeParse zwraca obiekt wynikowy ({success, data} albo {success, error}) zamiast rzucać.
 
 
-Poczytac o tym 
+Poczytac o tym !!!
+
+
+24.07.2026
+
+- Race conition w friends.actions.ts -> Poczytac tez troche 
+
+- @deprecated
+
+- jak dziala kanaly i sesje jesli chodzi o baze danych 
+
+- typ a zmienna 
+
+- 

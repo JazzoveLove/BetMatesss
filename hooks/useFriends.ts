@@ -16,7 +16,7 @@ import {
   subscribeFriendInvites,
 } from '../lib/friend-invite-queue'
 import type { Friendship } from '../types/user.types'
-import { error, log } from '../utils/logger'
+import { error } from '../utils/logger'
 import { queryKeys } from '../lib/queryKeys'
 
 function alertForInviteResult(
@@ -72,13 +72,15 @@ export function useFriends() {
     enabled: !!userId,
   })
 
+  const { data: myInviteCode } = useQuery({
+    queryKey: queryKeys.myInviteCode(userId ?? ''),
+    queryFn: () => ensureMyInviteCode(userId!),
+    enabled: !!userId,
+  })
+
   const onRefresh = useCallback(async () => {
     if (!userId) return
-    try {
-      await refetch()
-    } catch (err) {
-      error('[useFriends] onRefresh', err)
-    }
+    await refetch()
   }, [userId, refetch])
 
   useEffect(() => {
@@ -150,7 +152,9 @@ export function useFriends() {
     loading: isLoading,
     refreshing: isRefetching,
     me,
-    myInviteCode: ensureMyInviteCode(userId!) ?? null,
+    myInviteCode: myInviteCode ?? null,
+    nick: (id: string) => data?.nickById[id] ?? '',
+    avatar: (id: string) => data?.avatarById[id] ?? null,
     incoming: data?.incoming ?? [],
     outgoing: data?.outgoing ?? [],
     friends: data?.friends ?? [],

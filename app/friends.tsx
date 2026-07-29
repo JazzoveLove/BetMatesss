@@ -30,6 +30,7 @@ export default function FriendsScreen() {
     outgoing,
     friends,
     nick,
+    avatar,
     onRefresh,
     accept,
     reject,
@@ -56,6 +57,7 @@ export default function FriendsScreen() {
         incoming={incoming}
         outgoing={outgoing}
         nick={nick}
+        avatar={avatar}
         accept={accept}
         reject={reject}
         myInviteCode={myInviteCode}

@@ -1,6 +1,6 @@
 import { supabase } from '../../lib/supabase'
 import { generateInviteCode } from '../../lib/invite-code'
-import type { FriendshipRow } from '../../types/user.types'
+import type { FriendshipRow, FriendInviteResult } from '../../types/user.types'
 
 type InviteCodeResult = { invite_code: string | null }
 
@@ -10,7 +10,7 @@ export async function ensureMyInviteCode(userId: string): Promise<string | null>
     .select('invite_code')
     .eq('id', userId)
     .maybeSingle()
-    .returns<InviteCodeResult>()
+    .overrideTypes<InviteCodeResult, { merge: false }>()
 
   if (error) return null
 
@@ -26,7 +26,7 @@ export async function ensureMyInviteCode(userId: string): Promise<string | null>
       .is('invite_code', null)
       .select('invite_code')
       .maybeSingle()
-      .returns<InviteCodeResult>()
+      .overrideTypes<InviteCodeResult, { merge: false }>()
 
     if (!upErr && row != null && row.invite_code) {
       return row.invite_code
@@ -39,7 +39,7 @@ export async function ensureMyInviteCode(userId: string): Promise<string | null>
       .select('invite_code')
       .eq('id', userId)
       .maybeSingle()
-      .returns<InviteCodeResult>()
+      .overrideTypes<InviteCodeResult, { merge: false }>()
     if (againErr) return null
     const c = again?.invite_code
     if (c) return c
@@ -53,28 +53,18 @@ type LookupRow = { user_id: string; user_nick: string }
 export async function lookupUserByCode(
   code: string,
 ): Promise<{ userId: string; nick: string } | { error: string; missingFunction?: boolean }> {
-  const { data, error } = await supabase.rpc('lookup_user_by_invite_code', { p_code: code })
+  const { data, error } = await supabase
+  .rpc('lookup_user_by_invite_code', { p_code: code })
+  .overrideTypes<LookupRow[], { merge: false }>()
   if (error) {
     const missingFunction =
       error.message?.includes('lookup_user_by_invite_code') || error.code === 'PGRST202'
     return { error: error.message, missingFunction }
   }
-  const rows = data as LookupRow[] | null
-  const first = rows?.[0]
+  const first = data?.[0]
   if (!first) return { error: 'not_found' }
   return { userId: first.user_id, nick: first.user_nick }
 }
-
-export type FriendInviteResult =
-  | { type: 'self' }
-  | { type: 'already_friends' }
-  | { type: 'already_sent' }
-  | { type: 'accepted' }
-  | { type: 'sent' }
-  | { type: 'not_found' }
-  | { type: 'missing_function' }
-  | { type: 'duplicate' }
-  | { type: 'error'; message: string }
 
 export async function handleFriendInvite(
   userId: string,
@@ -103,7 +93,7 @@ export async function handleFriendInvite(
       `and(user_a.eq.${userId},user_b.eq.${otherId}),and(user_a.eq.${otherId},user_b.eq.${userId})`,
     )
     .maybeSingle()
-    .returns<FriendshipRow>()
+    .overrideTypes<FriendshipRow, { merge: false }>()
   if (anyRowErr) return { type: 'error', message: anyRowErr.message }
 
   if (anyRow) {

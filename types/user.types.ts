@@ -38,3 +38,14 @@ export type UserStats = {
   winRate: number
   balance: number
 }
+
+export type FriendInviteResult =
+  | { type: 'self' }
+  | { type: 'already_friends' }
+  | { type: 'already_sent' }
+  | { type: 'accepted' }
+  | { type: 'sent' }
+  | { type: 'not_found' }
+  | { type: 'missing_function' }
+  | { type: 'duplicate' }
+  | { type: 'error'; message: string }

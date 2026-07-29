@@ -59,6 +59,7 @@ export async function loadFriendships(userId: string): Promise<FriendshipsData> 
     if (r.userAId === userId) need.add(r.userBId)
     else if (r.userBId === userId) need.add(r.userAId)
   }
+  need.add(userId)
 
   const profiles = await loadProfilesByIds([...need])
   const nickById = Object.fromEntries(profiles.map(p => [p.id, p.nick]))

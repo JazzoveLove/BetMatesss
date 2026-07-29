@@ -5,6 +5,7 @@ export const queryKeys = {
   rivalry: (userId: string, friendId: string) => ['rivalry', userId, friendId] as const,
   betInvites: (userId: string) => ['betInvites', userId] as const,
   friends: (userId: string) => ['friends', userId] as const,
+  myInviteCode: (userId: string) => ['myInviteCode', userId] as const,
   bets: (userId: string) => ['bets', userId] as const,
   betDetail: (betId: string) => ['betDetail', betId] as const,
 }
