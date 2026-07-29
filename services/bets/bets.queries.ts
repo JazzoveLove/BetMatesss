@@ -1,5 +1,5 @@
 import { supabase } from '../../lib/supabase'
-import { getAcceptedFriendsList } from '../friends.service'
+import { getAcceptedFriendsList } from '../friends'
 import { getDashboardData } from './bets.dashboard'
 import { getProfileStatsV2 } from './bets.profile'
 import type { BetRow } from '../../types/bet.row.types'

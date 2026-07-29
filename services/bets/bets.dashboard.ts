@@ -2,7 +2,7 @@
 
 import { supabase } from '../../lib/supabase'
 import { parseStakeAmount } from '../../utils/odds'
-import { loadNicksByIds } from '../friends.service'
+import { loadNicksByIds } from '../friends'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
 import type {
   ActiveBetItem,

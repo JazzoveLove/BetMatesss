@@ -10,7 +10,7 @@ import {
   rejectFriendship,
   handleFriendInvite,
   subscribeFriendshipChanges,
-} from '../services/friends.service'
+} from '../services/friends'
 import {
   drainFriendInvites,
   subscribeFriendInvites,

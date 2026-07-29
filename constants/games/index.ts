@@ -1,10 +1,10 @@
-import { BOARD_GAME_TEMPLATES } from './games/board'
-import { CUSTOM_GAME_TEMPLATES } from './games/custom'
-import { SPORT_GAME_TEMPLATES } from './games/sport'
-import type { GameTemplate } from './games/types'
-import { VIDEO_GAME_TEMPLATES } from './games/video'
+import { BOARD_GAME_TEMPLATES } from './board'
+import { CUSTOM_GAME_TEMPLATES } from './custom'
+import { SPORT_GAME_TEMPLATES } from './sport'
+import type { GameTemplate } from './types'
+import { VIDEO_GAME_TEMPLATES } from './video'
 
-export type { GameTemplate, WinCondition } from './games/types'
+export type { GameTemplate, WinCondition } from './types'
 
 export const GAME_TEMPLATES: GameTemplate[] = [
   ...SPORT_GAME_TEMPLATES,
