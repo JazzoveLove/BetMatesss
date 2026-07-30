@@ -48,6 +48,7 @@ export type NewBetHandlers = {
   handleGameSelect: (game: GameTemplate) => void
   handleBack: () => void
   handleSubmit: () => Promise<void>
+  isSubmitting: boolean
   resetNewBet: () => void
   toggleParticipant: (friend: UserProfile) => void
   setParticipants: Dispatch<SetStateAction<UserProfile[]>>
