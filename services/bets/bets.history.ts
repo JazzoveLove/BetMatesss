@@ -2,7 +2,7 @@
 import { supabase } from '../../lib/supabase'
 import { loadNicksByIds } from '../friends'
 import { normalizeUsersNick } from './_helpers'
-import { getUserBets } from './bets.queries'
+import { getUserBets } from './bets.userBets'
 import type { BetStatus, HistoryBadgeLabel, HistoryListItem } from '../../types/bet.types'
 
 export function historyBadgeAndAmount(
@@ -14,7 +14,7 @@ export function historyBadgeAndAmount(
   if (st === 'pending') return { badge: 'oczekuje', amountLabel: '—' }
   if (st === 'rejected') return { badge: 'odrzucony', amountLabel: '—' }
   if (st === 'disputed') return { badge: 'spór', amountLabel: '—' }
-  if (st === 'active' || st === 'in_progress' || st === 'awaiting_confirmation') {
+  if (st === 'active' || st === 'awaiting_confirmation') {
     return { badge: 'aktywny', amountLabel: '—' }
   }
   if (st === 'completed') {

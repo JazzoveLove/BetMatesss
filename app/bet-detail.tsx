@@ -188,7 +188,7 @@ function initials(value: string): string {
 }
 
 function getStatusBadge(status: BetStatus) {
-  if (status === "active" || status === "in_progress")
+  if (status === "active")
     return { label: "Aktywny", bg: hexToRgba(Colors.green, 0.15), text: Colors.green, border: hexToRgba(Colors.green, 0.2) };
   if (status === "pending")
     return { label: "Oczekuje", bg: hexToRgba(Colors.amber, 0.15), text: Colors.amber, border: hexToRgba(Colors.amber, 0.2) };

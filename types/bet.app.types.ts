@@ -4,7 +4,6 @@ import type { BetFormat, StakeMode, PokerMode } from './bet.creation.types'
 export type BetStatus =
   | 'pending'
   | 'active'
-  | 'in_progress'
   | 'awaiting_confirmation'
   | 'completed'
   | 'disputed'

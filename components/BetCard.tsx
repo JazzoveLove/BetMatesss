@@ -4,7 +4,6 @@ import { GAME_MAP } from '../constants/games'
 export type BetStatus =
   | 'pending'
   | 'active'
-  | 'in_progress'
   | 'awaiting_confirmation'
   | 'completed'
   | 'disputed'
@@ -20,7 +19,6 @@ export type BetCardProps = {
 
 const STATUS_CONFIG: Record<BetStatus, { label: string; color: string; bg: string }> = {
   active: { label: 'Aktywny', color: '#7F77DD', bg: '#7F77DD18' },
-  in_progress: { label: 'W toku', color: '#7F77DD', bg: '#7F77DD18' },
   pending: { label: 'Oczekuje', color: '#EF9F27', bg: '#EF9F2718' },
   awaiting_confirmation: { label: 'Do potwierdzenia', color: '#EF9F27', bg: '#EF9F2718' },
   completed: { label: 'Zakończony', color: 'rgba(232,230,224,0.5)', bg: '#1e2330' },

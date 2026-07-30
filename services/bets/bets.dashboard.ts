@@ -154,8 +154,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
     if (
       bet.status === 'active' ||
       bet.status === 'pending' ||
-      bet.status === 'awaiting_confirmation' ||
-      bet.status === 'in_progress'
+      bet.status === 'awaiting_confirmation'
     ) {
       active.push({
         id: bet.id,

@@ -1,7 +1,7 @@
 import { supabase } from '../../lib/supabase'
 import { computeProfileStatsV2, type WLEntry } from '../../utils/profileStats'
 import type { ProfileStatsV2 } from '../../types/bet.types'
-import { getUserBets } from './bets.queries'
+import { getUserBets } from './bets.userBets'
 
 type SettlementRow = {
   bet_id: string

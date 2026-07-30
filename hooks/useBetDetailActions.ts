@@ -5,7 +5,7 @@ import { Alert } from 'react-native'
 import { BetsService } from '../services/bets.service'
 import { NotificationsService } from '../services/notifications.service'
 import type { BetDetail, PendingResult, Settlement } from '../types/bet.types'
-import { error, log } from '../utils/logger'
+import { error } from '../utils/logger'
 import type { ActionLoadingState } from './useBetDetailData'
 
 export function useBetDetailActions(
@@ -108,7 +108,6 @@ export function useBetDetailActions(
 
   const confirmResult = useCallback(async () => {
     if (!bet || !currentUserId || !pendingResult) return
-    log('[useBetDetail confirmResult] start', { betId, resultId: pendingResult.id })
     setAction('confirming', true)
     try {
       const result = await BetsService.confirmBetResult({
@@ -116,7 +115,6 @@ export function useBetDetailActions(
         resultId: pendingResult.id,
         confirmerId: currentUserId,
       })
-      log('[useBetDetail confirmResult] BetsService.confirmBetResult', result)
       if (result.error) {
         Alert.alert('Błąd', result.error)
         return
@@ -151,14 +149,11 @@ export function useBetDetailActions(
   const markPaid = useCallback(
     async (settlementId: string, debtorId: string) => {
       if (!currentUserId || debtorId !== currentUserId) {
-        log('[useBetDetail markPaid] skip — not debtor', { settlementId, debtorId, currentUserId })
         return
       }
-      log('[useBetDetail markPaid] start', { settlementId, debtorId })
       setAction('markingPaid', settlementId)
       try {
         const result = await BetsService.markAsPaid(settlementId, debtorId)
-        log('[useBetDetail markPaid] result', result)
         if (result.error) {
           Alert.alert('Błąd', result.error)
           return
@@ -262,7 +257,6 @@ export function useBetDetailActions(
   const sendReminder = useCallback(
     async (s: Settlement) => {
       if (!currentUserId || currentUserId !== s.creditorId) return
-      log('[useBetDetail sendReminder] start', { settlementId: s.id, debtorId: s.debtorId })
       setAction('reminding', s.id)
       try {
         const result = await NotificationsService.sendSettlementReminderNotification({

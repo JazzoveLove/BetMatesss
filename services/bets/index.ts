@@ -27,8 +27,9 @@ export {
 
 export { getDashboardData } from './bets.dashboard'
 
+export { getUserBets } from './bets.userBets'
+
 export {
-  getUserBets,
   getUserBetSummaries,
   getDisciplineStatsForUser,
   getFriendsBalanceLeaderboard,
@@ -62,8 +63,8 @@ import {
   rejectParticipation,
 } from './bets.participants'
 import { getDashboardData } from './bets.dashboard'
+import { getUserBets } from './bets.userBets'
 import {
-  getUserBets,
   getUserBetSummaries,
   getDisciplineStatsForUser,
   getFriendsBalanceLeaderboard,

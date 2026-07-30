@@ -47,7 +47,7 @@ function getInitials(nick: string): string {
 
 function mapActiveStatus(rawStatus: string): 'pending' | 'active' | 'enter_result' {
   if (rawStatus === 'awaiting_confirmation') return 'enter_result'
-  if (rawStatus === 'active' || rawStatus === 'in_progress') return 'active'
+  if (rawStatus === 'active') return 'active'
   return 'pending'
 }
 

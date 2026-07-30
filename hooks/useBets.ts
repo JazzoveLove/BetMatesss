@@ -96,7 +96,6 @@ export function useBets() {
         b =>
           b.status === 'pending' ||
           b.status === 'active' ||
-          b.status === 'in_progress' ||
           b.status === 'awaiting_confirmation',
       ),
     [bets],

@@ -14,7 +14,6 @@ export interface BetRow {
   status:
     | 'pending'
     | 'active'
-    | 'in_progress'
     | 'awaiting_confirmation'
     | 'completed'
     | 'disputed'

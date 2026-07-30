@@ -2,7 +2,7 @@ import { supabase } from '../../lib/supabase'
 import { NotificationsService } from '../notifications.service'
 import { calcOdds, toStakeNumber } from '../../utils/odds'
 import type { CreateBetParams, ParticipantRow } from '../../types/bet.types'
-import { log, warn } from '../../utils/logger'
+import { warn } from '../../utils/logger'
 
 export function buildParticipantRows(
   betId: string,
@@ -31,21 +31,6 @@ export function buildParticipantRows(
 export async function createBet(
   params: CreateBetParams,
 ): Promise<{ betId: string } | { error: string }> {
-  log('[createBet] input params', {
-    creatorId: params.creatorId,
-    gameTemplate: params.gameTemplate,
-    format: params.format,
-    stakeMode: params.stakeMode,
-    globalStake: params.globalStake,
-    globalStakeType: typeof params.globalStake,
-    participants: params.participants.map(p => ({
-      id: p.id,
-      nick: p.nick,
-      customStake: p.customStake,
-      customStakeParsed: toStakeNumber(p.customStake),
-    })),
-  })
-
   const { data: bet, error: betError } = await supabase
     .from('bets')
     .insert({
@@ -67,15 +52,10 @@ export async function createBet(
 
   const rows = buildParticipantRows(bet.id, params)
 
-  log('[createBet] bet_participants rows (before insert)', JSON.stringify(rows, null, 2))
-
   const { error: partError } = await supabase.from('bet_participants').insert(rows)
   if (partError) {
-    log('[createBet] bet_participants insert error', partError)
     return { error: partError.message }
   }
-
-  log('[createBet] bet_participants insert OK', { betId: bet.id, rowCount: rows.length })
 
   const creatorNick = params.participants.find(p => p.id === params.creatorId)?.nick ?? 'Znajomy'
   const toUserIds = rows.filter(r => r.user_id !== params.creatorId).map(r => r.user_id)
