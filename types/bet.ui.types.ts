@@ -43,3 +43,15 @@ export type RecentResult = {
   opponentNick: string
   profit: number
 }
+
+export type HistoryBadgeLabel = 'aktywny' | 'wygrany' | 'przegrany' | 'oczekuje' | 'spór' | 'zakończony' | 'odrzucony'
+
+export type HistoryListItem = {
+  id: string
+  gameTemplate: string
+  createdAt: string
+  opponentNick: string
+  badge: HistoryBadgeLabel
+  amountLabel: string
+  profit: number
+}

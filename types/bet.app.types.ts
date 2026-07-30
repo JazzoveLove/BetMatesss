@@ -1,13 +1,6 @@
 import type { BetResultRow } from './bet.row.types'
+import type { BetFormat, StakeMode, PokerMode } from './bet.creation.types'
 
-export type BetFormat =
-  | 'single'
-  | 'best_of'
-  | 'per_match'
-  | 'round_robin'
-  | 'elimination'
-  | 'session'
-export type StakeMode = 'none' | 'equal' | 'custom'
 export type BetStatus =
   | 'pending'
   | 'active'
@@ -17,13 +10,7 @@ export type BetStatus =
   | 'disputed'
   | 'rejected'
 export type ResultType = 'score' | 'legs' | 'sets' | 'winner_only' | 'chips'
-export type PokerMode = 'winner_takes_all' | 'chip_count'
 
-export type NewBetParticipant = {
-  id: string
-  nick: string
-  customStake: number
-}
 export type ParticipantRole = 'creator' | 'participant'
 export type BetParticipant = {
   id: string
@@ -88,83 +75,4 @@ export type PendingResult = {
   score: string
   recordedBy: string
   confirmed: boolean
-}
-
-export interface CreateBetParams {
-  creatorId: string
-  gameTemplate: string
-  format: BetFormat
-  stakeMode: StakeMode
-  participants: NewBetParticipant[]
-  globalStake: number
-  bestOfCount?: number
-  stakeAmount?: number
-  stakePerMatch?: number
-  customStakes?: Record<string, number>
-  pokerMode?: PokerMode
-  pokerStack?: number
-  pokerRebuyStack?: number
-  participantIds?: string[]
-}
-
-export type HistoryBadgeLabel = 'aktywny' | 'wygrany' | 'przegrany' | 'oczekuje' | 'spór' | 'zakończony' | 'odrzucony'
-
-export type HistoryListItem = {
-  id: string
-  gameTemplate: string
-  createdAt: string
-  opponentNick: string
-  badge: HistoryBadgeLabel
-  amountLabel: string
-  profit: number
-}
-
-export type DisciplineStatRow = {
-  gameTemplate: string
-  wins: number
-  losses: number
-  winPct: number
-}
-
-export type FriendRankRow = {
-  id: string
-  nick: string
-  balance: number
-}
-
-export type DashboardStats = {
-  balance: number
-  totalBets: number
-  winRate: number
-}
-
-export type ProfileDisciplineStat = {
-  gameTemplate: string
-  wins: number
-  losses: number
-  winPct: number
-  balance: number
-}
-
-export type ProfileStatSection = {
-  wins: number
-  losses: number
-  winRate: number
-  balance: number
-  disciplines: ProfileDisciplineStat[]
-}
-
-export type ProfileStatsV2 = {
-  overall: ProfileStatSection
-  money: ProfileStatSection | null
-  friendly: ProfileStatSection | null
-}
-
-export type ProfileScreenData = {
-  nick: string
-  createdAt: string | null
-  stats: DashboardStats
-  disciplines: DisciplineStatRow[]
-  friendsRank: FriendRankRow[]
-  statsV2: ProfileStatsV2
 }
