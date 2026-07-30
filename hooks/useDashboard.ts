@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthContext } from '../contexts/AuthContext'
 import { queryKeys } from '../lib/queryKeys'
@@ -58,11 +59,17 @@ function mapGame(gameTemplate: string): string {
 export function useDashboard() {
   const { userId } = useAuthContext()
 
-  const { data: raw, isLoading } = useQuery({
+  const { data: raw, isLoading, refetch } = useQuery({
     queryKey: queryKeys.dashboard(userId ?? ''),
     queryFn: () => BetsService.getDashboardData(userId!),
     enabled: !!userId,
   })
+
+  useFocusEffect(
+    useCallback(() => {
+      if (userId) void refetch()
+    }, [userId, refetch]),
+  )
 
   const user = useMemo<DashboardUser>(
     () => raw
