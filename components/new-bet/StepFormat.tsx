@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
 import { BET_FORMATS } from '../../constants/formats'
+import { ENABLED_FORMATS } from '../../constants/features'
 import type { NewBetHandlers, NewBetState } from '../../hooks/useNewBet'
 import type { BetFormat } from '../../types/bet.types'
 import { FormatDetailsCard } from './format/FormatDetailsCard'
@@ -22,7 +23,8 @@ export function StepFormat({ state, handlers }: Props) {
 
   const formatSource = useMemo(() => {
     if (!selectedGame) return [] as BetFormat[]
-    return availableFormats.length > 0 ? availableFormats : selectedGame.availableFormats
+    const source = availableFormats.length > 0 ? availableFormats : selectedGame.availableFormats
+    return source.filter(format => ENABLED_FORMATS.includes(format))
   }, [availableFormats, selectedGame])
 
   useEffect(() => {

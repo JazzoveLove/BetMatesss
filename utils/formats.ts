@@ -1,4 +1,5 @@
 import type { GameTemplate } from '../constants/games'
+import { ENABLED_FORMATS } from '../constants/features'
 import type { BetFormat, BetParticipant, BetResultRow } from '../types/bet.types'
 
 const FORMAT_MIN_PLAYERS: Record<BetFormat, number> = {
@@ -28,7 +29,7 @@ export const getAvailableFormats = (
   return game.availableFormats.filter(format => {
     const min = FORMAT_MIN_PLAYERS[format] ?? 2
     const max = FORMAT_MAX_PLAYERS[format] ?? Number.POSITIVE_INFINITY
-    return total >= min && total <= max
+    return total >= min && total <= max && ENABLED_FORMATS.includes(format)
   })
 }
 
@@ -38,15 +39,19 @@ export const getDefaultFormat = (
 ): BetFormat => {
   const total = participantCount + 1
 
-  if (game.id === 'poker') return 'single'
+  const format: BetFormat = (() => {
+    if (game.id === 'poker') return 'single'
 
-  if (total >= 4 && game.availableFormats.includes('elimination')) {
-    return 'elimination'
-  }
-  if (total === 3 && game.availableFormats.includes('round_robin')) {
-    return 'round_robin'
-  }
-  return game.defaultFormat
+    if (total >= 4 && game.availableFormats.includes('elimination')) {
+      return 'elimination'
+    }
+    if (total === 3 && game.availableFormats.includes('round_robin')) {
+      return 'round_robin'
+    }
+    return game.defaultFormat
+  })()
+
+  return ENABLED_FORMATS.includes(format) ? format : 'single'
 }
 
 /** Bilans netto z rozegranych meczów (tylko 2 graczy): zwycięzca +stake, przegrany −stake. */

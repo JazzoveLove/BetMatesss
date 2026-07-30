@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { Animated, Pressable, Text, View } from 'react-native'
+import { ENABLED_STAKE_MODES } from '../../../constants/features'
 import type { StakeMode } from '../../../types/bet.types'
 import { stakeStepStyles as styles } from './stakeStyles'
 
@@ -10,6 +11,8 @@ const STAKE_MODES: StakeModeCard[] = [
   { id: 'equal', name: 'Równe', description: 'Wszyscy po tyle samo' },
   { id: 'custom', name: 'Własny kurs', description: 'Różne kwoty' },
 ]
+
+const VISIBLE_STAKE_MODES = STAKE_MODES.filter(mode => ENABLED_STAKE_MODES.includes(mode.id))
 
 export type StakeModePickerProps = {
   stakeMode: StakeMode
@@ -36,7 +39,7 @@ export function StakeModePicker({ stakeMode, onChange }: StakeModePickerProps) {
     <>
       <Text style={styles.sectionLabel}>TRYB STAWKI</Text>
       <View style={styles.modeRow}>
-        {STAKE_MODES.map(mode => {
+        {VISIBLE_STAKE_MODES.map(mode => {
           const selected = stakeMode === mode.id
           return (
             <Animated.View key={mode.id} style={[styles.modeCol, { transform: [{ scale: modeScale(mode.id) }] }]}>
