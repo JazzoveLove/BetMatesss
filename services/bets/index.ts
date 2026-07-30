@@ -1,5 +1,6 @@
-export { createBet, getBetInvitePreview, joinBetFromInvite, buildParticipantRows } from './bets.create'
-export type { BetInvitePreview, ParticipantRow } from './bets.create'
+export { createBet, buildParticipantRows } from './bets.create'
+export { getBetInvitePreview, joinBetFromInvite } from './bets.join'
+export type { BetInvitePreview, ParticipantRow } from '../../types/bet.types'
 
 export {
   getBetDetail,
@@ -38,7 +39,8 @@ export { getHistoryForUser, historyBadgeAndAmount } from './bets.history'
 
 export { getProfileStatsV2 } from './bets.profile'
 
-import { createBet, getBetInvitePreview, joinBetFromInvite } from './bets.create'
+import { createBet } from './bets.create'
+import { getBetInvitePreview, joinBetFromInvite } from './bets.join'
 import {
   getBetDetail,
   submitBetResult,

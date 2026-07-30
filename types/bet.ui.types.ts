@@ -1,4 +1,5 @@
 import type { BetDetail, BetStatus, PendingResult, Settlement } from './bet.app.types'
+import type { StakeMode } from './bet.creation.types'
 
 export type FormatViewProps = {
   bet: BetDetail
@@ -27,6 +28,7 @@ export type FormatViewProps = {
   openResultModal: () => void
   openPerMatchResultModal: () => void
 }
+// czy to nie jest god table 
 
 export type ActiveBetItem = {
   id: string
@@ -54,4 +56,17 @@ export type HistoryListItem = {
   badge: HistoryBadgeLabel
   amountLabel: string
   profit: number
+}
+
+export type BetInvitePreview = {
+  betId: string
+  inviteCode: string
+  title: string
+  gameTemplate: string
+  stakeMode: StakeMode
+  status: BetStatus
+  creatorId: string
+  stakeAmount: number
+  alreadyParticipant: boolean
+  alreadyConfirmed: boolean
 }

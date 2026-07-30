@@ -41,3 +41,12 @@ export interface BetResultRow {
   chips?: Record<string, number>
   confirmed: boolean
 }
+
+export interface ParticipantRow {
+  bet_id: string
+  user_id: string
+  stake_amount: number
+  odds: number
+  role: 'creator' | 'participant'
+  confirmed: boolean
+}
