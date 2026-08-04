@@ -112,7 +112,7 @@ export function useDashboard() {
       game: mapGame(item.gameTemplate),
       amount: item.profit,
       dateLabel: item.timeLabel,
-      result: item.profit >= 0 ? 'win' : 'loss',
+      result: item.won ? 'win' : 'loss',
     })),
     [raw],
   )

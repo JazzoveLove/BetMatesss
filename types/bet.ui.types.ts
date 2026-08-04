@@ -44,6 +44,7 @@ export type RecentResult = {
   gameTemplate: string
   opponentNick: string
   profit: number
+  won: boolean
 }
 
 export type HistoryBadgeLabel = 'aktywny' | 'wygrany' | 'przegrany' | 'oczekuje' | 'spór' | 'zakończony' | 'odrzucony'
