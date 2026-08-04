@@ -17,7 +17,10 @@
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/__tests__/helpers/"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    }
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.15.9",
