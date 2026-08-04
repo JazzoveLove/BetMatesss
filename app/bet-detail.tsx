@@ -171,6 +171,7 @@ export default function BetDetailScreen() {
         visible={scoreModalOpen}
         onClose={() => setScoreModalOpen(false)}
         resultType={resultType}
+        scoringLabel={gameTemplate?.scoringLabel ?? null}
         me={{ id: me.id, nick: me.nick }}
         opponent={{ id: opponent.id, nick: opponent.nick }}
         resolving={resolving}
