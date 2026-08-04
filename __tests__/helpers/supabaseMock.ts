@@ -7,12 +7,15 @@ const CHAIN_METHODS = [
   'in',
   'is',
   'ilike',
+  'gt',
+  'order',
   'limit',
   'update',
   'insert',
   'delete',
   'overrideTypes',
   'maybeSingle',
+  'single',
 ] as const
 
 /**

@@ -38,7 +38,7 @@ export function parsePendingScore(score: string): ScoreState {
   };
 }
 
-function resolveModalResult(
+export function resolveModalResult(
   resultType: string,
   meId: string,
   opponentId: string,

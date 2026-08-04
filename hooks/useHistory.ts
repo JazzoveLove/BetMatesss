@@ -13,7 +13,7 @@ type HistoryQueryResult = {
   statusById: Map<string, BetStatus>
 }
 
-function itemMatchesFilter(item: HistoryListItem, filter: HistoryFilter, statusById: Map<string, BetStatus>): boolean {
+export function itemMatchesFilter(item: HistoryListItem, filter: HistoryFilter, statusById: Map<string, BetStatus>): boolean {
   const st = statusById.get(item.id)
   if (!st) return filter === 'all'
   if (filter === 'all') return true
