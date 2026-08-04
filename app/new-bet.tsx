@@ -41,13 +41,7 @@ export default function NewBetScreen() {
           <Text style={styles.title}>Nowy zakład</Text>
           <Pressable
             style={styles.navBtn}
-            onPress={() => {
-              try {
-                navigation.navigate('Dashboard' as never)
-              } catch {
-                navigation.navigate('Home')
-              }
-            }}
+            onPress={() => navigation.navigate('Home')}
           >
             <Text style={styles.closeIcon}>×</Text>
           </Pressable>

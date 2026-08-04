@@ -123,7 +123,6 @@ export function useNewBetActions(
       error('[useNewBet] handleSubmit createBet', e)
       const message = e instanceof Error ? e.message : 'Nie udało się utworzyć zakładu. Spróbuj ponownie.'
       Alert.alert('Błąd', message)
-    } finally {
       submittingRef.current = false
       setIsSubmitting(false)
     }
@@ -145,6 +144,8 @@ export function useNewBetActions(
   ])
 
   const resetNewBet = useCallback(() => {
+    submittingRef.current = false
+    setIsSubmitting(false)
     setStep(1)
     setSelectedGame(null)
     setParticipants([])
@@ -162,6 +163,7 @@ export function useNewBetActions(
   }, [
     setBestOfCount,
     setCustomStakes,
+    setIsSubmitting,
     setParticipants,
     setPokerMode,
     setPokerRebuyStack,
