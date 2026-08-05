@@ -1,5 +1,5 @@
 import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
-import { Colors } from "../../constants/colors";
+import { Colors } from "@/shared/constants/colors";
 import { styles } from "./FriendsScreenContent.styles";
 import { useAddFriendByCode } from "../../hooks/useAddFriendByCode";
 

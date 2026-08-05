@@ -14,12 +14,12 @@ import { BetActionsPanel } from "../components/bet-detail/BetActionsPanel";
 import { BetDetailHeaderSection } from "../components/bet-detail/BetDetailHeaderSection";
 import { BetDetailScrollBody } from "../components/bet-detail/BetDetailScrollBody";
 import { BetScoreModal, parsePendingScore } from "../components/bet-detail/BetScoreModal";
-import { Colors } from "../constants/colors";
+import { Colors } from "@/shared/constants/colors";
 import { GAME_MAP, GAME_TEMPLATES } from "../constants/games";
 import { useBetDetail } from "../hooks/useBetDetail";
 import type { RootStackParamList } from "../navigation/types";
 import type { BetStatus } from "../types/bet.types";
-import { hexToRgba } from "../utils/colors";
+import { hexToRgba } from "@/shared/utils/colors";
 import { styles } from "./bet-detail.styles";
 
 export default function BetDetailScreen() {

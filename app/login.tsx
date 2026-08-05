@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, TextInput } from 'react-native'
 import { YStack, Text, Button } from 'tamagui'
 import { useAuth } from '../hooks/useAuth'
-import { Colors } from '../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { styles } from '../components/auth/authScreen.styles'
 
 type Props = { onGoToRegister: () => void }

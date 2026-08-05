@@ -21,7 +21,7 @@ import tamaguiConfig from './tamagui.config'
 import { AppErrorFallback } from './components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
 import { useDeepLinks } from './hooks/useDeepLinks'
-import { registerAndSyncPushToken } from './lib/notifications'
+import { registerAndSyncPushToken } from '@/shared/lib/notifications'
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,9 +1,9 @@
 /** Tworzenie rozliczeń dla formatu per_match */
 
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import type { BetParticipant, BetResultRow, ParticipantRole } from '../../types/bet.types'
 import { calculatePerMatchBalance } from '../../utils/formats'
-import { log } from '../../utils/logger'
+import { log } from '@/shared/utils/logger'
 import { parseStakeAmount } from '../../utils/odds'
 import { settlementDraftsFromPairBalances } from '../../utils/settlements'
 import type { BetParticipantRowPerMatch } from './settlements.types'

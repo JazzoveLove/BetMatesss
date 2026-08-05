@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
-import { Colors } from '../../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import type { BetFormat } from '../../../types/bet.types'
 import type { FormatMeta } from '../../../constants/formats'
 import { rgbaFromHex } from '../stake/stakeStyles'

@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 
 function Skeleton({ height }: { height: number }) {
   return <View style={[styles.skeleton, { height }]} />

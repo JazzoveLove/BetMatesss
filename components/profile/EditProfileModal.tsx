@@ -1,6 +1,6 @@
 import { Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
-import { Colors } from '../../constants/colors'
-import { hexToRgba } from '../../utils/colors'
+import { Colors } from '@/shared/constants/colors'
+import { hexToRgba } from '@/shared/utils/colors'
 
 export type EditProfileModalProps = {
   visible: boolean

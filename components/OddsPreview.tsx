@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native'
-import { Colors } from '../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import type { UserProfile } from '../types/user.types'
 import { calculateOdds } from '../utils/odds'
 

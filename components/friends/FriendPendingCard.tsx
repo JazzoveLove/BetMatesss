@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { Colors } from '../../constants/colors'
-import { hexToRgba } from '../../utils/colors'
+import { Colors } from '@/shared/constants/colors'
+import { hexToRgba } from '@/shared/utils/colors'
 import type { Friendship } from '../../types/user.types'
 
 export type FriendPendingCardItem = {

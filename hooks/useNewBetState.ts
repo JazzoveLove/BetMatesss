@@ -6,7 +6,7 @@ import { UsersService } from '../services/users.service'
 import type { GameTemplate } from '../constants/games'
 import type { BetFormat, PokerMode, StakeMode } from '../types/bet.types'
 import type { UserProfile } from '../types/user.types'
-import { error } from '../utils/logger'
+import { error } from '@/shared/utils/logger'
 import type { NewBetStep } from './useNewBet.types'
 
 export type UseNewBetStateReturn = {

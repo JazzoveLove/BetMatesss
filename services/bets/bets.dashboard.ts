@@ -1,6 +1,4 @@
-/** Zapytania i logika dla ekranu Dashboard */
-
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import { parseStakeAmount } from '../../utils/odds'
 import { loadNicksByIds } from '../friends'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'

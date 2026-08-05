@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 
 // Singleton per userId: multiple callers share one channel to avoid
 // "cannot add postgres_changes callbacks after subscribe()" errors.

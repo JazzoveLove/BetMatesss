@@ -1,5 +1,5 @@
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import type { BetParticipant, BetResultRow, FormatViewProps } from '../../types/bet.types'
 import { calculatePerMatchBalance } from '../../utils/formats'
 import { formatBalance } from '../../utils/settlements'

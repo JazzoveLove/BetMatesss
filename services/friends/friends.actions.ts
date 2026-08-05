@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 
 export async function acceptFriendship(id: string): Promise<{ error?: string }> {
   const { error } = await supabase

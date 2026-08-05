@@ -1,6 +1,6 @@
 import { chainResponse } from '../helpers/supabaseMock'
 
-jest.mock('../../lib/supabase', () => {
+jest.mock('@/shared/lib/supabase', () => {
   const { createSupabaseMock } = require('../helpers/supabaseMock')
   return createSupabaseMock()
 })
@@ -9,7 +9,7 @@ jest.mock('../../services/settlements.service', () => ({
   createSettlements: jest.fn().mockResolvedValue({}),
 }))
 
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import { createSettlements } from '../../services/settlements.service'
 import {
   submitBetResult,

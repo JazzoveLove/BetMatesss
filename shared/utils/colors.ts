@@ -1,4 +1,4 @@
-import { Colors } from '../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 
 /**
  * Konwertuje kolor hex z Colors na rgba z podaną opacity.

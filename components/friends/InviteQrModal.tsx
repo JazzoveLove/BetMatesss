@@ -1,7 +1,7 @@
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import QRCode from 'react-native-qrcode-svg'
-import { Colors } from '../../constants/colors'
-import { hexToRgba } from '../../utils/colors'
+import { Colors } from '@/shared/constants/colors'
+import { hexToRgba } from '@/shared/utils/colors'
 
 export type InviteQrModalProps = {
   visible: boolean

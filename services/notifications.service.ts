@@ -1,5 +1,5 @@
-import { supabase } from '../lib/supabase'
-import { sendExpoPushNotifications } from '../lib/notifications'
+import { supabase } from '@/shared/lib/supabase'
+import { sendExpoPushNotifications } from '@/shared/lib/notifications'
 
 export type BetInviteNotification = {
   id: string

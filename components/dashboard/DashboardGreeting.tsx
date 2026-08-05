@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useNavigation, type CompositeNavigationProp } from '@react-navigation/native'
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import type { RootStackParamList, TabParamList } from '../../navigation/types'
 
 type DashboardNavProp = CompositeNavigationProp<

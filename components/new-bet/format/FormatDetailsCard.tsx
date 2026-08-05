@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Pressable, Text, TextInput, View } from 'react-native'
 import type { BetFormat } from '../../../types/bet.types'
 import type { GameTemplate } from '../../../constants/games'
-import { Colors } from '../../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { formatDetailsStyles as styles } from './formatDetails.styles'
 
 type ResultMode = 'score' | 'winner_only'

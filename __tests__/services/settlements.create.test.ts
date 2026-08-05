@@ -1,11 +1,11 @@
 import { chainResponse } from '../helpers/supabaseMock'
 
-jest.mock('../../lib/supabase', () => {
+jest.mock('@/shared/lib/supabase', () => {
   const { createSupabaseMock } = require('../helpers/supabaseMock')
   return createSupabaseMock()
 })
 
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import { createSettlements } from '../../services/settlements/settlements.create'
 
 const mockFrom = supabase.from as jest.Mock

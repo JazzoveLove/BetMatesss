@@ -1,4 +1,4 @@
-import { Colors } from '../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 
 export function formatBalance(value: number): string {
   if (value > 0) return `+${value} zł`

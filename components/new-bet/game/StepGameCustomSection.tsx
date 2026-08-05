@@ -1,5 +1,5 @@
 import { TextInput, View } from 'react-native'
-import { Colors } from '../../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import type { GameTemplate } from '../../../constants/games'
 import { CustomGameCard } from './CustomGameCard'
 import { gameScreenStyles as styles } from './gameScreen.styles'

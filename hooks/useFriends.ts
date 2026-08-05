@@ -16,8 +16,8 @@ import {
   subscribeFriendInvites,
 } from '../lib/friend-invite-queue'
 import type { Friendship } from '../types/user.types'
-import { error } from '../utils/logger'
-import { queryKeys } from '../lib/queryKeys'
+import { error } from '@/shared/utils/logger'
+import { queryKeys } from '@/shared/lib/queryKeys'
 
 function alertForInviteResult(
   result: Awaited<ReturnType<typeof handleFriendInvite>>,

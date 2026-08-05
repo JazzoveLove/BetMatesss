@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { formatBalance, getBalanceColor } from '../../utils/money'
 
 export type ProfileStatsRowProps = {

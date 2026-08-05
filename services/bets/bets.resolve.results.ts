@@ -1,7 +1,7 @@
 /** Zapisywanie i potwierdzanie wyników zakładu */
 
-import { supabase } from '../../lib/supabase'
-import { log } from '../../utils/logger'
+import { supabase } from '@/shared/lib/supabase'
+import { log } from '@/shared/utils/logger'
 import { createSettlements } from '../settlements.service'
 
 type ResolveParams = {

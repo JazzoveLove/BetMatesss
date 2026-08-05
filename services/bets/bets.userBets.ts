@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import type { BetRow } from '../../types/bet.row.types'
 import type { BetSummary } from '../../types/bet.types'
 

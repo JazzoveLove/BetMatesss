@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import type { Friendship, FriendshipRow } from '../../types/user.types'
 
 export type FriendshipsData = {

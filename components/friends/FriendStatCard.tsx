@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 
 export type FriendStatCardFriend = {
   id: string

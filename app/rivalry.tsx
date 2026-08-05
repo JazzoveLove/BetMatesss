@@ -7,7 +7,7 @@ import { RivalryBottomActions } from '../components/rivalry/RivalryBottomActions
 import { RivalryMatchesList } from '../components/rivalry/RivalryMatchesList'
 import { RivalryTopBar } from '../components/rivalry/RivalryTopBar'
 import { rivalryScreenStyles as styles } from '../components/rivalry/rivalryScreen.styles'
-import { Colors } from '../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { useRivalry } from '../hooks/useRivalry'
 import { useRivalryScreenActions } from '../hooks/useRivalryScreenActions'
 import type { RootStackParamList } from '../navigation/types'

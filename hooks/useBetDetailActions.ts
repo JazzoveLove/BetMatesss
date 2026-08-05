@@ -5,7 +5,7 @@ import { Alert } from 'react-native'
 import { BetsService } from '../services/bets.service'
 import { NotificationsService } from '../services/notifications.service'
 import type { BetDetail, PendingResult, Settlement } from '../types/bet.types'
-import { error } from '../utils/logger'
+import { error } from '@/shared/utils/logger'
 import type { ActionLoadingState } from './useBetDetailData'
 
 export function useBetDetailActions(

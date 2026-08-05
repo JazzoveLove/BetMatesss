@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { Colors } from '../../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 
 export function rgbaFromHex(hexColor: string, alpha: number): string {
   const parsed = hexColor.replace('#', '')

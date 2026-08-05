@@ -12,7 +12,7 @@ import {
 import type { EdgeInsets } from "react-native-safe-area-context";
 import type { Friendship } from "../../types/user.types";
 import type { UserProfile } from "../../types/user.types";
-import { Colors } from "../../constants/colors";
+import { Colors } from "@/shared/constants/colors";
 import { type BetInviteNotification } from "../../services/notifications.service";
 import type { RootStackParamList, TabParamList } from "../../navigation/types";
 import { FriendPendingCard } from "./FriendPendingCard";

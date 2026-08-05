@@ -1,7 +1,7 @@
 /** Tworzenie rozliczeń dla formatu winner takes all */
 
-import { supabase } from '../../lib/supabase'
-import { log } from '../../utils/logger'
+import { supabase } from '@/shared/lib/supabase'
+import { log } from '@/shared/utils/logger'
 import { parseStakeAmount } from '../../utils/odds'
 import type { BetParticipantStakeRow } from './settlements.types'
 

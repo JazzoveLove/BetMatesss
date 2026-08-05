@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { GAME_MAP } from '../constants/games'
 import { useAuthContext } from '../contexts/AuthContext'
-import { queryKeys } from '../lib/queryKeys'
+import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '../services/bets.service'
 import type { ProfileScreenData, ProfileStatSection } from '../types/bet.types'
 

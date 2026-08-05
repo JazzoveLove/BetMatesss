@@ -1,8 +1,8 @@
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import { NotificationsService } from '../notifications.service'
 import { calcOdds, toStakeNumber } from '../../utils/odds'
 import type { CreateBetParams, ParticipantRow } from '../../types/bet.types'
-import { warn } from '../../utils/logger'
+import { warn } from '@/shared/utils/logger'
 
 export function buildParticipantRows(
   betId: string,

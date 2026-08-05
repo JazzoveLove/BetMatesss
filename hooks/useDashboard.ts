@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthContext } from '../contexts/AuthContext'
-import { queryKeys } from '@/lib/queryKeys'
+import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '../services/bets.service'
 import { GAME_MAP } from '../constants/games'
 

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { Colors } from '../../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { rgbaFromHex } from '../stake/stakeStyles'
 
 export const formatDetailsStyles = StyleSheet.create({

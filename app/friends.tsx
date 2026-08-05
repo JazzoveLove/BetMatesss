@@ -7,7 +7,7 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { FriendsScreenContent } from "../components/friends/FriendsScreenContent";
-import { Colors } from "../constants/colors";
+import { Colors } from "@/shared/constants/colors";
 import { useBetInvites } from "../hooks/useBetInvites";
 import { useFriends } from "../hooks/useFriends";
 import type { RootStackParamList, TabParamList } from "../navigation/types";

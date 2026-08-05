@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import { computeProfileStatsV2, type WLEntry } from '../../utils/profileStats'
 import type { ProfileStatsV2 } from '../../types/bet.types'
 import { getUserBets } from './bets.userBets'

@@ -1,8 +1,8 @@
 /** Główna funkcja tworzenia rozliczeń */
 
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import type { BetResultRow, StakeMode } from '../../types/bet.types'
-import { log } from '../../utils/logger'
+import { log } from '@/shared/utils/logger'
 import { parseStakeAmount } from '../../utils/odds'
 import { createSettlementsFromWinner } from './settlements.create.winner'
 import { createSettlementsPerMatch } from './settlements.create.perMatch'

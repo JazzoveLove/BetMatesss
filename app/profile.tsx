@@ -3,7 +3,7 @@ import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } 
 import { useNavigation } from '@react-navigation/native'
 import { useQueryClient } from '@tanstack/react-query'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Colors } from '../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { EditProfileModal } from '../components/profile/EditProfileModal'
 import { ProfileActions } from '../components/profile/ProfileActions'
 import { ProfileDisciplineList } from '../components/profile/ProfileDisciplineList'
@@ -18,7 +18,7 @@ import { useAuthContext } from '../contexts/AuthContext'
 import { UsersService } from '../services/users.service'
 import { nickSchema } from '../utils/user/nickValidation'
 import { getFirstValidationError } from '../utils/validation'
-import { queryKeys } from '../lib/queryKeys'
+import { queryKeys } from '@/shared/lib/queryKeys'
 
 const ImagePicker: any = require('expo-image-picker')
 

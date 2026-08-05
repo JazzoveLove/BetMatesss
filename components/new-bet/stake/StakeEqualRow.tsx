@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { Text, TextInput, View } from 'react-native'
-import { Colors } from '../../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { stakeStepStyles as styles } from './stakeStyles'
 
 export type StakeEqualRowProps = {

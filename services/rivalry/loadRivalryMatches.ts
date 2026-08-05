@@ -1,6 +1,6 @@
 /** Pobieranie danych rywalizacji z bazy */
 
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import { mapBetRowsToRivalryMatchItems } from './mapRivalryItems'
 import type { RivalryData, RivalryPaymentRow } from './rivalry.types'
 

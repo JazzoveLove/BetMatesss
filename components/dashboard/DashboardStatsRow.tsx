@@ -1,6 +1,6 @@
 import { Animated, StyleSheet, Text, View } from 'react-native'
 import { useEffect, useRef } from 'react'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { SkeletonBlock } from './SkeletonBlock'
 
 export type DashboardStats = {

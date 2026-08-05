@@ -1,7 +1,7 @@
 /** Handshake potwierdzenia zapłaty rozliczeń */
 
-import { supabase } from '../../lib/supabase'
-import { log } from '../../utils/logger'
+import { supabase } from '@/shared/lib/supabase'
+import { log } from '@/shared/utils/logger'
 
 export async function markAsPaid(
   settlementId: string,

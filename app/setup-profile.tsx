@@ -4,7 +4,7 @@ import { YStack, Button } from 'tamagui'
 import { useAuth } from '../hooks/useAuth'
 import { nickSchema } from '../utils/user/nickValidation'
 import { getFirstValidationError } from '../utils/validation'
-import { Colors } from '../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 
 type Props = { userId: string; onComplete: () => void }
 

@@ -1,4 +1,4 @@
-import { supabase } from '../../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import { generateInviteCode } from '../../lib/invite-code'
 import type { FriendshipRow, FriendInviteResult } from '../../types/user.types'
 

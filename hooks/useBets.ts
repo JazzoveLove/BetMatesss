@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BetsService } from '../services/bets.service'
 import { useAuthContext } from '../contexts/AuthContext'
-import { supabase } from '../lib/supabase'
-import { error as logError } from '../utils/logger'
+import { supabase } from '@/shared/lib/supabase'
+import { error as logError } from '@/shared/utils/logger'
 import type { BetSummary, CreateBetParams } from '../types/bet.types'
 
 export function useBets() {

@@ -2,7 +2,7 @@ import * as Device from 'expo-device'
 import * as Notifications from 'expo-notifications'
 import { Platform } from 'react-native'
 import { supabase } from './supabase'
-import { error, warn } from '../utils/logger'
+import { error, warn } from '@/shared/utils/logger'
 
 export type BetInvitePushPayload = {
   betId: string

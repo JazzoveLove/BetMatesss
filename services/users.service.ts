@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase'
+import { supabase } from '@/shared/lib/supabase'
 import { mapUserProfileRow } from '../utils/mappers'
 import type { UserProfile, UserProfileRow } from '../types/user.types'
 
