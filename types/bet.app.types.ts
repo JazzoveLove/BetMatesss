@@ -1,5 +1,5 @@
 import type { BetResultRow } from './bet.row.types'
-import type { BetFormat, StakeMode, PokerMode } from './bet.creation.types'
+import type { BetFormat, StakeMode } from './bet.creation.types'
 
 export type BetStatus =
   | 'pending'
@@ -31,12 +31,6 @@ export type BetSummary = {
   createdAt: string
   stakePerMatch?: number
   rivalryId?: string
-  sessionId?: string
-  bracketMode?: 'auto' | 'manual'
-  pokerMode?: PokerMode
-  pokerStack?: number
-  pokerRebuyStack?: number
-  bestOfCount?: number
   rejectedAt?: string
 }
 

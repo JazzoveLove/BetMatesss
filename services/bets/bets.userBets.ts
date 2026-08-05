@@ -14,12 +14,6 @@ function mapBetRowToBetSummary(row: BetRow): BetSummary {
     createdAt: row.created_at,
     stakePerMatch: row.stake_per_match,
     rivalryId: row.rivalry_id,
-    sessionId: row.session_id,
-    bracketMode: row.bracket_mode,
-    pokerMode: row.poker_mode,
-    pokerStack: row.poker_stack,
-    pokerRebuyStack: row.poker_rebuy_stack,
-    bestOfCount: row.best_of_count,
     rejectedAt: row.rejected_at ?? undefined,
   }
 }

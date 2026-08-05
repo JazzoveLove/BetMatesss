@@ -19,13 +19,7 @@ export interface BetRow {
     | 'disputed'
     | 'rejected'
   rejected_at?: string | null
-  best_of_count?: number
   stake_per_match?: number
-  session_id?: string
-  bracket_mode?: 'auto' | 'manual'
-  poker_mode?: 'winner_takes_all' | 'chip_count'
-  poker_stack?: number
-  poker_rebuy_stack?: number
   notes?: string | null
   created_at: string
 }
