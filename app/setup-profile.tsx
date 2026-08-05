@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput } from 'react-native'
 import { YStack, Button } from 'tamagui'
 import { useAuth } from '../hooks/useAuth'
-import { nickSchema } from '../utils/user/nickValidation'
+import { nickSchema } from '@/shared/utils/user/nickValidation'
 import { getFirstValidationError } from '@/shared/utils/validation'
 import { Colors } from '@/shared/constants/colors'
 

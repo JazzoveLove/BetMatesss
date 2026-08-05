@@ -1,8 +1,8 @@
-jest.mock('../../constants/user/bannedNickWords', () => ({
+jest.mock('@/shared/constants/user/bannedNickWords', () => ({
   BANNED_NICK_WORDS: ['zakazany'],
 }))
 
-import { nickSchema } from '../../utils/user/nickValidation'
+import { nickSchema } from '@/shared/utils/user/nickValidation'
 
 describe('nickSchema', () => {
   it('akceptuje poprawny nick mieszczący się w limicie długości', () => {

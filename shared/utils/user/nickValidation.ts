@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { BANNED_NICK_WORDS } from '../../constants/user/bannedNickWords'
+import { BANNED_NICK_WORDS } from '@/shared/constants/user/bannedNickWords'
 
 export const nickSchema = z
   .string()

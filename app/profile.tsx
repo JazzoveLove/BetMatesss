@@ -16,7 +16,7 @@ import { useProfile } from '../hooks/useProfile'
 import { useAuth } from '@/hooks/useAuth'
 import { useAuthContext } from '../contexts/AuthContext'
 import { UsersService } from '../services/users.service'
-import { nickSchema } from '../utils/user/nickValidation'
+import { nickSchema } from '@/shared/utils/user/nickValidation'
 import { getFirstValidationError } from '@/shared/utils/validation'
 import { queryKeys } from '@/shared/lib/queryKeys'
 
