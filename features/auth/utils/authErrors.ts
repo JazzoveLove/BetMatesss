@@ -1,5 +1,5 @@
-import type { AuthErrorCode } from '../../types/auth.types'
-import { AUTH_ERROR_MESSAGES_PL } from '../../constants/auth/authErrorMessages'
+import type { AuthErrorCode } from '../types'
+import { AUTH_ERROR_MESSAGES_PL } from '../constants'
 
 function getAuthErrorCode(error: unknown): AuthErrorCode {
   const message = error instanceof Error ? error.message : String(error)

@@ -1,5 +1,5 @@
-import { mapAuthError } from '../../utils/auth/authErrors'
-import { AUTH_ERROR_MESSAGES_PL } from '../../constants/auth/authErrorMessages'
+import { mapAuthError } from '@/features/auth/utils/authErrors'
+import { AUTH_ERROR_MESSAGES_PL } from '@/features/auth/constants'
 
 describe('mapAuthError', () => {
   it('mapuje błąd "Invalid login credentials" na komunikat o błędnych danych logowania', () => {

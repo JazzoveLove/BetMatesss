@@ -1,7 +1,7 @@
 /** Stan i ładowanie danych szczegółów zakładu */
 
 import { useCallback, useEffect, useState } from 'react'
-import { useAuthContext } from '../contexts/AuthContext'
+import { useAuthContext } from '@/features/auth'
 import { BetsService } from '../services/bets.service'
 import type { BetDetail, PendingResult, Settlement } from '../types/bet.types'
 import { error, log } from '@/shared/utils/logger'

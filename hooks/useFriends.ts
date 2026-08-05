@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react'
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query'
 import { Alert } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
-import { useAuthContext } from '../contexts/AuthContext'
+import { useAuthContext } from '@/features/auth'
 import {
   loadFriendships,
   ensureMyInviteCode,

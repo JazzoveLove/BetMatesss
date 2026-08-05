@@ -1,7 +1,7 @@
 /** Stan kreatora nowego zakładu */
 
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react'
-import { useAuthContext } from '../contexts/AuthContext'
+import { useAuthContext } from '@/features/auth'
 import { UsersService } from '../services/users.service'
 import type { GameTemplate } from '@/shared/constants/games'
 import type { BetFormat, PokerMode, StakeMode } from '../types/bet.types'

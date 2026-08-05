@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
-import { AuthService } from '../services/auth.service'
+import { AuthService } from '../api/auth.service'
 
 export type AppAuthState = 'loading' | 'auth' | 'setup' | 'main'
 

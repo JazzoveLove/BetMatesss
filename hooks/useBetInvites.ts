@@ -1,6 +1,6 @@
 import { Alert } from 'react-native'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useAuthContext } from '../contexts/AuthContext'
+import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '../services/bets.service'
 import { NotificationsService, type BetInviteNotification } from '../services/notifications.service'

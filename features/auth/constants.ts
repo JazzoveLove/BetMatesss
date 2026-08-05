@@ -1,4 +1,4 @@
-import type { AuthErrorCode } from '../../types/auth.types'
+import type { AuthErrorCode } from './types'
 
 export const AUTH_ERROR_MESSAGES_PL: Record<AuthErrorCode, string> = {
   invalid_credentials: 'Błędny e-mail lub hasło.',

@@ -10,7 +10,7 @@ import {
 } from '../lib/friend-invite-queue'
 import { extractFriendIdFromUrl } from '../lib/friend-invite-url'
 import { extractBetInviteCodeFromUrl } from '../lib/bet-invite-url'
-import type { AppAuthState } from '../contexts/AuthContext'
+import type { AppAuthState } from '@/features/auth'
 
 type Nav = ReturnType<typeof createNavigationContainerRef<ParamListBase>>
 

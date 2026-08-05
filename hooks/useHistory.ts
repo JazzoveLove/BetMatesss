@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
-import { useAuthContext } from '../contexts/AuthContext'
+import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '../services/bets.service'
 import type { BetStatus, HistoryListItem } from '../types/bet.types'

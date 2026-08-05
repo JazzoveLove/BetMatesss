@@ -1,4 +1,4 @@
-import { emailSchema, passwordSchema, credentialsSchema } from '../../utils/auth/authValidation'
+import { emailSchema, passwordSchema, credentialsSchema } from '@/features/auth/utils/authValidation'
 
 describe('emailSchema', () => {
   it('akceptuje poprawny adres e-mail', () => {

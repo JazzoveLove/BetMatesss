@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react'
-import { AuthService } from '../services/auth.service'
-import { credentialsSchema } from '../utils/auth/authValidation'
+import { AuthService } from '../api/auth.service'
+import { credentialsSchema } from '../utils/authValidation'
 import { getFirstValidationError } from '@/shared/utils/validation'
-import { mapAuthError } from '../utils/auth/authErrors'
-import type { AuthActionState } from '../types/auth.types'
+import { mapAuthError } from '../utils/authErrors'
+import type { AuthActionState } from '../types'
 
 export function useAuth() {
   const [state, setState] = useState<AuthActionState>({ loading: false, error: null })
