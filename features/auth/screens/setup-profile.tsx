@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput } from 'react-native'
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput } from 'react-native'
 import { YStack, Button } from 'tamagui'
 import { useAuth } from '../hooks/useAuth'
 import { nickSchema } from '@/shared/utils/user/nickValidation'
 import { getFirstValidationError } from '@/shared/utils/validation'
 import { Colors } from '@/shared/constants/colors'
+import { styles } from '../authScreen.styles'
 
 type Props = { userId: string; onComplete: () => void }
 
@@ -35,11 +36,11 @@ export default function SetupProfileScreen({ userId, onComplete }: Props) {
 
   return (
     <KeyboardAvoidingView style={styles.safe} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.content, { padding: 28 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <YStack flex={1}>
           <Text style={styles.emoji}>👋</Text>
-          <Text style={styles.title}>Jak masz na imię?</Text>
-          <Text style={styles.subtitle}>Twój nick będą widzieć znajomi przy zakładach</Text>
+          <Text style={[styles.title, { fontSize: 26, fontWeight: '700', color: Colors.text }]}>Jak masz na imię?</Text>
+          <Text style={[styles.subtitle, { fontSize: 14, marginBottom: 40, lineHeight: 20 }]}>Twój nick będą widzieć znajomi przy zakładach</Text>
 
           <TextInput
             value={nick}
@@ -51,38 +52,15 @@ export default function SetupProfileScreen({ userId, onComplete }: Props) {
             maxLength={10}
             returnKeyType="done"
             onSubmitEditing={saveNick}
-            style={styles.input}
+            style={[styles.input, { fontSize: 18, textAlign: 'center', letterSpacing: 0.5, marginBottom: 0 }]}
           />
           <Text style={styles.counter}>{nick.trim().length} / 10</Text>
 
-          <Button disabled={!canSave} onPress={saveNick} style={[styles.saveButton, { opacity: canSave ? 1 : 0.4 }]}>
-            <Text style={styles.saveButtonText}>{loading ? 'Zapisywanie...' : 'Gotowe'}</Text>
+          <Button disabled={!canSave} onPress={saveNick} style={[styles.primaryButton, { borderRadius: 12, marginBottom: 0, opacity: canSave ? 1 : 0.4 }]}>
+            <Text style={styles.primaryButtonText}>{loading ? 'Zapisywanie...' : 'Gotowe'}</Text>
           </Button>
         </YStack>
       </ScrollView>
     </KeyboardAvoidingView>
   )
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Colors.background },
-  content: { flexGrow: 1, justifyContent: 'center', padding: 28 },
-  emoji: { fontSize: 48, textAlign: 'center', marginBottom: 16 },
-  title: { fontSize: 26, fontWeight: '700', color: Colors.text, textAlign: 'center', marginBottom: 8 },
-  subtitle: { fontSize: 14, color: Colors.textMuted, textAlign: 'center', marginBottom: 40, lineHeight: 20 },
-  input: {
-    backgroundColor: Colors.cardAlt,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 18,
-    color: Colors.text,
-    textAlign: 'center',
-    letterSpacing: 0.5,
-  },
-  counter: { fontSize: 12, color: Colors.textFaint, textAlign: 'right', marginTop: 6, marginBottom: 32 },
-  saveButton: { backgroundColor: Colors.accent, borderRadius: 12, height: 52 },
-  saveButtonText: { color: Colors.white, fontSize: 16, fontWeight: '600' },
-})

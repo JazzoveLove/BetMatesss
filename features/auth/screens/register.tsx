@@ -3,7 +3,7 @@ import { Alert, KeyboardAvoidingView, Platform, ScrollView, TextInput } from 're
 import { YStack, Text, Button } from 'tamagui'
 import { useAuth } from '../hooks/useAuth'
 import { Colors } from '@/shared/constants/colors'
-import { styles } from '../components/authScreen.styles'
+import { styles } from '../authScreen.styles'
 
 type Props = { onGoToLogin: () => void }
 
