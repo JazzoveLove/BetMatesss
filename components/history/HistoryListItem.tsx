@@ -1,5 +1,5 @@
 import { XStack, YStack, Text } from 'tamagui'
-import { GAME_MAP } from '../../constants/games'
+import { GAME_MAP } from '@/shared/constants/games'
 import type { HistoryBadgeLabel, HistoryListItem as HistoryEntry } from '../../types/bet.types'
 
 const BADGE_UI: Record<HistoryBadgeLabel, { text: string; color: string; bg: string }> = {

@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Animated, Pressable, Text, View } from 'react-native'
-import { ENABLED_STAKE_MODES } from '../../../constants/features'
+import { ENABLED_STAKE_MODES } from '@/shared/constants/features'
 import type { StakeMode } from '../../../types/bet.types'
 import { stakeStepStyles as styles } from './stakeStyles'
 

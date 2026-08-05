@@ -1,5 +1,5 @@
 import { XStack, YStack, Text } from 'tamagui'
-import { GAME_MAP } from '../constants/games'
+import { GAME_MAP } from '@/shared/constants/games'
 
 export type BetStatus =
   | 'pending'

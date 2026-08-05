@@ -1,7 +1,7 @@
 /** Dane pochodne kreatora nowego zakładu */
 
 import { useEffect, useMemo } from 'react'
-import { GAME_TEMPLATES, type GameTemplate } from '../constants/games'
+import { GAME_TEMPLATES, type GameTemplate } from '@/shared/constants/games'
 import type { BetFormat } from '../types/bet.types'
 import type { Friendship, UserProfile } from '@/shared/types/user.types'
 import type { BetSummary } from '../types/bet.types'

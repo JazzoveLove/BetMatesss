@@ -5,7 +5,7 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BetsService } from '../services/bets.service'
 import { useAuthContext } from '../contexts/AuthContext'
-import { GAME_MAP } from '../constants/games'
+import { GAME_MAP } from '@/shared/constants/games'
 import { ensureFriendshipAccepted } from '../services/friends'
 import type { RootStackParamList } from '../navigation/types'
 

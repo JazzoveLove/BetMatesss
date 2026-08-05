@@ -1,5 +1,5 @@
 import { getAvailableFormats, getDefaultFormat } from '../../utils/formats'
-import { GAME_TEMPLATES } from '../../constants/games'
+import { GAME_TEMPLATES } from '@/shared/constants/games'
 
 const dart = GAME_TEMPLATES.find(g => g.id === 'dart')!
 const tenis = GAME_TEMPLATES.find(g => g.id === 'tenis')!

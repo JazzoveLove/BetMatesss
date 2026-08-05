@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { GAME_MAP } from '../constants/games'
+import { GAME_MAP } from '@/shared/constants/games'
 import { useAuthContext } from '../contexts/AuthContext'
 import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '../services/bets.service'

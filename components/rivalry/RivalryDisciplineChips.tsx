@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
-import { GAME_MAP } from '../../constants/games'
+import { GAME_MAP } from '@/shared/constants/games'
 import { hexToRgba } from '@/shared/utils/colors'
 
 export type RivalryDisciplineChipsProps = {

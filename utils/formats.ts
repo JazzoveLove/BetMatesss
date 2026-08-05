@@ -1,5 +1,5 @@
-import type { GameTemplate } from '../constants/games'
-import { ENABLED_FORMATS } from '../constants/features'
+import type { GameTemplate } from '@/shared/constants/games'
+import { ENABLED_FORMATS } from '@/shared/constants/features'
 import type { BetFormat, BetParticipant, BetResultRow } from '../types/bet.types'
 
 const FORMAT_MIN_PLAYERS: Record<BetFormat, number> = {

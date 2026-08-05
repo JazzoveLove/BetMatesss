@@ -1,4 +1,4 @@
-import { GAME_TEMPLATES, type GameTemplate } from '../../../constants/games'
+import { GAME_TEMPLATES, type GameTemplate } from '@/shared/constants/games'
 import type { GameTileDisplay } from './GameTileGrid'
 
 export const STEP_GAME_TILE_ORDER: { id: string; label: string; emoji: string }[] = [

@@ -3,7 +3,7 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react'
 import { useAuthContext } from '../contexts/AuthContext'
 import { UsersService } from '../services/users.service'
-import type { GameTemplate } from '../constants/games'
+import type { GameTemplate } from '@/shared/constants/games'
 import type { BetFormat, PokerMode, StakeMode } from '../types/bet.types'
 import type { UserProfile } from '@/shared/types/user.types'
 import { error } from '@/shared/utils/logger'

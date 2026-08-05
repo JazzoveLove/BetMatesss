@@ -1,6 +1,6 @@
 import { Pressable, Text, View } from 'react-native'
-import { BET_FORMATS } from '../../../constants/formats'
-import type { GameTemplate } from '../../../constants/games'
+import { BET_FORMATS } from '@/shared/constants/formats'
+import type { GameTemplate } from '@/shared/constants/games'
 import type { BetFormat } from '../../../types/bet.types'
 import type { NewBetHandlers } from '../../../hooks/useNewBet'
 import { stepStakeStyles as styles } from './stepStake.styles'
