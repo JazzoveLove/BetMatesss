@@ -3,7 +3,7 @@ import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, Te
 import { YStack, Button } from 'tamagui'
 import { useAuth } from '../hooks/useAuth'
 import { nickSchema } from '../utils/user/nickValidation'
-import { getFirstValidationError } from '../utils/validation'
+import { getFirstValidationError } from '@/shared/utils/validation'
 import { Colors } from '@/shared/constants/colors'
 
 type Props = { userId: string; onComplete: () => void }

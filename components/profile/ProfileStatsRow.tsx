@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
-import { formatBalance, getBalanceColor } from '../../utils/money'
+import { formatBalance, getBalanceColor } from '@/shared/utils/money'
 
 export type ProfileStatsRowProps = {
   totalMatches: number

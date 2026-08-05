@@ -1,7 +1,7 @@
 import { supabase } from '@/shared/lib/supabase'
 import type { Session } from '@supabase/supabase-js'
 import type { UserProfile, UserProfileRow } from '../types/user.types'
-import { mapUserProfileRow } from '../utils/mappers'
+import { mapUserProfileRow } from '@/shared/utils/mappers'
 
 export const AuthService = {
   signIn(email: string, password: string) {

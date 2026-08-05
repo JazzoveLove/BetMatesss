@@ -17,7 +17,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useAuthContext } from '../contexts/AuthContext'
 import { UsersService } from '../services/users.service'
 import { nickSchema } from '../utils/user/nickValidation'
-import { getFirstValidationError } from '../utils/validation'
+import { getFirstValidationError } from '@/shared/utils/validation'
 import { queryKeys } from '@/shared/lib/queryKeys'
 
 const ImagePicker: any = require('expo-image-picker')

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { getFirstValidationError } from '../../utils/validation'
+import { getFirstValidationError } from '@/shared/utils/validation'
 
 const schema = z.string().min(3, 'Za krótkie.')
 

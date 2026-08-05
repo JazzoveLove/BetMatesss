@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
-import { mapUserProfileRow } from '../utils/mappers'
+import { mapUserProfileRow } from '@/shared/utils/mappers'
 import type { UserProfile, UserProfileRow } from '../types/user.types'
 
 export const UsersService = {
