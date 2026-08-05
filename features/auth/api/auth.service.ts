@@ -1,7 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
 import type { Session } from '@supabase/supabase-js'
-import type { UserProfile, UserProfileRow } from '@/shared/types/user.types'
-import { mapUserProfileRow } from '@/shared/utils/mappers'
 
 export const AuthService = {
   signIn(email: string, password: string) {
@@ -59,10 +57,6 @@ export const AuthService = {
 
   onAuthStateChange(cb: (_event: string, session: Session | null) => void) {
     return supabase.auth.onAuthStateChange(cb)
-  },
-
-  mapProfileRow(row: UserProfileRow): UserProfile {
-    return mapUserProfileRow(row)
   },
 }
 

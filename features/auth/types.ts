@@ -6,6 +6,6 @@ export type AuthErrorCode =
   | 'unknown'
 
 export type AuthActionState = {
-    loading: boolean
-    error: string | null
+  loading: boolean
+  error: string | null
 }
