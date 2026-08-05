@@ -1,6 +1,6 @@
 import { supabase } from '@/shared/lib/supabase'
 import { mapUserProfileRow } from '@/shared/utils/mappers'
-import type { UserProfile, UserProfileRow } from '../types/user.types'
+import type { UserProfile, UserProfileRow } from '@/shared/types/user.types'
 
 export const UsersService = {
   async getFullProfile(userId: string): Promise<UserProfile | null> {

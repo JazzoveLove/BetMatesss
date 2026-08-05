@@ -3,7 +3,7 @@ import { Alert } from 'react-native'
 import { AuthService } from '../services/auth.service'
 import { BetsService } from '../services/bets.service'
 import type { RivalryMatchItem } from '../services/rivalry/rivalry.types'
-import type { UserProfile } from '../types/user.types'
+import type { UserProfile } from '@/shared/types/user.types'
 
 type Params = {
   friendId: string

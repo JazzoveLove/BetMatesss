@@ -3,7 +3,7 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { RouteProp } from '@react-navigation/native'
 import type { GameTemplate } from '../constants/games'
 import type { BetFormat, PokerMode, StakeMode } from '../types/bet.types'
-import type { UserProfile } from '../types/user.types'
+import type { UserProfile } from '@/shared/types/user.types'
 
 export type NewBetTabParamList = {
   Home: undefined

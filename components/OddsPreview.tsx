@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
-import type { UserProfile } from '../types/user.types'
+import type { UserProfile } from '@/shared/types/user.types'
 import { calculateOdds } from '../utils/odds'
 
 type OddsPreviewProps = {

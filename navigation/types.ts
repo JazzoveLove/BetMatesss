@@ -1,5 +1,5 @@
 import type { NavigatorScreenParams } from '@react-navigation/native'
-import type { UserProfile } from '../types/user.types'
+import type { UserProfile } from '@/shared/types/user.types'
 
 export type TabParamList = {
   Home: undefined

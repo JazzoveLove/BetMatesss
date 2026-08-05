@@ -1,4 +1,4 @@
-import type { UserProfile, UserProfileRow } from '@/types/user.types'
+import type { UserProfile, UserProfileRow } from '@/shared/types/user.types'
 
 export function mapUserProfileRow(row: UserProfileRow): UserProfile {
   return {

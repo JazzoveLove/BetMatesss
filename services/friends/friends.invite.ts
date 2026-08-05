@@ -1,6 +1,6 @@
 import { supabase } from '@/shared/lib/supabase'
 import { generateInviteCode } from '../../lib/invite-code'
-import type { FriendshipRow, FriendInviteResult } from '../../types/user.types'
+import type { FriendshipRow, FriendInviteResult } from '@/shared/types/user.types'
 
 type InviteCodeResult = { invite_code: string | null }
 

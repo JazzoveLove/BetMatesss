@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from 'react'
 import { GAME_TEMPLATES, type GameTemplate } from '../constants/games'
 import type { BetFormat } from '../types/bet.types'
-import type { Friendship, UserProfile } from '../types/user.types'
+import type { Friendship, UserProfile } from '@/shared/types/user.types'
 import type { BetSummary } from '../types/bet.types'
 import { getAvailableFormats, getDefaultFormat } from '../utils/formats'
 import type { UseNewBetStateReturn } from './useNewBetState'
