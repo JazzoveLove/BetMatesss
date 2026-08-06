@@ -4,7 +4,7 @@ import { useNavigation, type CompositeNavigationProp } from '@react-navigation/n
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Colors } from '@/shared/constants/colors'
-import type { RootStackParamList, TabParamList } from '../../navigation/types'
+import type { RootStackParamList, TabParamList } from '@/navigation/types'
 
 type DashboardNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList, 'Home'>,

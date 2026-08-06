@@ -4,9 +4,9 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import type { RouteProp } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useHistory } from '@/features/bets/hooks/useHistory'
-import { HistoryFilterBar } from '../components/history/HistoryFilterBar'
-import { HistoryListItem } from '../components/history/HistoryListItem'
-import { HistoryEmptyState } from '../components/history/HistoryEmptyState'
+import { HistoryFilterBar } from '@/features/bets/components/history/HistoryFilterBar'
+import { HistoryListItem } from '@/features/bets/components/history/HistoryListItem'
+import { HistoryEmptyState } from '@/features/bets/components/history/HistoryEmptyState'
 
 type HistoryStackParamList = {
   Historia: { initialFilter?: 'active' | 'all' } | undefined

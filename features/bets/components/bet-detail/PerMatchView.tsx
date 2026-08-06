@@ -2,7 +2,7 @@ import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-na
 import { Colors } from '@/shared/constants/colors'
 import type { BetParticipant, BetResultRow, FormatViewProps } from '@/features/bets/types/bet.types'
 import { calculatePerMatchBalance } from '@/features/bets/utils/formats'
-import { formatBalance } from '../../utils/settlements'
+import { formatBalance } from '@/utils/settlements'
 import { styles } from './betDetailStyles'
 
 function MatchList({

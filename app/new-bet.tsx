@@ -6,9 +6,9 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNewBet } from '@/features/bets/hooks/useNewBet'
 import { Colors } from '@/shared/constants/colors'
-import { StepGame } from '../components/new-bet/StepGame'
-import { StepFormat } from '../components/new-bet/StepFormat'
-import { StepStake } from '../components/new-bet/StepStake'
+import { StepGame } from '@/features/bets/components/new-bet/StepGame'
+import { StepFormat } from '@/features/bets/components/new-bet/StepFormat'
+import { StepStake } from '@/features/bets/components/new-bet/StepStake'
 import type { RootStackParamList, TabParamList } from '../navigation/types'
 
 type NewBetNavProp = CompositeNavigationProp<

@@ -1,4 +1,4 @@
-import { resolveModalResult, parsePendingScore } from '../../components/bet-detail/BetScoreModal'
+import { resolveModalResult, parsePendingScore } from '@/features/bets/components/bet-detail/BetScoreModal'
 
 describe('resolveModalResult', () => {
   it('resultType "winner_only": zwraca wybranego zwycięzcę', () => {

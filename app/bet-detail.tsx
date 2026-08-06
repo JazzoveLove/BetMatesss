@@ -10,10 +10,10 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { BetActionsPanel } from "../components/bet-detail/BetActionsPanel";
-import { BetDetailHeaderSection } from "../components/bet-detail/BetDetailHeaderSection";
-import { BetDetailScrollBody } from "../components/bet-detail/BetDetailScrollBody";
-import { BetScoreModal, parsePendingScore } from "../components/bet-detail/BetScoreModal";
+import { BetActionsPanel } from "@/features/bets/components/bet-detail/BetActionsPanel";
+import { BetDetailHeaderSection } from "@/features/bets/components/bet-detail/BetDetailHeaderSection";
+import { BetDetailScrollBody } from "@/features/bets/components/bet-detail/BetDetailScrollBody";
+import { BetScoreModal, parsePendingScore } from "@/features/bets/components/bet-detail/BetScoreModal";
 import { Colors } from "@/shared/constants/colors";
 import { GAME_MAP, GAME_TEMPLATES } from "@/shared/constants/games";
 import { useBetDetail } from "@/features/bets/hooks/useBetDetail";

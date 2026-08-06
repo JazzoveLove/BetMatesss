@@ -9,7 +9,7 @@ import type {
 import type { ScoreState } from "./BetScoreModal";
 import { InfoItem } from "./InfoItem";
 import { PlayerCard } from "./PlayerCard";
-import { styles } from "../../app/bet-detail.styles";
+import { styles } from "@/app/bet-detail.styles";
 
 export type BetDetailScrollBodyProps = {
   me: BetParticipant;
