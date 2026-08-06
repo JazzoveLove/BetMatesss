@@ -1,4 +1,4 @@
-import type { FormatViewProps } from '../../types/bet.types'
+import type { FormatViewProps } from '@/features/bets/types/bet.types'
 import { SingleMatchView } from './SingleMatchView'
 
 /** Obecnie ten sam przepływ co pojedynczy mecz — osobny wpis w mapie pod przyszłe rozróżnienie. */

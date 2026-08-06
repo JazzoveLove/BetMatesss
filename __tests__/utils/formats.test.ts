@@ -1,4 +1,4 @@
-import { getAvailableFormats, getDefaultFormat } from '../../utils/formats'
+import { getAvailableFormats, getDefaultFormat } from '@/features/bets/utils/formats'
 import { GAME_TEMPLATES } from '@/shared/constants/games'
 
 const dart = GAME_TEMPLATES.find(g => g.id === 'dart')!

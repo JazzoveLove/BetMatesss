@@ -1,4 +1,4 @@
-import type { ProfileStatSection, ProfileStatsV2 } from '../types/bet.types'
+import type { ProfileStatSection, ProfileStatsV2 } from '@/features/bets/types/bet.types'
 
 export type WLEntry = {
   win: boolean

@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native'
-import type { FormatViewProps } from '../../types/bet.types'
+import type { FormatViewProps } from '@/features/bets/types/bet.types'
 import { styles } from './betDetailStyles'
 
 export function SingleMatchView({

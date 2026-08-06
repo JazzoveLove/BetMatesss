@@ -12,7 +12,7 @@ jest.mock('@/shared/services/notifications.service', () => ({
 import { supabase } from '@/shared/lib/supabase'
 import { NotificationsService } from '@/shared/services/notifications.service'
 import { buildParticipantRows, createBet } from '../../services/bets/bets.create'
-import type { CreateBetParams } from '../../types/bet.types'
+import type { CreateBetParams } from '@/features/bets/types/bet.types'
 
 const mockFrom = supabase.from as jest.Mock
 const mockSendBetInvite = NotificationsService.sendBetInvite as jest.Mock

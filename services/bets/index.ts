@@ -1,6 +1,6 @@
 export { createBet, buildParticipantRows } from './bets.create'
 export { getBetInvitePreview, joinBetFromInvite } from './bets.join'
-export type { BetInvitePreview, ParticipantRow } from '../../types/bet.types'
+export type { BetInvitePreview, ParticipantRow } from '@/features/bets/types/bet.types'
 
 export {
   getBetDetail,

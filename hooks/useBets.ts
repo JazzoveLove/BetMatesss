@@ -3,7 +3,7 @@ import { BetsService } from '../services/bets.service'
 import { useAuthContext } from '@/features/auth'
 import { supabase } from '@/shared/lib/supabase'
 import { error as logError } from '@/shared/utils/logger'
-import type { BetSummary, CreateBetParams } from '../types/bet.types'
+import type { BetSummary, CreateBetParams } from '@/features/bets/types/bet.types'
 
 export function useBets() {
   const { userId } = useAuthContext()

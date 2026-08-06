@@ -4,7 +4,7 @@ import { GAME_MAP } from '@/shared/constants/games'
 import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '../services/bets.service'
-import type { ProfileScreenData, ProfileStatSection } from '../types/bet.types'
+import type { ProfileScreenData, ProfileStatSection } from '@/features/bets/types/bet.types'
 
 export interface ProfileData {
   user: {

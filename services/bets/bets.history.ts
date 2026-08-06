@@ -3,7 +3,7 @@ import { supabase } from '@/shared/lib/supabase'
 import { loadNicksByIds } from '@/features/friends'
 import { normalizeUsersNick } from './_helpers'
 import { getUserBets } from './bets.userBets'
-import type { BetStatus, HistoryBadgeLabel, HistoryListItem } from '../../types/bet.types'
+import type { BetStatus, HistoryBadgeLabel, HistoryListItem } from '@/features/bets/types/bet.types'
 
 export function historyBadgeAndAmount(
   bet: { status: BetStatus },

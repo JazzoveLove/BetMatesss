@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Pressable, Text, TextInput, View } from 'react-native'
-import type { BetFormat } from '../../../types/bet.types'
+import type { BetFormat } from '@/features/bets/types/bet.types'
 import type { GameTemplate } from '@/shared/constants/games'
 import { Colors } from '@/shared/constants/colors'
 import { formatDetailsStyles as styles } from './formatDetails.styles'

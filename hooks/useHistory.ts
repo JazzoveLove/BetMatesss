@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '../services/bets.service'
-import type { BetStatus, HistoryListItem } from '../types/bet.types'
+import type { BetStatus, HistoryListItem } from '@/features/bets/types/bet.types'
 
 export type HistoryFilter = 'all' | 'active' | 'completed'
 

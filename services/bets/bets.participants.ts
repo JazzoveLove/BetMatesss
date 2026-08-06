@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
-import type { BetStatus } from '../../types/bet.types'
+import type { BetStatus } from '@/features/bets/types/bet.types'
 import { error } from '@/shared/utils/logger'
 
 

@@ -4,7 +4,7 @@ jest.mock('@/shared/lib/supabase', () => {
 })
 
 import { itemMatchesFilter } from '../../hooks/useHistory'
-import type { BetStatus, HistoryListItem } from '../../types/bet.types'
+import type { BetStatus, HistoryListItem } from '@/features/bets/types/bet.types'
 
 const item: HistoryListItem = {
   id: 'bet-1',

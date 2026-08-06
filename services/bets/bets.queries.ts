@@ -3,7 +3,7 @@ import { getAcceptedFriendsList } from '@/features/friends'
 import { getDashboardData } from './bets.dashboard'
 import { getProfileStatsV2 } from './bets.profile'
 import { getUserBets } from './bets.userBets'
-import type { BetSummary, DisciplineStatRow, FriendRankRow, ProfileScreenData } from '../../types/bet.types'
+import type { BetSummary, DisciplineStatRow, FriendRankRow, ProfileScreenData } from '@/features/bets/types/bet.types'
 
 export async function getUserBetSummaries(userId: string): Promise<BetSummary[]> {
   return getUserBets(userId)

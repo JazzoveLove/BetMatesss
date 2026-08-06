@@ -1,4 +1,4 @@
-import type { BetFormat } from '@/types/bet.types'
+import type { BetFormat } from '@/features/bets/types/bet.types'
 
 export type FormatMeta = {
   id: BetFormat

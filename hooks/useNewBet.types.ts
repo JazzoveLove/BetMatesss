@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react'
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { RouteProp } from '@react-navigation/native'
 import type { GameTemplate } from '@/shared/constants/games'
-import type { BetFormat, PokerMode, StakeMode } from '../types/bet.types'
+import type { BetFormat, PokerMode, StakeMode } from '@/features/bets/types/bet.types'
 import type { UserProfile } from '@/shared/types/user.types'
 
 export type NewBetTabParamList = {

@@ -1,6 +1,6 @@
 import { XStack, YStack, Text } from 'tamagui'
 import { GAME_MAP } from '@/shared/constants/games'
-import type { HistoryBadgeLabel, HistoryListItem as HistoryEntry } from '../../types/bet.types'
+import type { HistoryBadgeLabel, HistoryListItem as HistoryEntry } from '@/features/bets/types/bet.types'
 
 const BADGE_UI: Record<HistoryBadgeLabel, { text: string; color: string; bg: string }> = {
   aktywny: { text: 'Aktywny', color: '#7F77DD', bg: '#7F77DD18' },

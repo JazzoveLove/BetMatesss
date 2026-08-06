@@ -3,7 +3,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { Alert } from 'react-native'
 import type { GameTemplate } from '@/shared/constants/games'
-import type { CreateBetParams } from '../types/bet.types'
+import type { CreateBetParams } from '@/features/bets/types/bet.types'
 import type { UserProfile } from '@/shared/types/user.types'
 import { error, log } from '@/shared/utils/logger'
 import type { NewBetHandlers, NewBetNavigation, NewBetStep } from './useNewBet.types'

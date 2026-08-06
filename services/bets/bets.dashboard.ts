@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
-import { parseStakeAmount } from '../../utils/odds'
+import { parseStakeAmount } from '@/features/bets/utils/odds'
 import { loadNicksByIds } from '@/features/friends'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
 import type {
@@ -7,7 +7,7 @@ import type {
   RecentResult,
   DashboardStats,
   BetStatus,
-} from '../../types/bet.types'
+} from '@/features/bets/types/bet.types'
 
 type DashboardStatsExtended = DashboardStats & {
   wins: number

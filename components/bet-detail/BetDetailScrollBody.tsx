@@ -5,7 +5,7 @@ import type {
   BetParticipant,
   BetStatus,
   Settlement,
-} from "../../types/bet.types";
+} from "@/features/bets/types/bet.types";
 import type { ScoreState } from "./BetScoreModal";
 import { InfoItem } from "./InfoItem";
 import { PlayerCard } from "./PlayerCard";

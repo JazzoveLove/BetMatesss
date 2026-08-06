@@ -1,7 +1,7 @@
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
-import type { BetParticipant, BetResultRow, FormatViewProps } from '../../types/bet.types'
-import { calculatePerMatchBalance } from '../../utils/formats'
+import type { BetParticipant, BetResultRow, FormatViewProps } from '@/features/bets/types/bet.types'
+import { calculatePerMatchBalance } from '@/features/bets/utils/formats'
 import { formatBalance } from '../../utils/settlements'
 import { styles } from './betDetailStyles'
 

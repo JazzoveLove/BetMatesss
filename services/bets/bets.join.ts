@@ -1,6 +1,6 @@
 import { supabase } from '@/shared/lib/supabase'
-import { getBetInviteCodeFromBetId, parseBetIdFromInviteCode } from '../../lib/bet-invite-url'
-import type { StakeMode, BetStatus, BetInvitePreview } from '../../types/bet.types'
+import { getBetInviteCodeFromBetId, parseBetIdFromInviteCode } from '@/features/bets/utils/betInviteUrl'
+import type { StakeMode, BetStatus, BetInvitePreview } from '@/features/bets/types/bet.types'
 
 export async function getBetInvitePreview(
   code: string,

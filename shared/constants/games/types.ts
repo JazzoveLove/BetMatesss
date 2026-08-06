@@ -1,4 +1,4 @@
-import type { BetFormat, PokerMode, ResultType } from '@/types/bet.types'
+import type { BetFormat, PokerMode, ResultType } from '@/features/bets/types/bet.types'
 
 export type WinCondition = 'higher_score' | 'most_legs' | 'most_sets' | 'winner_only' | 'chip_count'
 
