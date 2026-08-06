@@ -19,7 +19,7 @@
       "/__tests__/helpers/"
     ],
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/$1"
+      "^@/(.*)$": "<rootDir>/src/$1"
     }
   },
   "dependencies": {

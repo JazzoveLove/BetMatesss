@@ -1,5 +1,5 @@
 jest.mock('@/shared/lib/supabase', () => {
-  const { createSupabaseMock } = require('@/__tests__/helpers/supabaseMock')
+  const { createSupabaseMock } = require('../helpers/supabaseMock')
   return createSupabaseMock()
 })
 
