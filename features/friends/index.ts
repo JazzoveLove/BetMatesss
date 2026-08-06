@@ -3,6 +3,6 @@ export {
   enqueueFriendInvite,
   setNavigateToFriendsTab,
   hasPendingFriendInvites,
-} from './utils/friend-invite-queue'
-export { extractFriendIdFromUrl } from './utils/friend-invite-url'
+} from './utils/friendInviteQueue'
+export { extractFriendIdFromUrl } from './utils/friendInviteUrl'
 export { useFriends } from './hooks/useFriends'

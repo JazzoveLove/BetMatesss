@@ -14,7 +14,7 @@ import {
 import {
   drainFriendInvites,
   subscribeFriendInvites,
-} from '../utils/friend-invite-queue'
+} from '../utils/friendInviteQueue'
 import type { Friendship } from '@/shared/types/user.types'
 import { error } from '@/shared/utils/logger'
 import { queryKeys } from '@/shared/lib/queryKeys'
