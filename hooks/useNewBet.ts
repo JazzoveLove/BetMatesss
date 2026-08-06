@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { useBets } from './useBets'
-import { useFriends } from './useFriends'
+import { useFriends } from '@/features/friends'
 import { useNewBetActions } from './useNewBetActions'
 import { useNewBetDerived } from './useNewBetDerived'
 import type { NewBetNavigation, NewBetRoute, NewBetState } from './useNewBet.types'

@@ -11,7 +11,7 @@ import {
   lookupUserByCode,
   handleFriendInvite,
   searchUsersByNick,
-} from '../../services/friends/friends.invite'
+} from '@/features/friends/api/friends.invite'
 
 const mockFrom = supabase.from as jest.Mock
 const mockRpc = supabase.rpc as jest.Mock

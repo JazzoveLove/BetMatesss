@@ -6,7 +6,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BetsService } from '../services/bets.service'
 import { useAuthContext } from '@/features/auth'
 import { GAME_MAP } from '@/shared/constants/games'
-import { ensureFriendshipAccepted } from '../services/friends'
+import { ensureFriendshipAccepted } from '@/features/friends'
 import type { RootStackParamList } from '../navigation/types'
 
 type RootParamList = { JoinBet: { code: string } }

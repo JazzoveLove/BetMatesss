@@ -10,11 +10,11 @@ import {
   rejectFriendship,
   handleFriendInvite,
   subscribeFriendshipChanges,
-} from '../services/friends'
+} from '../api'
 import {
   drainFriendInvites,
   subscribeFriendInvites,
-} from '../lib/friend-invite-queue'
+} from '../utils/friend-invite-queue'
 import type { Friendship } from '@/shared/types/user.types'
 import { error } from '@/shared/utils/logger'
 import { queryKeys } from '@/shared/lib/queryKeys'

@@ -1,6 +1,6 @@
 import { supabase } from '@/shared/lib/supabase'
 import { parseStakeAmount } from '../../utils/odds'
-import { loadNicksByIds } from '../friends'
+import { loadNicksByIds } from '@/features/friends'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
 import type {
   ActiveBetItem,

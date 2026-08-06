@@ -7,8 +7,8 @@ import {
 import {
   enqueueFriendInvite,
   setNavigateToFriendsTab,
-} from '../lib/friend-invite-queue'
-import { extractFriendIdFromUrl } from '../lib/friend-invite-url'
+  extractFriendIdFromUrl,
+} from '@/features/friends'
 import { extractBetInviteCodeFromUrl } from '../lib/bet-invite-url'
 import type { AppAuthState } from '@/features/auth'
 

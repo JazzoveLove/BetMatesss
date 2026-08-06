@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '../services/bets.service'
-import { NotificationsService, type BetInviteNotification } from '../services/notifications.service'
+import { NotificationsService, type BetInviteNotification } from '@/shared/services/notifications.service'
 import { error } from '@/shared/utils/logger'
 
 export function useBetInvites() {

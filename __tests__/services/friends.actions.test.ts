@@ -10,7 +10,7 @@ import {
   acceptFriendship,
   rejectFriendship,
   ensureFriendshipAccepted,
-} from '../../services/friends/friends.actions'
+} from '@/features/friends/api/friends.actions'
 
 const mockFrom = supabase.from as jest.Mock
 

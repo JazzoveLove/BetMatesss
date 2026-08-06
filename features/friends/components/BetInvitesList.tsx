@@ -1,6 +1,6 @@
 import { Pressable, Text, View } from "react-native";
 import { betInviteStyles, styles } from "./FriendsScreenContent.styles";
-import type { BetInviteNotification } from "../../services/notifications.service";
+import type { BetInviteNotification } from "@/shared/services/notifications.service";
 
 type BetInvitesListProps = {
   invites: BetInviteNotification[];

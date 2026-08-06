@@ -1,6 +1,6 @@
 /** Zapytania i logika dla ekranu Historia */
 import { supabase } from '@/shared/lib/supabase'
-import { loadNicksByIds } from '../friends'
+import { loadNicksByIds } from '@/features/friends'
 import { normalizeUsersNick } from './_helpers'
 import { getUserBets } from './bets.userBets'
 import type { BetStatus, HistoryBadgeLabel, HistoryListItem } from '../../types/bet.types'

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { handleFriendInvite, lookupUserByCode } from '../services/friends/friends.invite'
+import { handleFriendInvite, lookupUserByCode } from '../api/friends.invite'
 
 function formatCodeInputField(raw: string): string {
   const cleaned = raw.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 8)

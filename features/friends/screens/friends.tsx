@@ -6,11 +6,11 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { FriendsScreenContent } from "../components/friends/FriendsScreenContent";
+import { FriendsScreenContent } from "../components/FriendsScreenContent";
 import { Colors } from "@/shared/constants/colors";
-import { useBetInvites } from "../hooks/useBetInvites";
+import { useBetInvites } from "@/hooks/useBetInvites";
 import { useFriends } from "../hooks/useFriends";
-import type { RootStackParamList, TabParamList } from "../navigation/types";
+import type { RootStackParamList, TabParamList } from "@/navigation/types";
 
 type FriendsNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList, "Znajomi">,
