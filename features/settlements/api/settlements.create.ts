@@ -1,4 +1,3 @@
-/** Główna funkcja tworzenia rozliczeń */
 
 import { supabase } from '@/shared/lib/supabase'
 import type { BetResultRow, StakeMode } from '@/features/bets/types/bet.types'

@@ -1,4 +1,3 @@
-/** Handshake potwierdzenia zapłaty rozliczeń */
 
 import { supabase } from '@/shared/lib/supabase'
 import { log } from '@/shared/utils/logger'

@@ -5,12 +5,12 @@ jest.mock('@/shared/lib/supabase', () => {
   return createSupabaseMock()
 })
 
-jest.mock('../../services/settlements.service', () => ({
+jest.mock('@/features/settlements', () => ({
   createSettlements: jest.fn().mockResolvedValue({}),
 }))
 
 import { supabase } from '@/shared/lib/supabase'
-import { createSettlements } from '../../services/settlements.service'
+import { createSettlements } from '@/features/settlements'
 import {
   submitBetResult,
   confirmBetResult,

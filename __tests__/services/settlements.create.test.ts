@@ -6,7 +6,7 @@ jest.mock('@/shared/lib/supabase', () => {
 })
 
 import { supabase } from '@/shared/lib/supabase'
-import { createSettlements } from '../../services/settlements/settlements.create'
+import { createSettlements } from '@/features/settlements/api/settlements.create'
 
 const mockFrom = supabase.from as jest.Mock
 

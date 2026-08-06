@@ -1,4 +1,3 @@
-/** Typy dla modułu rozliczeń */
 
 export type SettlementRow = {
   bet_id: string
