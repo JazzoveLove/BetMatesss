@@ -6,7 +6,7 @@ import { useNewBetDerived } from './useNewBetDerived'
 import type { NewBetNavigation, NewBetRoute, NewBetState } from './useNewBet.types'
 import { useNewBetState } from './useNewBetState'
 
-export type { NewBetHandlers, NewBetState, NewBetStep, NewBetNavigation, NewBetRoute, NewBetTabParamList } from './useNewBet.types'
+export type { NewBetHandlers, NewBetState, NewBetStep, NewBetNavigation, NewBetRoute } from './useNewBet.types'
 
 export function useNewBet() {
   const navigation = useNavigation<NewBetNavigation>()
