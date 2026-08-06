@@ -3,7 +3,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
-import { BetsService } from '../services/bets.service'
+import { BetsService } from '@/features/bets/api'
 import { GAME_MAP } from '@/shared/constants/games'
 
 type DashboardUser = {

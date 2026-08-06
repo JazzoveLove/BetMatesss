@@ -1,6 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
-import type { BetRow } from '@/features/bets/types/bet.row.types'
-import type { BetSummary } from '@/features/bets/types/bet.types'
+import type { BetRow, BetSummary } from '@/features/bets/types/bet.types'
 
 function mapBetRowToBetSummary(row: BetRow): BetSummary {
   return {

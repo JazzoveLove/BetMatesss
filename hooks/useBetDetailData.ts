@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useAuthContext } from '@/features/auth'
-import { BetsService } from '../services/bets.service'
+import { BetsService } from '@/features/bets/api'
 import type { BetDetail, PendingResult, Settlement } from '@/features/bets/types/bet.types'
 import { error, log } from '@/shared/utils/logger'
 

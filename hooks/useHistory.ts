@@ -3,7 +3,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
-import { BetsService } from '../services/bets.service'
+import { BetsService } from '@/features/bets/api'
 import type { BetStatus, HistoryListItem } from '@/features/bets/types/bet.types'
 
 export type HistoryFilter = 'all' | 'active' | 'completed'

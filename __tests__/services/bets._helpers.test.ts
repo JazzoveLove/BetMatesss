@@ -1,4 +1,4 @@
-import { parseOddsNumber, normalizeUsersNick } from './_helpers'
+import { parseOddsNumber, normalizeUsersNick } from '@/features/bets/api/_helpers'
 
 // ─── parseOddsNumber ──────────────────────────────────────────────────────────
 

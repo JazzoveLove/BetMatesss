@@ -15,7 +15,7 @@ import {
   submitBetResult,
   confirmBetResult,
   disputeBetResult,
-} from '../../services/bets/bets.resolve.results'
+} from '@/features/bets/api/bets.resolve.results'
 
 const mockFrom = supabase.from as jest.Mock
 const mockCreateSettlements = createSettlements as jest.Mock

@@ -2,7 +2,7 @@
 
 import { supabase } from '@/shared/lib/supabase'
 import { log } from '@/shared/utils/logger'
-import { createSettlements } from '../settlements.service'
+import { createSettlements } from '@/services/settlements.service'
 
 type ResolveParams = {
   betId: string

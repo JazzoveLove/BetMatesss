@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { BetsService } from '../services/bets.service'
+import { BetsService } from '@/features/bets/api'
 import { useAuthContext } from '@/features/auth'
 import { supabase } from '@/shared/lib/supabase'
 import { error as logError } from '@/shared/utils/logger'

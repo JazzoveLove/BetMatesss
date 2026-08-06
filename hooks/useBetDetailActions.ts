@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react'
 import { Alert } from 'react-native'
-import { BetsService } from '../services/bets.service'
+import { BetsService } from '@/features/bets/api'
 import { NotificationsService } from '@/shared/services/notifications.service'
 import type { BetDetail, PendingResult, Settlement } from '@/features/bets/types/bet.types'
 import { error } from '@/shared/utils/logger'

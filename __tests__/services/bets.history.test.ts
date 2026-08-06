@@ -1,4 +1,4 @@
-import { historyBadgeAndAmount } from '../../services/bets/bets.history'
+import { historyBadgeAndAmount } from '@/features/bets/api/bets.history'
 
 describe('historyBadgeAndAmount', () => {
   it('status "pending" → badge "oczekuje", kwota "—"', () => {
