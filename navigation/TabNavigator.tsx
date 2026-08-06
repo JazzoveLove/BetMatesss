@@ -7,7 +7,7 @@ import DashboardScreen from '@/features/bets/screens/dashboard'
 import HistoryScreen from '@/features/bets/screens/history'
 import NewBetScreen from '@/features/bets/screens/new-bet'
 import FriendsScreen from '@/features/friends/screens/friends'
-import ProfileScreen from '../app/profile'
+import ProfileScreen from '@/features/profile/screens/profile'
 import { Colors } from '@/shared/constants/colors'
 import { ScreenErrorFallback } from '@/shared/components/ScreenErrorFallback'
 
