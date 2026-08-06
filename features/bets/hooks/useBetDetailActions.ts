@@ -3,7 +3,7 @@
 import { useCallback } from 'react'
 import { Alert } from 'react-native'
 import { BetsService } from '@/features/bets/api'
-import { NotificationsService } from '@/shared/services/notifications.service'
+import { NotificationsService } from '@/shared/lib/notifications.service'
 import type { BetDetail, PendingResult, Settlement } from '@/features/bets/types/bet.types'
 import { error } from '@/shared/utils/logger'
 import type { ActionLoadingState } from './useBetDetailData'

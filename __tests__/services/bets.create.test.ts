@@ -5,12 +5,12 @@ jest.mock('@/shared/lib/supabase', () => {
   return createSupabaseMock()
 })
 
-jest.mock('@/shared/services/notifications.service', () => ({
+jest.mock('@/shared/lib/notifications.service', () => ({
   NotificationsService: { sendBetInvite: jest.fn().mockResolvedValue({}) },
 }))
 
 import { supabase } from '@/shared/lib/supabase'
-import { NotificationsService } from '@/shared/services/notifications.service'
+import { NotificationsService } from '@/shared/lib/notifications.service'
 import { buildParticipantRows, createBet } from '@/features/bets/api/bets.create'
 import type { CreateBetParams } from '@/features/bets/types/bet.types'
 

@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
-import { NotificationsService } from '@/shared/services/notifications.service'
+import { NotificationsService } from '@/shared/lib/notifications.service'
 import { calcOdds, toStakeNumber } from '@/features/bets/utils/odds'
 import type { CreateBetParams, ParticipantRow } from '@/features/bets/types/bet.types'
 import { warn } from '@/shared/utils/logger'

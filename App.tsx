@@ -20,7 +20,6 @@ import { hasPendingFriendInvites } from '@/features/friends'
 import tamaguiConfig from './tamagui.config'
 import { AppErrorFallback } from '@/shared/components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
-import { useDeepLinks } from './hooks/useDeepLinks'
 import { registerAndSyncPushToken } from '@/shared/lib/notifications'
 
 const queryClient = new QueryClient({
@@ -50,11 +49,6 @@ const Stack = createNativeStackNavigator()
 function AppContent() {
   const { appState, session, userId, completeSetup } = useAuthContext()
   const [authScreen, setAuthScreen] = useState<'login' | 'register'>('login')
-
-  const { pendingBetCodeRef } = useDeepLinks({
-    appState,
-    navigationRef,
-  })
 
   useEffect(() => {
     if (appState !== 'main' || !userId) return
@@ -92,14 +86,6 @@ function AppContent() {
     <NavigationContainer
       ref={navigationRef}
       onReady={() => {
-        const betCode = pendingBetCodeRef.current
-        if (betCode) {
-          ;(navigationRef as { navigate: (a: string, b?: object) => void }).navigate(
-            'JoinBet',
-            { code: betCode },
-          )
-          pendingBetCodeRef.current = null
-        }
         if (
           hasPendingFriendInvites() &&
           navigationRef.isReady() &&
