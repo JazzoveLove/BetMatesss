@@ -1,5 +1,5 @@
 import { XStack, YStack, Text } from 'tamagui'
-import type { HistoryFilter } from '../../hooks/useHistory'
+import type { HistoryFilter } from '@/features/bets/hooks/useHistory'
 
 export type HistoryFilterBarProps = {
   filter: HistoryFilter

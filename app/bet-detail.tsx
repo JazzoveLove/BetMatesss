@@ -16,7 +16,7 @@ import { BetDetailScrollBody } from "../components/bet-detail/BetDetailScrollBod
 import { BetScoreModal, parsePendingScore } from "../components/bet-detail/BetScoreModal";
 import { Colors } from "@/shared/constants/colors";
 import { GAME_MAP, GAME_TEMPLATES } from "@/shared/constants/games";
-import { useBetDetail } from "../hooks/useBetDetail";
+import { useBetDetail } from "@/features/bets/hooks/useBetDetail";
 import type { RootStackParamList } from "../navigation/types";
 import type { BetStatus } from "@/features/bets/types/bet.types";
 import { hexToRgba } from "@/shared/utils/colors";

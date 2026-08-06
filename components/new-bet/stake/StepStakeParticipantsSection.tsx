@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Pressable, Text, TextInput, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
-import type { NewBetHandlers, NewBetState } from '../../../hooks/useNewBet'
+import type { NewBetHandlers, NewBetState } from '@/features/bets/hooks/useNewBet'
 import type { UserProfile } from '@/shared/types/user.types'
 import { stakeStepStyles } from './stakeStyles'
 import { stepStakeStyles as styles } from './stepStake.styles'

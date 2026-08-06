@@ -1,6 +1,6 @@
 import { Pressable, Text, View } from 'react-native'
 import type { GameTemplate } from '@/shared/constants/games'
-import type { NewBetHandlers } from '../../../hooks/useNewBet'
+import type { NewBetHandlers } from '@/features/bets/hooks/useNewBet'
 import { formatScreenStyles as styles } from './formatScreen.styles'
 
 export type FormatGameChipProps = {

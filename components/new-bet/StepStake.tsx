@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native'
-import type { NewBetHandlers, NewBetState } from '../../hooks/useNewBet'
+import type { NewBetHandlers, NewBetState } from '@/features/bets/hooks/useNewBet'
 import { StakeCustomRows } from './stake/StakeCustomRows'
 import { StakeEqualRow } from './stake/StakeEqualRow'
 import { StakeModePicker } from './stake/StakeModePicker'

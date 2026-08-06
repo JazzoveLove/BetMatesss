@@ -3,7 +3,7 @@ import { useNavigation, type CompositeNavigationProp } from '@react-navigation/n
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useDashboard } from '../hooks/useDashboard'
+import { useDashboard } from '@/features/bets/hooks/useDashboard'
 import { Colors } from '@/shared/constants/colors'
 import { DashboardGreeting } from '../components/dashboard/DashboardGreeting'
 import { DashboardStatsRow, DashboardStatsRowSkeleton } from '../components/dashboard/DashboardStatsRow'

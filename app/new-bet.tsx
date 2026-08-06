@@ -4,7 +4,7 @@ import { useFocusEffect, useNavigation, type CompositeNavigationProp } from '@re
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useNewBet } from '../hooks/useNewBet'
+import { useNewBet } from '@/features/bets/hooks/useNewBet'
 import { Colors } from '@/shared/constants/colors'
 import { StepGame } from '../components/new-bet/StepGame'
 import { StepFormat } from '../components/new-bet/StepFormat'

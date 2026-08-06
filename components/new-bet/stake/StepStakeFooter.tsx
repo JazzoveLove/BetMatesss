@@ -1,6 +1,6 @@
 import { ActivityIndicator, Pressable, Text, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
-import type { NewBetHandlers } from '../../../hooks/useNewBet'
+import type { NewBetHandlers } from '@/features/bets/hooks/useNewBet'
 import type { UserProfile } from '@/shared/types/user.types'
 import { stepStakeStyles as styles } from './stepStake.styles'
 
