@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { GAME_MAP } from '@/shared/constants/games'
 import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
-import { BetsService } from '@/features/bets/api'
+import { BetsService } from '@/features/bets'
 import type { ProfileScreenData, ProfileStatSection } from '@/features/bets/types/bet.types'
 
 export interface ProfileData {

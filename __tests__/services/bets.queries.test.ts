@@ -2,7 +2,7 @@ jest.mock('@/shared/lib/supabase', () => ({ supabase: {} }))
 jest.mock('@/features/friends', () => ({}))
 
 import { historyBadgeAndAmount } from '@/features/bets/api/bets.history'
-import type { BetRow } from '@/features/bets/types/bet.row.types'
+import type { BetRow } from '@/features/bets/types/bet.types'
 
 const baseBet: BetRow = {
   id: '1',

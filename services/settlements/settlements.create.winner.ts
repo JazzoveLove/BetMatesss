@@ -2,7 +2,7 @@
 
 import { supabase } from '@/shared/lib/supabase'
 import { log } from '@/shared/utils/logger'
-import { parseStakeAmount } from '@/features/bets/utils/odds'
+import { parseStakeAmount } from '@/features/bets'
 import type { BetParticipantStakeRow } from './settlements.types'
 
 export async function createSettlementsFromWinner(

@@ -9,7 +9,7 @@ import {
   setNavigateToFriendsTab,
   extractFriendIdFromUrl,
 } from '@/features/friends'
-import { extractBetInviteCodeFromUrl } from '@/features/bets/utils/betInviteUrl'
+import { extractBetInviteCodeFromUrl } from '@/features/bets'
 import type { AppAuthState } from '@/features/auth'
 
 type Nav = ReturnType<typeof createNavigationContainerRef<ParamListBase>>
