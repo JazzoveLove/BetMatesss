@@ -17,7 +17,7 @@ import { BetScoreModal, parsePendingScore } from "@/features/bets/components/bet
 import { Colors } from "@/shared/constants/colors";
 import { GAME_MAP, GAME_TEMPLATES } from "@/shared/constants/games";
 import { useBetDetail } from "@/features/bets/hooks/useBetDetail";
-import type { RootStackParamList } from "../navigation/types";
+import type { RootStackParamList } from "@/navigation/types";
 import type { BetStatus } from "@/features/bets/types/bet.types";
 import { hexToRgba } from "@/shared/utils/colors";
 import { styles } from "./bet-detail.styles";

@@ -9,7 +9,7 @@ import { DashboardGreeting } from '@/features/bets/components/dashboard/Dashboar
 import { DashboardStatsRow, DashboardStatsRowSkeleton } from '@/features/bets/components/dashboard/DashboardStatsRow'
 import { DashboardActiveBetsSection } from '@/features/bets/components/dashboard/DashboardActiveBetsSection'
 import { DashboardRecentResultsSection } from '@/features/bets/components/dashboard/DashboardRecentResultsSection'
-import type { RootStackParamList, TabParamList } from '../navigation/types'
+import type { RootStackParamList, TabParamList } from '@/navigation/types'
 
 type DashboardNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList, 'Home'>,

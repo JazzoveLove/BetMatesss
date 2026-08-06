@@ -9,7 +9,7 @@ import { Colors } from '@/shared/constants/colors'
 import { StepGame } from '@/features/bets/components/new-bet/StepGame'
 import { StepFormat } from '@/features/bets/components/new-bet/StepFormat'
 import { StepStake } from '@/features/bets/components/new-bet/StepStake'
-import type { RootStackParamList, TabParamList } from '../navigation/types'
+import type { RootStackParamList, TabParamList } from '@/navigation/types'
 
 type NewBetNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList, 'Nowy'>,

@@ -7,7 +7,7 @@ import { BetsService } from '@/features/bets/api'
 import { useAuthContext } from '@/features/auth'
 import { GAME_MAP } from '@/shared/constants/games'
 import { ensureFriendshipAccepted } from '@/features/friends'
-import type { RootStackParamList } from '../navigation/types'
+import type { RootStackParamList } from '@/navigation/types'
 
 type RootParamList = { JoinBet: { code: string } }
 
