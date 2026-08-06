@@ -1,5 +1,5 @@
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
-import { Colors } from "../../constants/colors";
+import { Colors } from "@/shared/constants/colors";
 
 export type StatusBadge = {
   label: string;

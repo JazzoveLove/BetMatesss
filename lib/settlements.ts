@@ -1,4 +1,4 @@
-import { AuthService } from '../services/auth.service'
+import { AuthService } from '@/features/auth'
 import { confirmPayment as confirmSettlementPayment, markAsPaid as markSettlementAsPaid, rejectPayment as rejectSettlementPayment } from '../services/settlements.service'
 
 async function requireCurrentUserId(): Promise<string> {

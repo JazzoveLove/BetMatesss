@@ -1,6 +1,6 @@
 export type BalanceHighlight = 'positive' | 'negative' | 'neutral'
 
-import type { StakeMode } from '../types/bet.types'
+import type { StakeMode } from '@/features/bets/types/bet.types'
 
 export function formatBalance(n: number): string {
   const sign = n > 0 ? '+' : ''

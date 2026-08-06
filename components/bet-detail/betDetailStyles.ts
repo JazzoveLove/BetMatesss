@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 
 export const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#0f1117' },

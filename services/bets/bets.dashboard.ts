@@ -1,15 +1,13 @@
-/** Zapytania i logika dla ekranu Dashboard */
-
-import { supabase } from '../../lib/supabase'
-import { parseStakeAmount } from '../../utils/odds'
-import { loadNicksByIds } from '../friends.service'
+import { supabase } from '@/shared/lib/supabase'
+import { parseStakeAmount } from '@/features/bets/utils/odds'
+import { loadNicksByIds } from '@/features/friends'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
 import type {
   ActiveBetItem,
   RecentResult,
   DashboardStats,
   BetStatus,
-} from '../../types/bet.types'
+} from '@/features/bets/types/bet.types'
 
 type DashboardStatsExtended = DashboardStats & {
   wins: number
@@ -22,6 +20,11 @@ type DashboardData = {
   stats: DashboardStatsExtended
   activeBets: (ActiveBetItem & { timeLabel: string })[]
   recentResults: (RecentResult & { timeLabel: string })[]
+}
+
+type BetResultRow = {
+  bet_id: string
+  winner_id: string
 }
 
 type DashRow = {
@@ -154,8 +157,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
     if (
       bet.status === 'active' ||
       bet.status === 'pending' ||
-      bet.status === 'awaiting_confirmation' ||
-      bet.status === 'in_progress'
+      bet.status === 'awaiting_confirmation'
     ) {
       active.push({
         id: bet.id,
@@ -177,19 +179,36 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
   }
 
   const completedIds = new Set(completed.map(b => b.id))
-  const wins = activeSettlements.filter(s => s.creditor_id === userId && completedIds.has(s.bet_id)).length
+
+  const resultsRes = completedIds.size > 0
+    ? await supabase
+        .from('bet_results')
+        .select('bet_id, winner_id')
+        .in('bet_id', [...completedIds])
+        .eq('confirmed', true)
+    : { data: [] as BetResultRow[], error: null }
+  if (resultsRes.error) throw resultsRes.error
+
+  const betResults = (resultsRes.data ?? []) as BetResultRow[]
+  const winnerByBetId = new Map<string, string>()
+  for (const r of betResults) {
+    if (!winnerByBetId.has(r.bet_id)) winnerByBetId.set(r.bet_id, r.winner_id)
+  }
+
+  const wins = [...completedIds].filter(betId => winnerByBetId.get(betId) === userId).length
   const totalMatches = completedIds.size
   const losses = Math.max(0, totalMatches - wins)
   const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0
 
   const recentResults: (RecentResult & { timeLabel: string })[] = completed.slice(0, 3).map(b => {
-    const s = activeSettlements.find(s => s.bet_id === b.id)
+    const s = settlements.find(s => s.bet_id === b.id)
     const profit = s ? (s.creditor_id === userId ? s.amount : -s.amount) : 0
     return {
       id: b.id,
       gameTemplate: b.gameTemplate,
       opponentNick: b.opponentNick,
       profit,
+      won: winnerByBetId.get(b.id) === userId,
       timeLabel: formatRelativeTime(b.createdAt),
     }
   })

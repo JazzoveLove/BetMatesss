@@ -3,24 +3,25 @@ import {
   createNavigationContainerRef,
   type ParamListBase,
 } from '@react-navigation/native'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as Notifications from 'expo-notifications'
 import { TamaguiProvider } from 'tamagui'
 import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthProvider, useAuthContext } from './contexts/AuthContext'
-import LoginScreen from './app/login'
-import SetupProfileScreen from './app/setup-profile'
+import { AuthProvider, useAuthContext } from '@/features/auth'
+import LoginScreen from '@/features/auth/screens/login'
+import RegisterScreen from '@/features/auth/screens/register'
+import SetupProfileScreen from '@/features/auth/screens/setup-profile'
 import BetDetailScreen from './app/bet-detail'
 import JoinBetScreen from './app/join-bet'
 import RivalryScreen from './app/rivalry'
-import { hasPendingFriendInvites } from './lib/friend-invite-queue'
+import { hasPendingFriendInvites } from '@/features/friends'
 import tamaguiConfig from './tamagui.config'
-import { AppErrorFallback } from './components/AppErrorFallback'
+import { AppErrorFallback } from '@/shared/components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
 import { useDeepLinks } from './hooks/useDeepLinks'
-import { registerAndSyncPushToken } from './lib/notifications'
+import { registerAndSyncPushToken } from '@/shared/lib/notifications'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,6 +49,7 @@ const Stack = createNativeStackNavigator()
 
 function AppContent() {
   const { appState, session, userId, completeSetup } = useAuthContext()
+  const [authScreen, setAuthScreen] = useState<'login' | 'register'>('login')
 
   const { pendingBetCodeRef } = useDeepLinks({
     appState,
@@ -72,7 +74,11 @@ function AppContent() {
   }, [])
 
   if (appState === 'loading') return null
-  if (appState === 'auth') return <LoginScreen />
+  if (appState === 'auth') {
+    return authScreen === 'login'
+      ? <LoginScreen onGoToRegister={() => setAuthScreen('register')} />
+      : <RegisterScreen onGoToLogin={() => setAuthScreen('login')} />
+  }
   if (appState === 'setup' && session) {
     return (
       <SetupProfileScreen

@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { Colors } from '../../constants/colors'
-import { GAME_MAP } from '../../constants/games'
-import { hexToRgba } from '../../utils/colors'
+import { Colors } from '@/shared/constants/colors'
+import { GAME_MAP } from '@/shared/constants/games'
+import { hexToRgba } from '@/shared/utils/colors'
 
 export type RivalryDisciplineChipsProps = {
   disciplines: string[]

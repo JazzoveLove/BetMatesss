@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
-import { type GameTemplate } from '../../constants/games'
+import { type GameTemplate } from '@/shared/constants/games'
 import type { NewBetHandlers, NewBetState } from '../../hooks/useNewBet'
 import { GameTileGrid } from './game/GameTileGrid'
 import { StepGameCustomSection } from './game/StepGameCustomSection'

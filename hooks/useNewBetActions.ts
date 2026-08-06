@@ -1,12 +1,12 @@
 /** Akcje kreatora nowego zakładu */
 
-import { useCallback } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { Alert } from 'react-native'
-import type { GameTemplate } from '../constants/games'
-import type { CreateBetParams } from '../types/bet.types'
-import type { UserProfile } from '../types/user.types'
-import { error, log } from '../utils/logger'
-import type { NewBetHandlers, NewBetNavigation, NewBetStep } from '../types/new-bet.types'
+import type { GameTemplate } from '@/shared/constants/games'
+import type { CreateBetParams } from '@/features/bets/types/bet.types'
+import type { UserProfile } from '@/shared/types/user.types'
+import { error, log } from '@/shared/utils/logger'
+import type { NewBetHandlers, NewBetNavigation, NewBetStep } from './useNewBet.types'
 import type { UseNewBetDerivedReturn } from './useNewBetDerived'
 import type { UseNewBetStateReturn } from './useNewBetState'
 
@@ -46,6 +46,9 @@ export function useNewBetActions(
     stakePerMatch,
   } = state
 
+  const submittingRef = useRef(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const handleGameSelect = useCallback((game: GameTemplate) => {
     setSelectedGame(game)
     setStep(2)
@@ -69,6 +72,7 @@ export function useNewBetActions(
   }, [navigation, setStep, step])
 
   const handleSubmit = useCallback(async () => {
+    if (submittingRef.current) return
     if (!selectedGame || !selectedFormat || !currentUser) return
 
     // Guard: if user typed an amount but mode was never explicitly changed from 'none', treat as 'equal'
@@ -94,6 +98,8 @@ export function useNewBetActions(
     log('[handleSubmit] stakePerMatch:', stakePerMatch)
     log('[handleSubmit] selectedFormat:', selectedFormat)
 
+    submittingRef.current = true
+    setIsSubmitting(true)
     try {
       await createBet({
         creatorId: currentUser.id,
@@ -117,6 +123,8 @@ export function useNewBetActions(
       error('[useNewBet] handleSubmit createBet', e)
       const message = e instanceof Error ? e.message : 'Nie udało się utworzyć zakładu. Spróbuj ponownie.'
       Alert.alert('Błąd', message)
+      submittingRef.current = false
+      setIsSubmitting(false)
     }
   }, [
     bestOfCount,
@@ -136,6 +144,8 @@ export function useNewBetActions(
   ])
 
   const resetNewBet = useCallback(() => {
+    submittingRef.current = false
+    setIsSubmitting(false)
     setStep(1)
     setSelectedGame(null)
     setParticipants([])
@@ -153,6 +163,7 @@ export function useNewBetActions(
   }, [
     setBestOfCount,
     setCustomStakes,
+    setIsSubmitting,
     setParticipants,
     setPokerMode,
     setPokerRebuyStack,
@@ -171,6 +182,7 @@ export function useNewBetActions(
     handleGameSelect,
     handleBack,
     handleSubmit,
+    isSubmitting,
     resetNewBet,
     toggleParticipant,
     setParticipants,

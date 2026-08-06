@@ -1,6 +1,6 @@
-import { supabase } from '../../lib/supabase'
-import type { BetStatus } from '../../types/bet.types'
-import { error } from '../../utils/logger'
+import { supabase } from '@/shared/lib/supabase'
+import type { BetStatus } from '@/features/bets/types/bet.types'
+import { error } from '@/shared/utils/logger'
 
 
 export async function searchUsers(

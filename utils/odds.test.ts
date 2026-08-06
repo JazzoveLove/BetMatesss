@@ -1,4 +1,4 @@
-import { parseStakeAmount, toStakeNumber, calcOdds } from './odds'
+import { parseStakeAmount, toStakeNumber, calcOdds } from '@/features/bets/utils/odds'
 
 // ─── parseStakeAmount ─────────────────────────────────────────────────────────
 

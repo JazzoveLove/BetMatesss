@@ -1,10 +1,10 @@
 /** Pobieranie i mapowanie szczegółów zakładu */
 
-import { supabase } from '../../lib/supabase'
-import { parseStakeAmount } from '../../utils/odds'
-import type { BetDetail, BetParticipant, BetResultRow } from '../../types/bet.types'
-import { error as logError, warn } from '../../utils/logger'
-import type { BetFormat, BetStatus, ParticipantRole, StakeMode } from '../../types/bet.types'
+import { supabase } from '@/shared/lib/supabase'
+import { parseStakeAmount } from '@/features/bets/utils/odds'
+import type { BetDetail, BetParticipant, BetResultRow } from '@/features/bets/types/bet.types'
+import { error as logError, warn } from '@/shared/utils/logger'
+import type { BetFormat, BetStatus, ParticipantRole, StakeMode } from '@/features/bets/types/bet.types'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
 
 type BetDetailRow = {

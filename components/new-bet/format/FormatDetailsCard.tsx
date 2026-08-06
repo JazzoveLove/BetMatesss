@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Pressable, Text, TextInput, View } from 'react-native'
-import type { BetFormat } from '../../../types/bet.types'
-import type { GameTemplate } from '../../../constants/games'
-import { Colors } from '../../../constants/colors'
+import type { BetFormat } from '@/features/bets/types/bet.types'
+import type { GameTemplate } from '@/shared/constants/games'
+import { Colors } from '@/shared/constants/colors'
 import { formatDetailsStyles as styles } from './formatDetails.styles'
 
 type ResultMode = 'score' | 'winner_only'
@@ -44,16 +44,18 @@ export function FormatDetailsCard({
   onStakePerMatchChange,
 }: FormatDetailsCardProps) {
   const [resultType, setResultType] = useState<ResultMode>('score')
-  const [remisPossible, setRemisPossible] = useState<YesNo>('no')
   const [rrDrawAllowed, setRrDrawAllowed] = useState<YesNo>('no')
   const [pairingMode, setPairingMode] = useState<PairingMode>('auto')
 
   useEffect(() => {
     setResultType(selectedGame.resultType === 'winner_only' ? 'winner_only' : 'score')
-    setRemisPossible(selectedGame.supportsRematch ? 'yes' : 'no')
-  }, [selectedGame.id, selectedGame.resultType, selectedGame.supportsRematch])
+  }, [selectedGame.id, selectedGame.resultType])
 
   const detailsTitle = `SZCZEGÓŁY — ${LABEL_BY_FORMAT[activeFormat]}`
+  const resultInfoText =
+    selectedGame.resultType === 'winner_only'
+      ? 'Wynik: wskazanie zwycięzcy'
+      : `Wynik: ${selectedGame.scoringLabel ?? 'punkty'}`
 
   return (
     <View style={styles.detailsCard}>
@@ -61,16 +63,7 @@ export function FormatDetailsCard({
 
       {activeFormat === 'single' && (
         <View style={styles.detailsBody}>
-          <Text style={styles.rowLabel}>Typ wyniku:</Text>
-          <View style={styles.toggleRow}>
-            <ToggleButton active={resultType === 'score'} label="Wynik (5:3)" onPress={() => setResultType('score')} />
-            <ToggleButton active={resultType === 'winner_only'} label="Zwycięzca" onPress={() => setResultType('winner_only')} />
-          </View>
-          <Text style={styles.rowLabel}>Remis możliwy?</Text>
-          <View style={styles.toggleRow}>
-            <ToggleButton active={remisPossible === 'yes'} label="Tak" onPress={() => setRemisPossible('yes')} />
-            <ToggleButton active={remisPossible === 'no'} label="Nie" onPress={() => setRemisPossible('no')} />
-          </View>
+          <Text style={styles.sessionInfo}>{resultInfoText}</Text>
         </View>
       )}
 

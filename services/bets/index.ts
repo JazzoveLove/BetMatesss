@@ -1,5 +1,6 @@
-export { createBet, getBetInvitePreview, joinBetFromInvite, buildParticipantRows } from './bets.create'
-export type { BetInvitePreview, ParticipantRow } from './bets.create'
+export { createBet, buildParticipantRows } from './bets.create'
+export { getBetInvitePreview, joinBetFromInvite } from './bets.join'
+export type { BetInvitePreview, ParticipantRow } from '@/features/bets/types/bet.types'
 
 export {
   getBetDetail,
@@ -26,8 +27,9 @@ export {
 
 export { getDashboardData } from './bets.dashboard'
 
+export { getUserBets } from './bets.userBets'
+
 export {
-  getUserBets,
   getUserBetSummaries,
   getDisciplineStatsForUser,
   getFriendsBalanceLeaderboard,
@@ -38,7 +40,8 @@ export { getHistoryForUser, historyBadgeAndAmount } from './bets.history'
 
 export { getProfileStatsV2 } from './bets.profile'
 
-import { createBet, getBetInvitePreview, joinBetFromInvite } from './bets.create'
+import { createBet } from './bets.create'
+import { getBetInvitePreview, joinBetFromInvite } from './bets.join'
 import {
   getBetDetail,
   submitBetResult,
@@ -60,8 +63,8 @@ import {
   rejectParticipation,
 } from './bets.participants'
 import { getDashboardData } from './bets.dashboard'
+import { getUserBets } from './bets.userBets'
 import {
-  getUserBets,
   getUserBetSummaries,
   getDisciplineStatsForUser,
   getFriendsBalanceLeaderboard,

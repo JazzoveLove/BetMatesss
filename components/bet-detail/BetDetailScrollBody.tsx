@@ -1,11 +1,11 @@
 import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
-import { Colors } from "../../constants/colors";
+import { Colors } from "@/shared/constants/colors";
 import type {
   BetDetail,
   BetParticipant,
   BetStatus,
   Settlement,
-} from "../../types/bet.types";
+} from "@/features/bets/types/bet.types";
 import type { ScoreState } from "./BetScoreModal";
 import { InfoItem } from "./InfoItem";
 import { PlayerCard } from "./PlayerCard";

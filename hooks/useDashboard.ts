@@ -1,9 +1,10 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
 import { useQuery } from '@tanstack/react-query'
-import { useAuthContext } from '../contexts/AuthContext'
-import { queryKeys } from '../lib/queryKeys'
+import { useAuthContext } from '@/features/auth'
+import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '../services/bets.service'
-import { GAME_MAP } from '../constants/games'
+import { GAME_MAP } from '@/shared/constants/games'
 
 type DashboardUser = {
   nick: string
@@ -47,7 +48,7 @@ function getInitials(nick: string): string {
 
 function mapActiveStatus(rawStatus: string): 'pending' | 'active' | 'enter_result' {
   if (rawStatus === 'awaiting_confirmation') return 'enter_result'
-  if (rawStatus === 'active' || rawStatus === 'in_progress') return 'active'
+  if (rawStatus === 'active') return 'active'
   return 'pending'
 }
 
@@ -58,11 +59,17 @@ function mapGame(gameTemplate: string): string {
 export function useDashboard() {
   const { userId } = useAuthContext()
 
-  const { data: raw, isLoading } = useQuery({
+  const { data: raw, isLoading, refetch } = useQuery({
     queryKey: queryKeys.dashboard(userId ?? ''),
     queryFn: () => BetsService.getDashboardData(userId!),
     enabled: !!userId,
   })
+
+  useFocusEffect(
+    useCallback(() => {
+      if (userId) void refetch()
+    }, [userId, refetch]),
+  )
 
   const user = useMemo<DashboardUser>(
     () => raw
@@ -105,7 +112,7 @@ export function useDashboard() {
       game: mapGame(item.gameTemplate),
       amount: item.profit,
       dateLabel: item.timeLabel,
-      result: item.profit >= 0 ? 'win' : 'loss',
+      result: item.won ? 'win' : 'loss',
     })),
     [raw],
   )

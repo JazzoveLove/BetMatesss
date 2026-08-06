@@ -28,11 +28,12 @@ export function StepStake({ state, handlers }: Props) {
     loading,
     betsError,
   } = state
+  const { isSubmitting } = handlers
   const isStakeAmountValid = Number.isFinite(stakeAmount) && stakeAmount > 0
   const showStakeValidation = stakeMode === 'equal' && !isStakeAmountValid && (stakeTouched || submitAttempted)
   const stakeValidationError = showStakeValidation ? 'Stawka musi być większa niż 0 PLN' : null
   const canSubmit = participants.length > 0 && !loading && (stakeMode !== 'equal' || isStakeAmountValid)
-  const canPressSubmit = participants.length > 0 && !loading
+  const canPressSubmit = participants.length > 0 && !loading && !isSubmitting
 
   const totalPlayers = participants.length + 1
   const myCustomStake = Number(customStakes[currentUser?.id ?? ''] ?? 0)
@@ -87,6 +88,7 @@ export function StepStake({ state, handlers }: Props) {
       <StepStakeFooter
         participants={participants}
         loading={loading}
+        isSubmitting={isSubmitting}
         canSubmit={canSubmit}
         canPressSubmit={canPressSubmit}
         errorMessage={stakeValidationError ?? betsError}

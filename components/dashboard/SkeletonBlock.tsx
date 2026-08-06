@@ -1,6 +1,6 @@
 import { View } from 'react-native'
 import type { DimensionValue } from 'react-native'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 
 type Props = { width: DimensionValue; height: number; radius?: number }
 

@@ -5,9 +5,9 @@ import {
   Text,
   View,
 } from "react-native";
-import { Colors } from "../../constants/colors";
-import type { BetStatus, Settlement } from "../../types/bet.types";
-import { hexToRgba } from "../../utils/colors";
+import { Colors } from "@/shared/constants/colors";
+import type { BetStatus, Settlement } from "@/features/bets/types/bet.types";
+import { hexToRgba } from "@/shared/utils/colors";
 
 export type BetActionsPanelProps = {
   status: BetStatus;

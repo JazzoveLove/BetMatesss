@@ -23,7 +23,7 @@ const makeQueryBuilder = () => {
   return chain
 }
 
-jest.mock('./lib/supabase', () => {
+jest.mock('@/shared/lib/supabase', () => {
   const channelBuilder = {
     on: jest.fn(() => channelBuilder),
     subscribe: jest.fn(() => channelBuilder),

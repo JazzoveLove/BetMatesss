@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from 'react-native'
-import type { GameTemplate } from '../../../constants/games'
+import type { GameTemplate } from '@/shared/constants/games'
 import type { NewBetHandlers } from '../../../hooks/useNewBet'
 import { formatScreenStyles as styles } from './formatScreen.styles'
 

@@ -10,8 +10,8 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Colors } from "../../constants/colors";
-import { hexToRgba } from "../../utils/colors";
+import { Colors } from "@/shared/constants/colors";
+import { hexToRgba } from "@/shared/utils/colors";
 
 export type ScoreState = {
   myScore: number | null;
@@ -26,6 +26,7 @@ export type BetScoreModalProps = {
   opponent: { id: string; nick: string };
   resolving: boolean;
   onSubmit: (winnerId: string, score: string) => Promise<boolean>;
+  scoringLabel?: string | null;
 };
 
 export function parsePendingScore(score: string): ScoreState {
@@ -37,7 +38,7 @@ export function parsePendingScore(score: string): ScoreState {
   };
 }
 
-function resolveModalResult(
+export function resolveModalResult(
   resultType: string,
   meId: string,
   opponentId: string,
@@ -65,10 +66,12 @@ export function BetScoreModal({
   opponent,
   resolving,
   onSubmit,
+  scoringLabel,
 }: BetScoreModalProps) {
   const [myScoreInput, setMyScoreInput] = useState("");
   const [opponentScoreInput, setOpponentScoreInput] = useState("");
   const [winnerOnlyId, setWinnerOnlyId] = useState<string | null>(null);
+  const isNumericResult = resultType !== "winner_only";
 
   return (
     <Modal
@@ -85,22 +88,27 @@ export function BetScoreModal({
             <View style={styles.sheetHandle} />
             <Text style={styles.sheetTitle}>Wpisz wynik</Text>
 
-            {resultType === "score" && (
-              <View style={styles.scoreInputs}>
-                <TextInput
-                  style={styles.bigInput}
-                  keyboardType="number-pad"
-                  value={myScoreInput}
-                  onChangeText={setMyScoreInput}
-                />
-                <Text style={styles.muted}>:</Text>
-                <TextInput
-                  style={styles.bigInput}
-                  keyboardType="number-pad"
-                  value={opponentScoreInput}
-                  onChangeText={setOpponentScoreInput}
-                />
-              </View>
+            {isNumericResult && (
+              <>
+                {!!scoringLabel && (
+                  <Text style={styles.scoringLabel}>{scoringLabel}</Text>
+                )}
+                <View style={styles.scoreInputs}>
+                  <TextInput
+                    style={styles.bigInput}
+                    keyboardType="number-pad"
+                    value={myScoreInput}
+                    onChangeText={setMyScoreInput}
+                  />
+                  <Text style={styles.muted}>:</Text>
+                  <TextInput
+                    style={styles.bigInput}
+                    keyboardType="number-pad"
+                    value={opponentScoreInput}
+                    onChangeText={setOpponentScoreInput}
+                  />
+                </View>
+              </>
             )}
 
             {resultType === "winner_only" && (
@@ -176,6 +184,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sheetTitle: { color: Colors.text, fontWeight: "700", fontSize: 17 },
+  scoringLabel: {
+    color: Colors.textMuted,
+    fontSize: 13,
+    marginTop: 12,
+    marginBottom: 6,
+  },
   scoreInputs: {
     flexDirection: "row",
     alignItems: "center",

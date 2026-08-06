@@ -7,10 +7,10 @@ import {
 import {
   enqueueFriendInvite,
   setNavigateToFriendsTab,
-} from '../lib/friend-invite-queue'
-import { extractFriendIdFromUrl } from '../lib/friend-invite-url'
-import { extractBetInviteCodeFromUrl } from '../lib/bet-invite-url'
-import type { AppAuthState } from '../contexts/AuthContext'
+  extractFriendIdFromUrl,
+} from '@/features/friends'
+import { extractBetInviteCodeFromUrl } from '@/features/bets/utils/betInviteUrl'
+import type { AppAuthState } from '@/features/auth'
 
 type Nav = ReturnType<typeof createNavigationContainerRef<ParamListBase>>
 

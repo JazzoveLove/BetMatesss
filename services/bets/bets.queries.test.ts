@@ -1,8 +1,8 @@
-jest.mock('../../lib/supabase', () => ({ supabase: {} }))
-jest.mock('../friends.service', () => ({}))
+jest.mock('@/shared/lib/supabase', () => ({ supabase: {} }))
+jest.mock('@/features/friends', () => ({}))
 
 import { historyBadgeAndAmount } from './bets.history'
-import type { BetRow } from '../../types/bet.row.types'
+import type { BetRow } from '@/features/bets/types/bet.row.types'
 
 const baseBet: BetRow = {
   id: '1',

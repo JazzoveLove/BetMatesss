@@ -1,0 +1,62 @@
+import { supabase } from '@/shared/lib/supabase'
+import type { Session } from '@supabase/supabase-js'
+
+export const AuthService = {
+  signIn(email: string, password: string) {
+    return supabase.auth.signInWithPassword({ email, password })
+  },
+
+  signUp(email: string, password: string) {
+    return supabase.auth.signUp({ email, password })
+  },
+
+  signOut() {
+    return supabase.auth.signOut()
+  },
+
+  getSession() {
+    return supabase.auth.getSession()
+  },
+
+  async getCurrentUserId(): Promise<string | null> {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession()
+    if (error) throw error
+    return session?.user.id ?? null
+  },
+
+  async getCurrentUserProfile(): Promise<{ id: string; nick: string } | null> {
+    const userId = await AuthService.getCurrentUserId()
+    if (!userId) return null
+    const { data, error } = await supabase
+      .from('users')
+      .select('id, nick')
+      .eq('id', userId)
+      .single()
+    if (error) throw error
+    return data ? { id: data.id, nick: data.nick } : null
+  },
+
+  async hasProfile(userId: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .from('users')
+      .select('id')
+      .eq('id', userId)
+      .maybeSingle()
+    if (error) throw error
+    return Boolean(data)
+  },
+
+  async createProfile(userId: string, nick: string): Promise<{ error?: string; code?: string }> {
+    const { error } = await supabase.from('users').insert({ id: userId, nick })
+    if (error) return { error: error.message, code: error.code }
+    return {}
+  },
+
+  onAuthStateChange(cb: (_event: string, session: Session | null) => void) {
+    return supabase.auth.onAuthStateChange(cb)
+  },
+}
+

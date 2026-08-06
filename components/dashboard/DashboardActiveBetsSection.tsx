@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { ActiveBetCard, type ActiveDashboardBet } from './ActiveBetCard'
 import { SkeletonBlock } from './SkeletonBlock'
 

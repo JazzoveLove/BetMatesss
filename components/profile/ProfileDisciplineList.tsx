@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
-import { Colors } from '../../constants/colors'
-import type { ProfileDisciplineStat } from '../../types/bet.types'
-import { formatBalance, getBalanceColor } from '../../utils/money'
+import { Colors } from '@/shared/constants/colors'
+import type { ProfileDisciplineStat } from '@/features/bets/types/bet.types'
+import { formatBalance, getBalanceColor } from '@/shared/utils/money'
 
 export type ProfileDisciplineListProps = {
   disciplines: Array<{

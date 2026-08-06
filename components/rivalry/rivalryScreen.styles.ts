@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 
 export const rivalryScreenStyles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: Colors.background },

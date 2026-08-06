@@ -5,7 +5,7 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNewBet } from '../hooks/useNewBet'
-import { Colors } from '../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { StepGame } from '../components/new-bet/StepGame'
 import { StepFormat } from '../components/new-bet/StepFormat'
 import { StepStake } from '../components/new-bet/StepStake'
@@ -41,13 +41,7 @@ export default function NewBetScreen() {
           <Text style={styles.title}>Nowy zakład</Text>
           <Pressable
             style={styles.navBtn}
-            onPress={() => {
-              try {
-                navigation.navigate('Dashboard' as never)
-              } catch {
-                navigation.navigate('Home')
-              }
-            }}
+            onPress={() => navigation.navigate('Home')}
           >
             <Text style={styles.closeIcon}>×</Text>
           </Pressable>

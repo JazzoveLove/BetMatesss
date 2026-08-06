@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { useQueryClient } from '@tanstack/react-query'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Colors } from '../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { EditProfileModal } from '../components/profile/EditProfileModal'
 import { ProfileActions } from '../components/profile/ProfileActions'
 import { ProfileDisciplineList } from '../components/profile/ProfileDisciplineList'
@@ -12,7 +13,11 @@ import { ProfileSkeleton } from '../components/profile/ProfileSkeleton'
 import { ProfileStatsRow } from '../components/profile/ProfileStatsRow'
 import { StatsSectionCard } from '../components/profile/StatsSectionCard'
 import { useProfile } from '../hooks/useProfile'
-import { AuthService } from '../services/auth.service'
+import { useAuth, useAuthContext } from '@/features/auth'
+import { UsersService } from '../services/users.service'
+import { nickSchema } from '@/shared/utils/user/nickValidation'
+import { getFirstValidationError } from '@/shared/utils/validation'
+import { queryKeys } from '@/shared/lib/queryKeys'
 
 const ImagePicker: any = require('expo-image-picker')
 
@@ -21,6 +26,9 @@ type Nav = { navigate: (screen: string) => void; replace: (screen: string) => vo
 export default function ProfileScreen() {
   const navigation = useNavigation<Nav>()
   const { loading, refreshing, data, onRefresh } = useProfile()
+  const { userId } = useAuthContext()
+  const { signOut } = useAuth()
+  const queryClient = useQueryClient()
 
   const [avatarUri, setAvatarUri] = useState<string | null>(null)
   const [editOpen, setEditOpen] = useState(false)
@@ -57,15 +65,29 @@ export default function ProfileScreen() {
     setEditOpen(true)
   }
 
-  function applyEdit() {
+  async function applyEdit() {
     const trimmed = draftNick.trim()
-    if (trimmed.length < 2) {
-      Alert.alert('Za krótki nick', 'Nick musi mieć minimum 2 znaki.')
+    const validationError = getFirstValidationError(nickSchema.safeParse(trimmed))
+    if (validationError) {
+      Alert.alert('Nieprawidłowy nick', validationError)
       return
     }
+    if (!userId) return
+
+    const result = await UsersService.updateNick(userId, trimmed)
+    if (result.error) {
+      if (result.code === '23505') {
+        Alert.alert('Nick zajęty', 'Ten nick jest już używany. Wybierz inny.')
+      } else {
+        Alert.alert('Błąd zapisu', result.error)
+      }
+      return
+    }
+
     setNickOverride(trimmed)
     if (avatarUri) setAvatarOverride(avatarUri)
     setEditOpen(false)
+    queryClient.invalidateQueries({ queryKey: queryKeys.profile(userId) })
   }
 
   return (
@@ -141,7 +163,7 @@ export default function ProfileScreen() {
               <ProfileActions
                 onSettings={() => navigation.navigate('Settings')}
                 onEditProfile={openEditModal}
-                onLogout={() => void AuthService.signOut()}
+                onLogout={() => void signOut()}
               />
             </>
           )}

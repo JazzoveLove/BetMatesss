@@ -1,0 +1,31 @@
+# Log testów manualnych (BetMates)
+
+## 2026-07-29 — Wątek A: Znajomi (auth + friends)
+
+### A. Rejestracja
+1. Poprawny email + poprawne hasło → przechodzi do ekranu "Jak masz na imię?" — ✅ działa
+2. Email już zarejestrowany → poprawny, zrozumiały komunikat — ✅ działa
+3. Hasło za słabe → dostaje komunikat o błędzie od razu — ✅ chyba działa (do potwierdzenia dokładniej)
+4. Nick za krótki/za długi (blokada przycisku) — ✅ działa
+5. Nick z niedozwolonym słowem (`bannedNickWords.ts`) — ⏭️ pominięte (lista słów jeszcze pusta)
+6. Dwa konta próbujące ustawić ten sam nick → drugi dostaje "Nick zajęty" — ✅ działa
+
+### B. Logowanie
+7. Poprawny email + hasło → wchodzi na dashboard — ✅ działa
+8. Zły email (nieistniejący) → komunikat — ✅ działa
+9. Dobry email, złe hasło → komunikat — ✅ działa
+10. Puste pola → walidacja blokuje — ✅ działa
+11. Wylogowanie i ponowne zalogowanie tym samym kontem — ✅ działa
+
+### C. Znajomi
+12. Świeże konto → własny kod zaproszenia generuje się i wyświetla — ✅ działa
+13. Kopiowanie kodu do schowka — ✅ działa
+14. Konto B wpisuje kod konta A → wysyła zaproszenie — ✅ działa
+15. Konto A widzi przychodzące zaproszenie na liście — ✅ działa
+16. Konto A akceptuje → obaj widzą się nawzajem z poprawnym nickiem — ✅ działa
+17. Odrzucenie zaproszenia — ⏭️ odłożone na potem
+18. Realtime bez ręcznego odświeżania (wymaga dwóch urządzeń jednocześnie) — ⏭️ odłożone na potem
+19. Próba dodania samego siebie po własnym kodzie → komunikat "To Ty" — ✅ działa
+20. Próba dodania kogoś, kto już jest znajomym → komunikat "już znajomi" — ✅ działa
+
+**Podsumowanie:** wszystko przetestowane działa poprawnie. Odłożone na potem: punkt 5 (nick z wulgaryzmem — lista słów pusta), punkt 17 (odrzucenie zaproszenia), punkt 18 (realtime na dwóch urządzeniach).

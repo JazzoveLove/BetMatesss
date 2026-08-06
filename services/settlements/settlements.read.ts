@@ -1,9 +1,9 @@
 /** Odczyt rozliczeń z bazy */
 
-import { supabase } from '../../lib/supabase'
-import type { Settlement } from '../../types/bet.types'
-import { log } from '../../utils/logger'
-import { loadNicksByIds } from '../friends.service'
+import { supabase } from '@/shared/lib/supabase'
+import type { Settlement } from '@/features/bets/types/bet.types'
+import { log } from '@/shared/utils/logger'
+import { loadNicksByIds } from '@/features/friends'
 import type { SettlementListDbRow } from './settlements.types'
 
 export async function getSettlements(betId: string): Promise<Settlement[]> {

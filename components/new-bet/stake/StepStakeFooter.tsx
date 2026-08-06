@@ -1,12 +1,13 @@
 import { ActivityIndicator, Pressable, Text, View } from 'react-native'
-import { Colors } from '../../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import type { NewBetHandlers } from '../../../hooks/useNewBet'
-import type { UserProfile } from '../../../types/user.types'
+import type { UserProfile } from '@/shared/types/user.types'
 import { stepStakeStyles as styles } from './stepStake.styles'
 
 export type StepStakeFooterProps = {
   participants: UserProfile[]
   loading: boolean
+  isSubmitting: boolean
   canSubmit: boolean
   canPressSubmit: boolean
   errorMessage?: string | null
@@ -17,6 +18,7 @@ export type StepStakeFooterProps = {
 export function StepStakeFooter({
   participants,
   loading,
+  isSubmitting,
   canSubmit,
   canPressSubmit,
   errorMessage,
@@ -39,7 +41,7 @@ export function StepStakeFooter({
         disabled={!canPressSubmit}
         style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}
       >
-        {loading ? (
+        {(loading || isSubmitting) ? (
           <ActivityIndicator color={Colors.white} />
         ) : (
           <>

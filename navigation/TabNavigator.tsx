@@ -6,10 +6,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import DashboardScreen from '../app/dashboard'
 import HistoryScreen from '../app/history'
 import NewBetScreen from '../app/new-bet'
-import FriendsScreen from '../app/friends'
+import FriendsScreen from '@/features/friends/screens/friends'
 import ProfileScreen from '../app/profile'
-import { Colors } from '../constants/colors'
-import { ScreenErrorFallback } from '../components/ScreenErrorFallback'
+import { Colors } from '@/shared/constants/colors'
+import { ScreenErrorFallback } from '@/shared/components/ScreenErrorFallback'
 
 const Tab = createBottomTabNavigator()
 

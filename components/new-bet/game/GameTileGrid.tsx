@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { Animated, Pressable, Text, View } from 'react-native'
-import type { GameTemplate } from '../../../constants/games'
+import type { GameTemplate } from '@/shared/constants/games'
 import { gameScreenStyles as styles } from './gameScreen.styles'
 
 export type GameTileDisplay = { label: string; emoji: string }

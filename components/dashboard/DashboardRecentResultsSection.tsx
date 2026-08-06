@@ -1,5 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { Colors } from '../../constants/colors'
+import { Colors } from '@/shared/constants/colors'
 import { RecentMatchCard, type RecentDashboardMatch } from './RecentMatchCard'
 import { SkeletonBlock } from './SkeletonBlock'
 

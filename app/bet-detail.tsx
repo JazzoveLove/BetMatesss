@@ -14,12 +14,12 @@ import { BetActionsPanel } from "../components/bet-detail/BetActionsPanel";
 import { BetDetailHeaderSection } from "../components/bet-detail/BetDetailHeaderSection";
 import { BetDetailScrollBody } from "../components/bet-detail/BetDetailScrollBody";
 import { BetScoreModal, parsePendingScore } from "../components/bet-detail/BetScoreModal";
-import { Colors } from "../constants/colors";
-import { GAME_MAP, GAME_TEMPLATES } from "../constants/games";
+import { Colors } from "@/shared/constants/colors";
+import { GAME_MAP, GAME_TEMPLATES } from "@/shared/constants/games";
 import { useBetDetail } from "../hooks/useBetDetail";
 import type { RootStackParamList } from "../navigation/types";
-import type { BetStatus } from "../types/bet.types";
-import { hexToRgba } from "../utils/colors";
+import type { BetStatus } from "@/features/bets/types/bet.types";
+import { hexToRgba } from "@/shared/utils/colors";
 import { styles } from "./bet-detail.styles";
 
 export default function BetDetailScreen() {
@@ -171,6 +171,7 @@ export default function BetDetailScreen() {
         visible={scoreModalOpen}
         onClose={() => setScoreModalOpen(false)}
         resultType={resultType}
+        scoringLabel={gameTemplate?.scoringLabel ?? null}
         me={{ id: me.id, nick: me.nick }}
         opponent={{ id: opponent.id, nick: opponent.nick }}
         resolving={resolving}
@@ -188,7 +189,7 @@ function initials(value: string): string {
 }
 
 function getStatusBadge(status: BetStatus) {
-  if (status === "active" || status === "in_progress")
+  if (status === "active")
     return { label: "Aktywny", bg: hexToRgba(Colors.green, 0.15), text: Colors.green, border: hexToRgba(Colors.green, 0.2) };
   if (status === "pending")
     return { label: "Oczekuje", bg: hexToRgba(Colors.amber, 0.15), text: Colors.amber, border: hexToRgba(Colors.amber, 0.2) };
