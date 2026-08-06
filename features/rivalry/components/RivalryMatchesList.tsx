@@ -1,6 +1,6 @@
 import { FlatList, RefreshControl, Text, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
-import type { RivalryMatchItem } from '../../services/rivalry/rivalry.types'
+import type { RivalryMatchItem } from '@/features/rivalry/api/rivalry.types'
 import { RivalryDisciplineChips } from './RivalryDisciplineChips'
 import { RivalryHeroCard } from './RivalryHeroCard'
 import { RivalryMatchRow } from './RivalryMatchRow'

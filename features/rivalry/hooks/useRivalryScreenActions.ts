@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { Alert } from 'react-native'
 import { AuthService } from '@/features/auth'
 import { BetsService } from '@/features/bets'
-import type { RivalryMatchItem } from '../services/rivalry/rivalry.types'
+import type { RivalryMatchItem } from '@/features/rivalry/api/rivalry.types'
 import type { UserProfile } from '@/shared/types/user.types'
 
 type Params = {

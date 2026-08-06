@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
 import { GAME_MAP } from '@/shared/constants/games'
-import type { RivalryMatchItem } from '../../services/rivalry/rivalry.types'
+import type { RivalryMatchItem } from '@/features/rivalry/api/rivalry.types'
 import { hexToRgba } from '@/shared/utils/colors'
 
 export type RivalryMatchRowProps = {

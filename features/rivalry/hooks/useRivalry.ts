@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
-import { fetchRivalryData, RivalryFetchError } from '../services/rivalry/loadRivalryMatches'
-import { buildRivalryTotalsFromMatches, buildStatsByDiscipline } from '../services/rivalry/mapRivalryItems'
-import type { RivalryDisciplineStats, RivalryMatchItem, RivalryPaymentRow } from '../services/rivalry/rivalry.types'
+import { fetchRivalryData, RivalryFetchError } from '@/features/rivalry/api/loadRivalryMatches'
+import { buildRivalryTotalsFromMatches, buildStatsByDiscipline } from '@/features/rivalry/api/mapRivalryItems'
+import type { RivalryDisciplineStats, RivalryMatchItem, RivalryPaymentRow } from '@/features/rivalry/api/rivalry.types'
 
 type RivalryPaymentSummary = {
   totalPaidByMe: number
@@ -109,4 +109,4 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
   }
 }
 
-export type { RivalryMatchItem, RivalryDisciplineStats } from '../services/rivalry/rivalry.types'
+export type { RivalryMatchItem, RivalryDisciplineStats } from '@/features/rivalry/api/rivalry.types'
