@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, TextInput } from 'react-native'
-import { YStack, Text, Button } from 'tamagui'
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { useAuth } from '../hooks/useAuth'
 import { Colors } from '@/shared/constants/colors'
 import { styles } from '../styles/authScreen.styles'
@@ -24,21 +23,29 @@ export default function RegisterScreen({ onGoToLogin }: Props) {
   return (
     <KeyboardAvoidingView style={styles.safe} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-        <YStack flex={1}>
+        <View style={{ flex: 1 }}>
           <Text style={styles.title}>BetMates</Text>
           <Text style={styles.subtitle}>Załóż konto</Text>
 
           <TextInput value={email} onChangeText={setEmail} placeholder="Email" placeholderTextColor={Colors.textMuted} autoCapitalize="none" keyboardType="email-address" style={styles.input} />
           <TextInput value={password} onChangeText={setPassword} placeholder="Hasło" placeholderTextColor={Colors.textMuted} secureTextEntry style={styles.input} />
 
-          <Button disabled={loading} onPress={handleSignUp} style={styles.primaryButton}>
+          <Pressable
+            disabled={loading}
+            onPress={handleSignUp}
+            style={({ pressed }) => [styles.primaryButton, pressed && { opacity: 0.85 }]}
+          >
             <Text style={styles.primaryButtonText}>{loading ? 'Ładowanie...' : 'Zarejestruj się'}</Text>
-          </Button>
+          </Pressable>
 
-          <Button disabled={loading} chromeless onPress={onGoToLogin} style={styles.secondaryButton}>
+          <Pressable
+            disabled={loading}
+            onPress={onGoToLogin}
+            style={({ pressed }) => [styles.secondaryButton, pressed && { opacity: 0.85 }]}
+          >
             <Text style={styles.secondaryButtonText}>Masz już konto? Zaloguj się</Text>
-          </Button>
-        </YStack>
+          </Pressable>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   )

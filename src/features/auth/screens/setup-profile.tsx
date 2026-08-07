@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput } from 'react-native'
-import { YStack, Button } from 'tamagui'
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
 import { useAuth } from '../hooks/useAuth'
 import { nickSchema } from '@/shared/utils/user/nickValidation'
 import { getFirstValidationError } from '@/shared/utils/validation'
@@ -37,7 +36,7 @@ export default function SetupProfileScreen({ userId, onComplete }: Props) {
   return (
     <KeyboardAvoidingView style={styles.safe} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={[styles.content, { padding: 28 }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-        <YStack flex={1}>
+        <View style={{ flex: 1 }}>
           <Text style={styles.emoji}>👋</Text>
           <Text style={[styles.title, { fontSize: 26, fontWeight: '700', color: Colors.text }]}>Jak masz na imię?</Text>
           <Text style={[styles.subtitle, { fontSize: 14, marginBottom: 40, lineHeight: 20 }]}>Twój nick będą widzieć znajomi przy zakładach</Text>
@@ -56,14 +55,22 @@ export default function SetupProfileScreen({ userId, onComplete }: Props) {
           />
           <Text style={styles.counter}>{nick.trim().length} / 10</Text>
 
-          <Button disabled={!canSave} onPress={saveNick} style={[styles.primaryButton, { borderRadius: 12, marginBottom: 0, opacity: canSave ? 1 : 0.4 }]}>
+          <Pressable
+            disabled={!canSave}
+            onPress={saveNick}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              { borderRadius: 12, marginBottom: 0, opacity: canSave ? 1 : 0.4 },
+              pressed && canSave && { opacity: 0.85 },
+            ]}
+          >
             <Text style={styles.primaryButtonText}>{loading ? 'Zapisywanie...' : 'Gotowe'}</Text>
-          </Button>
+          </Pressable>
 
           <Text style={styles.disclaimer}>
             BetMates nie przetwarza ani nie transferuje realnych pieniędzy — służy wyłącznie do śledzenia rywalizacji między znajomymi. Wartość jednostki ustalacie między sobą sami.
           </Text>
-        </YStack>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   )

@@ -6,7 +6,6 @@ import {
 } from '@react-navigation/native'
 import { useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { TamaguiProvider } from 'tamagui'
 import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuthContext } from '@/features/auth'
@@ -17,7 +16,6 @@ import BetDetailScreen from '@/features/bets/screens/bet-detail'
 import JoinBetScreen from '@/features/bets/screens/join-bet'
 import RivalryScreen from '@/features/rivalry/screens/rivalry'
 import { hasPendingFriendInvites } from '@/features/friends'
-import tamaguiConfig from '../tamagui.config'
 import { AppErrorFallback } from '@/shared/components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
 
@@ -101,11 +99,9 @@ export default Sentry.wrap(function App() {
   return (
     <ErrorBoundary FallbackComponent={AppErrorFallback}>
       <QueryClientProvider client={queryClient}>
-        <TamaguiProvider config={tamaguiConfig} defaultTheme="dark">
-          <AuthProvider>
-            <AppContent />
-          </AuthProvider>
-        </TamaguiProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   )

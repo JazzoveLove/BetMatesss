@@ -1,4 +1,4 @@
-import { XStack, YStack, Text } from 'tamagui'
+import { Pressable, Text, View } from 'react-native'
 import { GAME_MAP } from '@/shared/constants/games'
 import type { HistoryBadgeLabel, HistoryListItem as HistoryEntry } from '@/features/bets/types/bet.types'
 
@@ -52,30 +52,32 @@ export function HistoryListItem({ item, onPress }: HistoryListItemProps) {
   const game = GAME_MAP[item.gameTemplate] ?? { emoji: '🎲', label: item.gameTemplate }
   const badge = BADGE_UI[item.badge]
   return (
-    <YStack
+    <Pressable
       onPress={() => onPress(item.id)}
-      pressStyle={{ opacity: 0.75 }}
-      style={{
-        backgroundColor: '#181c24',
-        borderRadius: 14,
-        borderWidth: 0.5,
-        borderColor: '#1e2330',
-        padding: 14,
-        marginBottom: 10,
-      }}
+      style={({ pressed }) => [
+        {
+          backgroundColor: '#181c24',
+          borderRadius: 14,
+          borderWidth: 0.5,
+          borderColor: '#1e2330',
+          padding: 14,
+          marginBottom: 10,
+        },
+        pressed && { opacity: 0.75 },
+      ]}
     >
-      <XStack style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 10 }}>
         <Text style={{ fontSize: 28 }}>{game.emoji}</Text>
-        <YStack flex={1}>
+        <View style={{ flex: 1 }}>
           <Text style={{ fontSize: 15, fontWeight: '600', color: '#e8e6e0', marginBottom: 3 }}>{game.label}</Text>
           <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)', marginBottom: 4 }}>
             vs {item.opponentNick}
           </Text>
           <Text style={{ fontSize: 12, color: 'rgba(232,230,224,0.35)' }}>{formatHistoryDate(item.createdAt)}</Text>
-        </YStack>
+        </View>
         <AmountText item={item} />
-      </XStack>
-      <YStack
+      </View>
+      <View
         style={{
           alignSelf: 'flex-start',
           borderRadius: 20,
@@ -85,7 +87,7 @@ export function HistoryListItem({ item, onPress }: HistoryListItemProps) {
         }}
       >
         <Text style={{ fontSize: 11, fontWeight: '700', color: badge.color }}>{badge.text}</Text>
-      </YStack>
-    </YStack>
+      </View>
+    </Pressable>
   )
 }

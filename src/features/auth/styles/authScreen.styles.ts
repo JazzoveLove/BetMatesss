@@ -19,9 +19,9 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   counter: { fontSize: 12, color: Colors.textFaint, textAlign: 'right', marginTop: 6, marginBottom: 32 },
-  primaryButton: { backgroundColor: Colors.accent, borderRadius: 10, height: 52, marginBottom: 12 },
+  primaryButton: { backgroundColor: Colors.accent, borderRadius: 10, height: 52, marginBottom: 12, justifyContent: 'center', alignItems: 'center' },
   primaryButtonText: { color: Colors.white, fontSize: 16, fontWeight: '600' },
-  secondaryButton: { borderWidth: 0.5, borderColor: Colors.accent, borderRadius: 10, height: 52, backgroundColor: 'transparent' },
+  secondaryButton: { borderWidth: 0.5, borderColor: Colors.accent, borderRadius: 10, height: 52, backgroundColor: 'transparent', justifyContent: 'center', alignItems: 'center' },
   secondaryButtonText: { color: Colors.accentLight, fontSize: 16 },
   disclaimer: { fontSize: 12, color: Colors.textFaint, textAlign: 'center', marginTop: 16, lineHeight: 17 },
 })

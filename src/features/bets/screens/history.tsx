@@ -1,5 +1,4 @@
-import { ActivityIndicator, RefreshControl, ScrollView } from 'react-native'
-import { YStack, Text } from 'tamagui'
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import type { RouteProp } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -25,9 +24,9 @@ export default function HistoryScreen() {
 
   if (loading) {
     return (
-      <YStack flex={1} style={{ backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator color="#7F77DD" size="large" />
-      </YStack>
+      </View>
     )
   }
 

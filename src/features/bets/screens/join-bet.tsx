@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, Alert } from 'react-native'
-import { YStack, XStack, Text, Button } from 'tamagui'
+import { ActivityIndicator, Alert, Pressable, Text, View } from 'react-native'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BetsService } from '@/features/bets/api'
@@ -78,25 +77,25 @@ export default function JoinBetScreen() {
 
   if (loading) {
     return (
-      <YStack flex={1} style={{ backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator color="#7F77DD" size="large" />
-      </YStack>
+      </View>
     )
   }
 
   if (!preview) {
     return (
-      <YStack flex={1} style={{ backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ color: 'rgba(232,230,224,0.5)', fontSize: 15 }}>Nie udało się odczytać zaproszenia.</Text>
-      </YStack>
+      </View>
     )
   }
 
   const game = GAME_MAP[preview.gameTemplate] ?? { emoji: '🎲', label: preview.gameTemplate }
 
   return (
-    <YStack flex={1} style={{ backgroundColor: '#0f1117', padding: 20, justifyContent: 'center' }}>
-      <YStack
+    <View style={{ flex: 1, backgroundColor: '#0f1117', padding: 20, justifyContent: 'center' }}>
+      <View
         style={{
           backgroundColor: '#181c24',
           borderRadius: 16,
@@ -107,30 +106,35 @@ export default function JoinBetScreen() {
         }}
       >
         <Text style={{ fontSize: 24, fontWeight: '700', color: '#e8e6e0', marginBottom: 8 }}>{preview.title}</Text>
-        <XStack style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
             Gra
           </Text>
           <Text style={{ fontSize: 16, color: '#e8e6e0', fontWeight: '600' }}>
             {game.emoji} {game.label}
           </Text>
-        </XStack>
-        <XStack style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
           <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
             Stawka
           </Text>
           <Text style={{ fontSize: 16, color: '#e8e6e0', fontWeight: '600' }}>{preview.stakeAmount} j.</Text>
-        </XStack>
-        <Button
+        </View>
+        <Pressable
           disabled={joining}
           onPress={handleJoin}
-          style={{
-            marginTop: 10,
-            backgroundColor: '#534AB7',
-            borderRadius: 12,
-            height: 52,
-            opacity: joining ? 0.65 : 1,
-          }}
+          style={({ pressed }) => [
+            {
+              marginTop: 10,
+              backgroundColor: '#534AB7',
+              borderRadius: 12,
+              height: 52,
+              opacity: joining ? 0.65 : 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+            pressed && { opacity: 0.85 },
+          ]}
         >
           {joining ? (
             <ActivityIndicator color="#fff" />
@@ -139,8 +143,8 @@ export default function JoinBetScreen() {
               {preview.alreadyConfirmed ? 'Przejdź do zakładu' : 'Dołącz do zakładu'}
             </Text>
           )}
-        </Button>
-      </YStack>
-    </YStack>
+        </Pressable>
+      </View>
+    </View>
   )
 }

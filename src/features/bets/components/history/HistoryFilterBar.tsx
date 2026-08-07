@@ -1,4 +1,4 @@
-import { XStack, YStack, Text } from 'tamagui'
+import { Pressable, Text, View } from 'react-native'
 import type { HistoryFilter } from '@/features/bets/hooks/useHistory'
 
 export type HistoryFilterBarProps = {
@@ -14,22 +14,24 @@ const FILTERS: { key: HistoryFilter; label: string }[] = [
 
 export function HistoryFilterBar({ filter, onFilterChange }: HistoryFilterBarProps) {
   return (
-    <XStack style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
       {FILTERS.map(({ key, label }) => {
         const active = filter === key
         return (
-          <YStack
+          <Pressable
             key={key}
             onPress={() => onFilterChange(key)}
-            pressStyle={{ opacity: 0.85 }}
-            style={{
-              paddingHorizontal: 14,
-              paddingVertical: 8,
-              borderRadius: 20,
-              backgroundColor: active ? '#534AB730' : '#181c24',
-              borderWidth: 0.5,
-              borderColor: active ? '#534AB7' : '#1e2330',
-            }}
+            style={({ pressed }) => [
+              {
+                paddingHorizontal: 14,
+                paddingVertical: 8,
+                borderRadius: 20,
+                backgroundColor: active ? '#534AB730' : '#181c24',
+                borderWidth: 0.5,
+                borderColor: active ? '#534AB7' : '#1e2330',
+              },
+              pressed && { opacity: 0.85 },
+            ]}
           >
             <Text
               style={{
@@ -40,9 +42,9 @@ export function HistoryFilterBar({ filter, onFilterChange }: HistoryFilterBarPro
             >
               {label}
             </Text>
-          </YStack>
+          </Pressable>
         )
       })}
-    </XStack>
+    </View>
   )
 }

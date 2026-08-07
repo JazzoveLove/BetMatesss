@@ -1,6 +1,6 @@
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { Text, Button } from 'tamagui'
+import { Pressable, Text } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import DashboardScreen from '@/features/bets/screens/dashboard'
 import HistoryScreen from '@/features/bets/screens/history'
@@ -59,14 +59,12 @@ export function TabNavigator() {
           tabBarLabel: () => null,
           tabBarIcon: () => null,
           tabBarButton: ({ onPress }) => (
-            <Button
-              unstyled
+            <Pressable
               onPress={onPress}
-              style={styles.newBetBtn}
-              pressStyle={{ opacity: 0.8 }}
+              style={({ pressed }) => [styles.newBetBtn, pressed && { opacity: 0.8 }]}
             >
               <Text style={styles.newBetPlus}>+</Text>
-            </Button>
+            </Pressable>
           ),
         }}
       />

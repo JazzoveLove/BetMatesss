@@ -1,8 +1,8 @@
-import { YStack, Text } from 'tamagui'
+import { Text, View } from 'react-native'
 
 export function HistoryEmptyState() {
   return (
-    <YStack
+    <View
       style={{
         backgroundColor: '#181c24',
         borderRadius: 14,
@@ -13,6 +13,6 @@ export function HistoryEmptyState() {
       }}
     >
       <Text style={{ fontSize: 14, color: 'rgba(232,230,224,0.5)' }}>Brak zakładów w tym widoku</Text>
-    </YStack>
+    </View>
   )
 }
