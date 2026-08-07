@@ -54,7 +54,6 @@ export default function BetDetailScreen() {
   } = useBetDetail(betId);
 
   const [scoreModalOpen, setScoreModalOpen] = useState(false);
-  const [chatInput, setChatInput] = useState("");
 
   const me = useMemo(
     () => bet?.participants.find((p) => p.id === currentUserId) ?? null,
@@ -135,8 +134,6 @@ export default function BetDetailScreen() {
         status={status}
         settlements={settlements}
         currentUserId={currentUserId}
-        chatInput={chatInput}
-        setChatInput={setChatInput}
       />
 
       <BetActionsPanel

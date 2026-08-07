@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Colors } from "@/shared/constants/colors";
 import type {
   BetDetail,
@@ -24,8 +24,6 @@ export type BetDetailScrollBodyProps = {
   status: BetStatus;
   settlements: Settlement[];
   currentUserId: string | null;
-  chatInput: string;
-  setChatInput: (s: string) => void;
 };
 
 export function BetDetailScrollBody({
@@ -41,8 +39,6 @@ export function BetDetailScrollBody({
   status,
   settlements,
   currentUserId,
-  chatInput,
-  setChatInput,
 }: BetDetailScrollBodyProps) {
   return (
     <ScrollView
@@ -160,25 +156,6 @@ export function BetDetailScrollBody({
           </View>
         </>
       )}
-
-      <Text style={styles.sectionLabel}>CZAT</Text>
-      <View style={styles.card}>
-        <Text style={styles.muted}>
-          Mini czat będzie podpięty pod hook po dodaniu messages.
-        </Text>
-      </View>
-      <View style={styles.chatRow}>
-        <TextInput
-          style={styles.input}
-          value={chatInput}
-          onChangeText={setChatInput}
-          placeholder="Napisz wiadomość..."
-          placeholderTextColor={Colors.textMuted}
-        />
-        <Pressable style={styles.sendBtn}>
-          <Text style={{ color: Colors.white }}>→</Text>
-        </Pressable>
-      </View>
     </ScrollView>
   );
 }

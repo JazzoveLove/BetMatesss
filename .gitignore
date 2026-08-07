@@ -45,3 +45,6 @@ zagadnienia.txt
 
 testy/
 
+# app size tracking (local log)
+build-size-log.csv
+

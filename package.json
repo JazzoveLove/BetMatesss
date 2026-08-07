@@ -7,7 +7,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "jest"
+    "test": "jest",
+    "size": "node scripts/check-app-size.js"
   },
   "jest": {
     "preset": "jest-expo",
