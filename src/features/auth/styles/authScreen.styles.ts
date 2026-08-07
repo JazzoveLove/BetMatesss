@@ -23,4 +23,5 @@ export const styles = StyleSheet.create({
   primaryButtonText: { color: Colors.white, fontSize: 16, fontWeight: '600' },
   secondaryButton: { borderWidth: 0.5, borderColor: Colors.accent, borderRadius: 10, height: 52, backgroundColor: 'transparent' },
   secondaryButtonText: { color: Colors.accentLight, fontSize: 16 },
+  disclaimer: { fontSize: 12, color: Colors.textFaint, textAlign: 'center', marginTop: 16, lineHeight: 17 },
 })

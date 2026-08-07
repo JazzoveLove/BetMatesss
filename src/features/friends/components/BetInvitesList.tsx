@@ -22,7 +22,7 @@ export function BetInvitesList({ invites, onAccept, onReject }: BetInvitesListPr
                 <Text style={betInviteStyles.game}>{invite.gameTemplate}</Text>
               </View>
               {invite.stakeAmount > 0 && (
-                <Text style={betInviteStyles.stake}>{invite.stakeAmount} zł</Text>
+                <Text style={betInviteStyles.stake}>{invite.stakeAmount} j.</Text>
               )}
             </View>
             <View style={betInviteStyles.actions}>

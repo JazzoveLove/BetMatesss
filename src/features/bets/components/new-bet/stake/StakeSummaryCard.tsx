@@ -51,11 +51,11 @@ export function StakeSummaryCard({
           <Text style={styles.summaryMuted}>Bez stawki</Text>
         ) : stakeMode === 'equal' ? (
           <Text style={styles.summaryValue}>
-            {stakeAmount || 0} zł / osoba · pula {equalPool} zł
+            {stakeAmount || 0} j. / osoba · pula {equalPool} j.
           </Text>
         ) : (
           <Text style={styles.summaryValue}>
-            {myCustomStake} zł / osoba · pula {customPool} zł
+            {myCustomStake} j. / osoba · pula {customPool} j.
           </Text>
         )}
       </View>

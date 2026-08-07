@@ -79,7 +79,7 @@ export function StepStakeParticipantsSection({ state, handlers }: StepStakeParti
                   placeholderTextColor={Colors.textMuted}
                   style={styles.friendStakeInput}
                 />
-                <Text style={styles.friendStakeSuffix}>zł</Text>
+                <Text style={styles.friendStakeSuffix}>j.</Text>
               </View>
             )}
             <View style={[styles.checkbox, selected && styles.checkboxSelected]}>{selected && <Text style={styles.checkboxText}>✓</Text>}</View>

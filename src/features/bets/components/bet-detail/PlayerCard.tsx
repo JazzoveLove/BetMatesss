@@ -28,7 +28,7 @@ export function PlayerCard({ nick, initials: initial, stake, me }: PlayerCardPro
         </Text>
       </View>
       <Text style={styles.bodyText}>{nick}</Text>
-      <Text style={styles.muted}>{stake > 0 ? `${stake} zł` : "—"}</Text>
+      <Text style={styles.muted}>{stake > 0 ? `${stake} j.` : "—"}</Text>
     </View>
   );
 }

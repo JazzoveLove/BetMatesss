@@ -18,7 +18,7 @@ type Props = {
 }
 
 function formatAmount(amount: number): string {
-  return `${amount} zł`
+  return `${amount} j.`
 }
 
 const STATUS_COPY: Record<ActiveDashboardBet['status'], string> = {

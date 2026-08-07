@@ -81,7 +81,7 @@ export function useNewBetActions(
     log('[handleSubmit] globalStake:', stakeAmount)
 
     if (stakeModeToSend === 'equal' && (!Number.isFinite(stakeAmount) || stakeAmount <= 0)) {
-      const stakeError = new Error('Stawka musi być większa niż 0 PLN')
+      const stakeError = new Error('Stawka musi być większa niż 0 j.')
       error('[useNewBet] handleSubmit validation', stakeError)
       Alert.alert('Błąd', stakeError.message)
       return

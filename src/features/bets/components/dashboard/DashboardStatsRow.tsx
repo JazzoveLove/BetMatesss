@@ -18,7 +18,7 @@ export type DashboardStatsRowProps = {
 
 function formatCurrency(value: number): string {
   const prefix = value > 0 ? '+' : ''
-  return `${prefix}${value} zł`
+  return `${prefix}${value} j.`
 }
 
 export function DashboardStatsRowSkeleton() {

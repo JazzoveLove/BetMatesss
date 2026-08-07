@@ -18,15 +18,15 @@ export function historyBadgeAndAmount(
   }
   if (st === 'completed') {
     if (!hadSettlement) {
-      return { badge: 'zakończony', amountLabel: '0 zł' }
+      return { badge: 'zakończony', amountLabel: '0 j.' }
     }
     const sign = profit > 0 ? '+' : ''
     if (profit === 0) {
-      return { badge: 'zakończony', amountLabel: '0 zł' }
+      return { badge: 'zakończony', amountLabel: '0 j.' }
     }
     return {
       badge: profit > 0 ? 'wygrany' : 'przegrany',
-      amountLabel: `${sign}${profit} zł`,
+      amountLabel: `${sign}${profit} j.`,
     }
   }
   return { badge: 'oczekuje', amountLabel: '—' }

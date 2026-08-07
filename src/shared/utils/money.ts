@@ -1,9 +1,9 @@
 import { Colors } from '@/shared/constants/colors'
 
 export function formatBalance(value: number): string {
-  if (value > 0) return `+${value} zł`
-  if (value < 0) return `${value} zł`
-  return '0 zł'
+  if (value > 0) return `+${value} j.`
+  if (value < 0) return `${value} j.`
+  return '0 j.'
 }
 
 export function getBalanceColor(value: number): string {

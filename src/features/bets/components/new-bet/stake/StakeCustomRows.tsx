@@ -23,7 +23,7 @@ export function StakeCustomRows({ currentUser, participants: _participants, cust
         placeholderTextColor={Colors.textMuted}
         style={styles.customStakeInput}
       />
-      <Text style={styles.equalSuffix}>zł</Text>
+      <Text style={styles.equalSuffix}>j.</Text>
     </View>
   )
 }

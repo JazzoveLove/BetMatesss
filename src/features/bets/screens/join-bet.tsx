@@ -119,7 +119,7 @@ export default function JoinBetScreen() {
           <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
             Stawka
           </Text>
-          <Text style={{ fontSize: 16, color: '#e8e6e0', fontWeight: '600' }}>{preview.stakeAmount} zł</Text>
+          <Text style={{ fontSize: 16, color: '#e8e6e0', fontWeight: '600' }}>{preview.stakeAmount} j.</Text>
         </XStack>
         <Button
           disabled={joining}

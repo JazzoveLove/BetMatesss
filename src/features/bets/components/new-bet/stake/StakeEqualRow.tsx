@@ -26,8 +26,8 @@ export function StakeEqualRow({ amount, onChange, onBlur, totalPlayers, errorMes
         placeholderTextColor={Colors.textMuted}
         style={styles.equalInput}
       />
-      <Text style={styles.equalSuffix}>zł</Text>
-      <Text style={styles.poolAccent}>Pula: {equalPool} zł</Text>
+      <Text style={styles.equalSuffix}>j.</Text>
+      <Text style={styles.poolAccent}>Pula: {equalPool} j.</Text>
       {!!errorMessage && <Text style={styles.inlineError}>{errorMessage}</Text>}
     </View>
   )

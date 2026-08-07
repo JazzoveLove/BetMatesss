@@ -31,7 +31,7 @@ function toBetInviteNotification(row: NotificationRow): BetInviteNotification | 
   const message =
     typeof payload.message === 'string'
       ? payload.message
-      : `${fromNick} zaprasza cię do zakładu: ${gameTemplate} ${stakeAmount} zł`
+      : `${fromNick} zaprasza cię do zakładu: ${gameTemplate} ${stakeAmount} j.`
 
   if (!betId || !fromUserId) return null
 
@@ -55,7 +55,7 @@ async function sendBetInviteNotification(params: {
   gameTemplate: string
   stakeAmount: number
 }): Promise<{ error?: string }> {
-  const message = `${params.fromNick} zaprasza cię do zakładu: ${params.gameTemplate} ${params.stakeAmount} zł`
+  const message = `${params.fromNick} zaprasza cię do zakładu: ${params.gameTemplate} ${params.stakeAmount} j.`
 
   const { error } = await supabase.from('notifications').insert({
     user_id: params.userId,
@@ -150,7 +150,7 @@ async function sendSettlementReminderNotification(params: {
   betId: string
   amount: number
 }): Promise<{ error?: string }> {
-  const message = `${params.creditorNick} przypomina o spłacie ${params.amount} zł (zakład).`
+  const message = `${params.creditorNick} przypomina o spłacie ${params.amount} j. (zakład).`
   const { error } = await supabase.from('notifications').insert({
     user_id: params.debtorUserId,
     type: 'settlement_reminder',

@@ -31,7 +31,7 @@ export function StepStake({ state, handlers }: Props) {
   const { isSubmitting } = handlers
   const isStakeAmountValid = Number.isFinite(stakeAmount) && stakeAmount > 0
   const showStakeValidation = stakeMode === 'equal' && !isStakeAmountValid && (stakeTouched || submitAttempted)
-  const stakeValidationError = showStakeValidation ? 'Stawka musi być większa niż 0 PLN' : null
+  const stakeValidationError = showStakeValidation ? 'Stawka musi być większa niż 0 j.' : null
   const canSubmit = participants.length > 0 && !loading && (stakeMode !== 'equal' || isStakeAmountValid)
   const canPressSubmit = participants.length > 0 && !loading && !isSubmitting
 
@@ -70,7 +70,7 @@ export function StepStake({ state, handlers }: Props) {
           <StepStakeInviteCard />
           {stakeMode === 'custom' && (
             <Text style={stakeStepStyles.customSummary}>
-              Pula: {customPool} zł · Twój kurs: {myOdds > 0 ? myOdds.toFixed(2) : '0.00'}×
+              Pula: {customPool} j. · Twój kurs: {myOdds > 0 ? myOdds.toFixed(2) : '0.00'}×
             </Text>
           )}
           <StakeSummaryCard

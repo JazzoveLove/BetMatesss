@@ -19,7 +19,7 @@ type Props = {
 
 function formatAmount(amount: number): string {
   const prefix = amount >= 0 ? '+' : ''
-  return `${prefix}${amount} zł`
+  return `${prefix}${amount} j.`
 }
 
 export function RecentMatchCard({ item, onPress }: Props) {

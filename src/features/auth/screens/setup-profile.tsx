@@ -59,6 +59,10 @@ export default function SetupProfileScreen({ userId, onComplete }: Props) {
           <Button disabled={!canSave} onPress={saveNick} style={[styles.primaryButton, { borderRadius: 12, marginBottom: 0, opacity: canSave ? 1 : 0.4 }]}>
             <Text style={styles.primaryButtonText}>{loading ? 'Zapisywanie...' : 'Gotowe'}</Text>
           </Button>
+
+          <Text style={styles.disclaimer}>
+            BetMates nie przetwarza ani nie transferuje realnych pieniędzy — służy wyłącznie do śledzenia rywalizacji między znajomymi. Wartość jednostki ustalacie między sobą sami.
+          </Text>
         </YStack>
       </ScrollView>
     </KeyboardAvoidingView>

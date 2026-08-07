@@ -84,7 +84,7 @@ export function RivalryHeroCard({ friendNick, wins, losses, balance, disciplines
         <View style={styles.metricCol}>
           <Text style={[styles.metricValue, { color: balance >= 0 ? Colors.green : Colors.red }]}>
             {balance > 0 ? '+' : ''}
-            {balance} zł
+            {balance} j.
           </Text>
           <Text style={styles.metricLabel}>BILANS</Text>
         </View>

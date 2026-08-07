@@ -34,7 +34,7 @@ export function FriendStatCard({ friend, onPress }: FriendStatCardProps) {
 
   const winRateColor = friend.winRate >= 60 ? Colors.green : friend.winRate >= 40 ? Colors.amber : Colors.red
   const balanceColor = friend.balance > 0 ? Colors.green : friend.balance < 0 ? Colors.red : Colors.textMuted
-  const balanceLabel = friend.balance > 0 ? `+${friend.balance} zł` : `${friend.balance} zł`
+  const balanceLabel = friend.balance > 0 ? `+${friend.balance} j.` : `${friend.balance} j.`
 
   return (
     <Pressable style={friendRowSharedStyles.friendCard} onPress={onPress}>

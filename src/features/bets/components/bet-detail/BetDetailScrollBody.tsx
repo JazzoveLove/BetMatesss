@@ -70,7 +70,7 @@ export function BetDetailScrollBody({
           <InfoItem label="FORMAT" value={bet.format} />
           <InfoItem
             label="PULA"
-            value={totalPool ? `${totalPool} zł` : "—"}
+            value={totalPool ? `${totalPool} j.` : "—"}
             valueColor={Colors.accentLight}
           />
         </View>
@@ -133,7 +133,7 @@ export function BetDetailScrollBody({
                     {s.debtorId === currentUserId && s.paymentStatus === "pending_confirmation" && "Oczekuje na potwierdzenie..."}
                     {s.debtorId === currentUserId && s.paymentStatus === "paid" && "Zapłacono ✅"}
                     {s.creditorId === currentUserId && s.paymentStatus === "unpaid" && "Oczekuje na płatność"}
-                    {s.creditorId === currentUserId && s.paymentStatus === "pending_confirmation" && `${s.debtorNick} twierdzi że zapłacił ${s.amount} PLN`}
+                    {s.creditorId === currentUserId && s.paymentStatus === "pending_confirmation" && `${s.debtorNick} twierdzi że zapłacił ${s.amount} j.`}
                     {s.creditorId === currentUserId && s.paymentStatus === "paid" && "Otrzymano ✅"}
                     {s.creditorId === currentUserId && s.paymentStatus === "disputed" && "Spór 🔴"}
                   </Text>
@@ -149,7 +149,7 @@ export function BetDetailScrollBody({
                     },
                   ]}
                 >
-                  {s.amount} zł
+                  {s.amount} j.
                 </Text>
               </View>
             ))}

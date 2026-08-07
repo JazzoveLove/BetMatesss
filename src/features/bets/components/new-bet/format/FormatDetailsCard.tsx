@@ -95,7 +95,7 @@ export function FormatDetailsCard({
               placeholderTextColor={Colors.textMuted}
               style={styles.stakeInput}
             />
-            <Text style={styles.suffix}>zł</Text>
+            <Text style={styles.suffix}>j.</Text>
           </View>
         </View>
       )}

@@ -140,8 +140,8 @@ export default function ProfileScreen() {
               />
               {profile.moneyStats && (
                 <StatsSectionCard
-                  icon="💰"
-                  title="Zakłady na pieniądze"
+                  icon="🏆"
+                  title="Zakłady na punkty"
                   wins={profile.moneyStats.wins}
                   losses={profile.moneyStats.losses}
                   winrate={profile.moneyStats.winRate}

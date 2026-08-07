@@ -73,7 +73,7 @@ export function useBets() {
           ? Number(params.stakeAmount ?? params.globalStake)
           : Number(params.globalStake)
       if (params.stakeMode === 'equal' && (!Number.isFinite(normalizedStake) || normalizedStake <= 0)) {
-        throw new Error('Stawka musi być większa niż 0 PLN')
+        throw new Error('Stawka musi być większa niż 0 j.')
       }
 
       const result = await BetsService.createBet(params)

@@ -4,7 +4,7 @@ import type { StakeMode } from '@/features/bets/types/bet.types'
 
 export function formatBalance(n: number): string {
   const sign = n > 0 ? '+' : ''
-  return `${sign}${n} zł`
+  return `${sign}${n} j.`
 }
 
 export function balanceHighlight(n: number): BalanceHighlight {

@@ -69,12 +69,12 @@ export function RivalryMatchesList({
           <View style={styles.settlementCard}>
             <Text style={styles.settlementText}>Ty zapłaciłeś {friendNick}</Text>
             <Text style={styles.settlementValue}>
-              łącznie: {paymentSummary.totalPaidByMe} PLN ({paymentSummary.settledBetsCount} zakładów) ✅
+              łącznie: {paymentSummary.totalPaidByMe} j. ({paymentSummary.settledBetsCount} zakładów) ✅
             </Text>
             <Text style={[styles.settlementText, { marginTop: 10 }]}>{friendNick} zapłacił Tobie</Text>
-            <Text style={styles.settlementValue}>łącznie: {paymentSummary.totalPaidByRival} PLN</Text>
+            <Text style={styles.settlementValue}>łącznie: {paymentSummary.totalPaidByRival} j.</Text>
             <Text style={[styles.settlementText, { marginTop: 10 }]}>
-              Aktualnie nierozliczone: {paymentSummary.pendingAmount} PLN
+              Aktualnie nierozliczone: {paymentSummary.pendingAmount} j.
             </Text>
             <Text style={styles.settlementStatus}>
               {paymentSummary.pendingStatus === 'pending_confirmation'
