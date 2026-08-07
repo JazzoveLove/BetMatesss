@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import {
   NavigationContainer,
   createNavigationContainerRef,
@@ -21,6 +22,11 @@ import tamaguiConfig from '../tamagui.config'
 import { AppErrorFallback } from '@/shared/components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
 import { registerAndSyncPushToken } from '@/shared/lib/notifications'
+
+Sentry.init({
+  dsn: 'https://6d2d5497873ff80878f5dc94e18b970f@o4511869702438912.ingest.de.sentry.io/4511869752705104',
+  tracesSampleRate: 1.0,
+})
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -120,7 +126,7 @@ function AppContent() {
   )
 }
 
-export default function App() {
+export default Sentry.wrap(function App() {
   return (
     <ErrorBoundary FallbackComponent={AppErrorFallback}>
       <QueryClientProvider client={queryClient}>
@@ -132,4 +138,4 @@ export default function App() {
       </QueryClientProvider>
     </ErrorBoundary>
   )
-}
+});

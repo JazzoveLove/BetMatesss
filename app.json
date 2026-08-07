@@ -32,6 +32,16 @@
         "projectId": "29fea7e1-31f7-4ed9-ab93-8fccb73d8eab"
       }
     },
-    "owner": "jazoveloves-team"
+    "owner": "jazoveloves-team",
+    "plugins": [
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "react-native",
+          "organization": "jazzovelove"
+        }
+      ]
+    ]
   }
 }
