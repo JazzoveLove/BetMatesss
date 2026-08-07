@@ -1,6 +1,6 @@
 import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
 import { Colors } from "@/shared/constants/colors";
-import { styles } from "./FriendsScreenContent.styles";
+import { styles } from "./styles/FriendsScreenContent.styles";
 import { useAddFriendByCode } from "../hooks/useAddFriendByCode";
 
 type AddFriendCardProps = {

@@ -1,6 +1,6 @@
 import { Platform, Pressable, Text, ToastAndroid, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
-import { stepStakeStyles as styles } from './stepStake.styles'
+import { stepStakeStyles as styles } from './styles/stepStake.styles'
 
 const INVITE_LINK = 'https://betmates.app/invite'
 

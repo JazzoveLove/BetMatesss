@@ -1,6 +1,6 @@
 import { Pressable, Text, View, Alert, Share } from "react-native";
 import * as Clipboard from "expo-clipboard";
-import { styles } from "./FriendsScreenContent.styles";
+import { styles } from "./styles/FriendsScreenContent.styles";
 import { formatInviteCodeDisplay } from "../utils/friendsFormatting";
 
 type InviteCodeCardProps = {

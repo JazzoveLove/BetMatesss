@@ -20,7 +20,7 @@ import { useBetDetail } from "@/features/bets/hooks/useBetDetail";
 import type { RootStackParamList } from "@/navigation/types";
 import type { BetStatus } from "@/features/bets/types/bet.types";
 import { hexToRgba } from "@/shared/utils/colors";
-import { styles } from "./bet-detail.styles";
+import { styles } from "./styles/bet-detail.styles";
 
 export default function BetDetailScreen() {
   const insets = useSafeAreaInsets();

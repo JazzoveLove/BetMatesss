@@ -1,7 +1,7 @@
 import { Text, TextInput, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
 import type { UserProfile } from '@/shared/types/user.types'
-import { stakeStepStyles as styles } from './stakeStyles'
+import { stakeStepStyles as styles } from './styles/stakeStyles'
 
 export type StakeCustomRowsProps = {
   currentUser: UserProfile | null

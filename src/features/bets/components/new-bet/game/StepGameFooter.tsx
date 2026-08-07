@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from 'react-native'
-import { gameScreenStyles as styles } from './gameScreen.styles'
+import { gameScreenStyles as styles } from './styles/gameScreen.styles'
 
 export type StepGameFooterProps = {
   canProceed: boolean

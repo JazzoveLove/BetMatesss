@@ -4,7 +4,7 @@ import { BET_FORMATS } from '@/shared/constants/formats'
 import type { GameTemplate } from '@/shared/constants/games'
 import type { BetFormat, StakeMode } from '@/features/bets/types/bet.types'
 import type { UserProfile } from '@/shared/types/user.types'
-import { stakeStepStyles as styles } from './stakeStyles'
+import { stakeStepStyles as styles } from './styles/stakeStyles'
 
 export type StakeSummaryCardProps = {
   participants: UserProfile[]

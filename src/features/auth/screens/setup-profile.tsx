@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import { nickSchema } from '@/shared/utils/user/nickValidation'
 import { getFirstValidationError } from '@/shared/utils/validation'
 import { Colors } from '@/shared/constants/colors'
-import { styles } from '../authScreen.styles'
+import { styles } from '../styles/authScreen.styles'
 
 type Props = { userId: string; onComplete: () => void }
 

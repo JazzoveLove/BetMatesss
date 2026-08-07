@@ -3,7 +3,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
 import type { BetFormat } from '@/features/bets/types/bet.types'
 import type { FormatMeta } from '@/shared/constants/formats'
-import { rgbaFromHex } from '../stake/stakeStyles'
+import { rgbaFromHex } from '../stake/styles/stakeStyles'
 
 export type FormatOptionListProps = {
   formats: FormatMeta[]

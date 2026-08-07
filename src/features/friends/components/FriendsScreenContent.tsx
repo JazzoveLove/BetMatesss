@@ -19,7 +19,7 @@ import { FriendPendingCard } from "./FriendPendingCard";
 import { FriendStatCard, friendRowSharedStyles } from "./FriendStatCard";
 import { FriendsSearchBar } from "./FriendsSearchBar";
 import { InviteQrModal } from "./InviteQrModal";
-import { styles } from "./FriendsScreenContent.styles";
+import { styles } from "./styles/FriendsScreenContent.styles";
 import { otherId } from "../utils/friendsFormatting";
 import { InviteCodeCard } from "./InviteCodeCard";
 import { AddFriendCard } from "./AddFriendCard";

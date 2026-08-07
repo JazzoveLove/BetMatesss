@@ -5,7 +5,7 @@ import type { NewBetHandlers, NewBetState } from '@/features/bets/hooks/useNewBe
 import { GameTileGrid } from './game/GameTileGrid'
 import { StepGameCustomSection } from './game/StepGameCustomSection'
 import { StepGameFooter } from './game/StepGameFooter'
-import { gameScreenStyles as styles } from './game/gameScreen.styles'
+import { gameScreenStyles as styles } from './game/styles/gameScreen.styles'
 import { buildGamesMap, buildOrderedGames, buildTileDisplayById } from './game/stepGameTiles'
 
 type Props = { state: NewBetState; onSelect: (game: GameTemplate) => void; handlers: Pick<NewBetHandlers, 'setSelectedFormat' | 'setStep'> }

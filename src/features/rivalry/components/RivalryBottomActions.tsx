@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from 'react-native'
-import { rivalryScreenStyles as styles } from './rivalryScreen.styles'
+import { rivalryScreenStyles as styles } from './styles/rivalryScreen.styles'
 
 export type RivalryBottomActionsProps = {
   paddingBottom: number

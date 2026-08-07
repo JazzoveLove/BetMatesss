@@ -3,8 +3,8 @@ import { Pressable, Text, TextInput, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
 import type { NewBetHandlers, NewBetState } from '@/features/bets/hooks/useNewBet'
 import type { UserProfile } from '@/shared/types/user.types'
-import { stakeStepStyles } from './stakeStyles'
-import { stepStakeStyles as styles } from './stepStake.styles'
+import { stakeStepStyles } from './styles/stakeStyles'
+import { stepStakeStyles as styles } from './styles/stepStake.styles'
 
 const ACTIVITY_LABELS = ['wczoraj', '3 dni temu', 'tydzień temu'] as const
 

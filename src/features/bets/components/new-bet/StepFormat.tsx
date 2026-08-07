@@ -8,7 +8,7 @@ import { FormatDetailsCard } from './format/FormatDetailsCard'
 import { FormatGameChip } from './format/FormatGameChip'
 import { FORMAT_STEP_LABELS } from './format/formatLabels'
 import { FormatOptionList } from './format/FormatOptionList'
-import { formatScreenStyles as styles } from './format/formatScreen.styles'
+import { formatScreenStyles as styles } from './format/styles/formatScreen.styles'
 
 type Props = { state: NewBetState; handlers: NewBetHandlers }
 

@@ -4,7 +4,7 @@ import type { RivalryMatchItem } from '@/features/rivalry/api/rivalry.types'
 import { RivalryDisciplineChips } from './RivalryDisciplineChips'
 import { RivalryHeroCard } from './RivalryHeroCard'
 import { RivalryMatchRow } from './RivalryMatchRow'
-import { rivalryScreenStyles as styles } from './rivalryScreen.styles'
+import { rivalryScreenStyles as styles } from './styles/rivalryScreen.styles'
 
 export type RivalryMatchesListProps = {
   filteredMatches: RivalryMatchItem[]

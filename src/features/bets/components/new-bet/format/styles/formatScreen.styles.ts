@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
-import { rgbaFromHex } from '../stake/stakeStyles'
+import { rgbaFromHex } from '../../stake/styles/stakeStyles'
 
 export const formatScreenStyles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },

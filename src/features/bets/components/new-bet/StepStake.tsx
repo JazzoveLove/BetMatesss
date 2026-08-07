@@ -5,12 +5,12 @@ import { StakeCustomRows } from './stake/StakeCustomRows'
 import { StakeEqualRow } from './stake/StakeEqualRow'
 import { StakeModePicker } from './stake/StakeModePicker'
 import { StakeSummaryCard } from './stake/StakeSummaryCard'
-import { stakeStepStyles } from './stake/stakeStyles'
+import { stakeStepStyles } from './stake/styles/stakeStyles'
 import { StepStakeChips } from './stake/StepStakeChips'
 import { StepStakeFooter } from './stake/StepStakeFooter'
 import { StepStakeInviteCard } from './stake/StepStakeInviteCard'
 import { StepStakeParticipantsSection } from './stake/StepStakeParticipantsSection'
-import { stepStakeStyles as styles } from './stake/stepStake.styles'
+import { stepStakeStyles as styles } from './stake/styles/stepStake.styles'
 
 type Props = { state: NewBetState; handlers: NewBetHandlers }
 

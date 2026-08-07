@@ -3,7 +3,7 @@ import { Pressable, Text, TextInput, View } from 'react-native'
 import type { BetFormat } from '@/features/bets/types/bet.types'
 import type { GameTemplate } from '@/shared/constants/games'
 import { Colors } from '@/shared/constants/colors'
-import { formatDetailsStyles as styles } from './formatDetails.styles'
+import { formatDetailsStyles as styles } from './styles/formatDetails.styles'
 
 type ResultMode = 'score' | 'winner_only'
 type YesNo = 'yes' | 'no'
