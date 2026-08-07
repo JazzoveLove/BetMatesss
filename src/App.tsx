@@ -4,9 +4,8 @@ import {
   createNavigationContainerRef,
   type ParamListBase,
 } from '@react-navigation/native'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import * as Notifications from 'expo-notifications'
 import { TamaguiProvider } from 'tamagui'
 import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -21,7 +20,6 @@ import { hasPendingFriendInvites } from '@/features/friends'
 import tamaguiConfig from '../tamagui.config'
 import { AppErrorFallback } from '@/shared/components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
-import { registerAndSyncPushToken } from '@/shared/lib/notifications'
 
 Sentry.init({
   dsn: 'https://6d2d5497873ff80878f5dc94e18b970f@o4511869702438912.ingest.de.sentry.io/4511869752705104',
@@ -38,40 +36,13 @@ const queryClient = new QueryClient({
   },
 })
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-})
-
 const navigationRef = createNavigationContainerRef<ParamListBase>()
 
 const Stack = createNativeStackNavigator()
 
 function AppContent() {
-  const { appState, session, userId, completeSetup } = useAuthContext()
+  const { appState, session, completeSetup } = useAuthContext()
   const [authScreen, setAuthScreen] = useState<'login' | 'register'>('login')
-
-  useEffect(() => {
-    if (appState !== 'main' || !userId) return
-    void registerAndSyncPushToken(userId)
-  }, [appState, userId])
-
-  useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-      const data = response.notification.request.content.data as { betId?: string }
-      if (!data.betId || !navigationRef.isReady()) return
-      ;(navigationRef as { navigate: (a: string, b?: object) => void }).navigate('BetDetail', {
-        betId: data.betId,
-      })
-    })
-
-    return () => subscription.remove()
-  }, [])
 
   if (appState === 'loading') return null
   if (appState === 'auth') {

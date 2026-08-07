@@ -1,5 +1,4 @@
 import { supabase } from '@/shared/lib/supabase'
-import { sendExpoPushNotifications } from '@/shared/lib/notifications'
 
 export type BetInviteNotification = {
   id: string
@@ -82,7 +81,6 @@ async function sendBetInvite(params: {
   gameTemplate: string
   stakeByUserId?: Record<string, number>
 }): Promise<{ error?: string }> {
-  const invitedUserIds = params.toUserIds.filter(userId => userId !== params.fromUserId)
   for (const userId of params.toUserIds) {
     if (userId === params.fromUserId) continue
     const stakeAmount = params.stakeByUserId?.[userId] ?? 0
@@ -97,29 +95,6 @@ async function sendBetInvite(params: {
     if (result.error) return result
   }
 
-  const { data: users, error: usersError } = await supabase
-    .from('users')
-    .select('id, expo_push_token')
-    .in('id', invitedUserIds)
-
-  if (usersError) return { error: usersError.message }
-
-  const pushTokens = ((users ?? []) as Array<{ id: string; expo_push_token?: string | null }>)
-    .map(row => row.expo_push_token ?? '')
-    .filter(Boolean)
-
-  const pushResult = await sendExpoPushNotifications({
-    toTokens: pushTokens,
-    title: `${params.fromNick} zaprasza Cię do zakładu!`,
-    body: 'Kliknij, aby zobaczyć szczegóły zakładu.',
-    data: {
-      type: 'bet_invite',
-      betId: params.betId,
-      fromUserId: params.fromUserId,
-    },
-  })
-
-  if (pushResult.error) return pushResult
   return {}
 }
 
