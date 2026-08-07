@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { useNavigation, type CompositeNavigationProp } from "@react-navigation/native";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -11,6 +11,7 @@ import { Colors } from "@/shared/constants/colors";
 import { useBetInvites } from "@/features/bets";
 import { useFriends } from "../hooks/useFriends";
 import type { RootStackParamList, TabParamList } from "@/navigation/types";
+import { styles } from "./styles/friends.styles";
 
 type FriendsNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList, "Znajomi">,
@@ -68,8 +69,3 @@ export default function FriendsScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Colors.background },
-  loadingWrap: { flex: 1, alignItems: "center", justifyContent: "center" },
-});

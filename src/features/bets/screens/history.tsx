@@ -1,4 +1,4 @@
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet } from 'react-native'
+import { ActivityIndicator, RefreshControl, ScrollView } from 'react-native'
 import { YStack, Text } from 'tamagui'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import type { RouteProp } from '@react-navigation/native'
@@ -7,6 +7,7 @@ import { useHistory } from '@/features/bets/hooks/useHistory'
 import { HistoryFilterBar } from '@/features/bets/components/history/HistoryFilterBar'
 import { HistoryListItem } from '@/features/bets/components/history/HistoryListItem'
 import { HistoryEmptyState } from '@/features/bets/components/history/HistoryEmptyState'
+import { styles } from './styles/history.styles'
 
 type HistoryStackParamList = {
   Historia: { initialFilter?: 'active' | 'all' } | undefined
@@ -65,11 +66,3 @@ export default function HistoryScreen() {
     </ScrollView>
   )
 }
-
-const styles = StyleSheet.create({
-  scrollContent: {
-    padding: 20,
-    paddingTop: 56,
-    paddingBottom: 40,
-  },
-})

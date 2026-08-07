@@ -1,7 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { Colors } from '@/shared/constants/colors'
+import { Pressable, Text, View } from 'react-native'
 import { RecentMatchCard, type RecentDashboardMatch } from './RecentMatchCard'
 import { SkeletonBlock } from './SkeletonBlock'
+import { styles } from './styles/DashboardRecentResultsSection.styles'
 
 export type DashboardRecentResultsSectionProps = {
   loading: boolean
@@ -43,31 +43,3 @@ export function DashboardRecentResultsSection({
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  section: { paddingHorizontal: 16, marginBottom: 24 },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-    paddingHorizontal: 4,
-  },
-  sectionTitle: {
-    color: Colors.textMuted,
-    textTransform: 'uppercase',
-    fontSize: 11,
-    letterSpacing: 1,
-    fontWeight: '700',
-  },
-  sectionAction: { color: Colors.accentLight, fontSize: 13, fontWeight: '500' },
-  cardsColumn: { gap: 12 },
-  loadingCardNoBorder: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: Colors.card,
-    borderRadius: 12,
-    padding: 12,
-  },
-})

@@ -1,15 +1,15 @@
-import { ScrollView, StyleSheet, Text } from 'react-native'
+import { ScrollView, Text } from 'react-native'
 import { useNavigation, type CompositeNavigationProp } from '@react-navigation/native'
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useDashboard } from '@/features/bets/hooks/useDashboard'
-import { Colors } from '@/shared/constants/colors'
 import { DashboardGreeting } from '@/features/bets/components/dashboard/DashboardGreeting'
 import { DashboardStatsRow, DashboardStatsRowSkeleton } from '@/features/bets/components/dashboard/DashboardStatsRow'
 import { DashboardActiveBetsSection } from '@/features/bets/components/dashboard/DashboardActiveBetsSection'
 import { DashboardRecentResultsSection } from '@/features/bets/components/dashboard/DashboardRecentResultsSection'
 import type { RootStackParamList, TabParamList } from '@/navigation/types'
+import { styles } from './styles/dashboard.styles'
 
 type DashboardNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList, 'Home'>,
@@ -50,10 +50,3 @@ export default function DashboardScreen() {
     </SafeAreaView>
   )
 }
-
-const styles = StyleSheet.create({
-  safeTop: { flex: 1, backgroundColor: Colors.background },
-  safeBottom: { flex: 1, backgroundColor: Colors.background },
-  container: { flex: 1, backgroundColor: Colors.background },
-  greetingSubtitle: { color: Colors.textMuted, fontSize: 12 },
-})

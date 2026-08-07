@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Alert, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useQueryClient } from '@tanstack/react-query'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -18,6 +18,7 @@ import { UsersService } from '@/shared/lib/users.service'
 import { nickSchema } from '@/shared/utils/user/nickValidation'
 import { getFirstValidationError } from '@/shared/utils/validation'
 import { queryKeys } from '@/shared/lib/queryKeys'
+import { styles } from './styles/profile.styles'
 
 const ImagePicker: any = require('expo-image-picker')
 
@@ -181,28 +182,3 @@ export default function ProfileScreen() {
     </SafeAreaView>
   )
 }
-
-const styles = StyleSheet.create({
-  safeTop: { flex: 1, backgroundColor: Colors.background },
-  safeBottom: { flex: 1, backgroundColor: Colors.background },
-  screen: { flex: 1, backgroundColor: Colors.background },
-  content: { paddingBottom: 32 },
-  header: {
-    paddingTop: 12,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  headerTitle: { color: Colors.text, fontSize: 20, fontWeight: '700' },
-  headerIcons: { flexDirection: 'row', gap: 8 },
-  headerIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: Colors.cardAlt,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerIconText: { color: Colors.text, fontSize: 14, fontWeight: '700' },
-})

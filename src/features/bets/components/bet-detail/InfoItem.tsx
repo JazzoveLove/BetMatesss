@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Colors } from "@/shared/constants/colors";
+import { styles } from "./styles/InfoItem.styles";
 
 export type InfoItemProps = {
   label: string;
@@ -19,15 +20,3 @@ export function InfoItem({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  wrap: { flex: 1, alignItems: "center" },
-  value: { fontSize: 13, fontWeight: "600" },
-  infoLabel: {
-    color: Colors.textMuted,
-    fontSize: 10,
-    letterSpacing: 1,
-    textTransform: "uppercase",
-    marginTop: 4,
-  },
-});
