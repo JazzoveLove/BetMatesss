@@ -1,4 +1,3 @@
-// ─── Deep link: betmates://friends?add=<user_uuid> ────────────────────────────
 
 const queue: string[] = []
 type Listener = () => void

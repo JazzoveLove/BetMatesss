@@ -52,7 +52,6 @@ export function useBetInvites() {
 
   return {
     betInvites,
-    // mutateAsync so callers receive Promise<void>; errors are handled by onError (Alert)
     acceptBetInvite: (invite: BetInviteNotification): Promise<void> =>
       acceptBetInvite.mutateAsync(invite).catch(() => undefined),
     rejectBetInvite: (invite: BetInviteNotification): Promise<void> =>

@@ -18,12 +18,6 @@ const CHAIN_METHODS = [
   'single',
 ] as const
 
-/**
- * Buduje "chainable" węzeł mockujący query builder Supabase: każda metoda
- * z CHAIN_METHODS zwraca ten sam obiekt (żeby łańcuch wywołań działał),
- * a sam obiekt jest thenable i rozwiązuje się do zadanej odpowiedzi
- * niezależnie od tego, w którym miejscu łańcucha zostanie zawołany `await`.
- */
 export function chainResponse<T = unknown>(result: MockResult<T>) {
   const node: Record<string, any> = {}
   CHAIN_METHODS.forEach(method => {

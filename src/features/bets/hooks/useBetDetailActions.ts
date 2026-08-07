@@ -1,4 +1,3 @@
-/** Akcje użytkownika dla szczegółów zakładu */
 
 import { useCallback } from 'react'
 import { Alert } from 'react-native'

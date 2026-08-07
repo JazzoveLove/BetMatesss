@@ -1,4 +1,3 @@
-/** Zapytania i logika dla ekranu Historia */
 import { supabase } from '@/shared/lib/supabase'
 import { loadNicksByIds } from '@/features/friends'
 import { normalizeUsersNick } from './_helpers'
@@ -37,7 +36,6 @@ const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000
 
 export async function getHistoryForUser(userId: string): Promise<HistoryListItem[]> {
   const allBets = await getUserBets(userId)
-  // Rejected bets: show for 24h after rejection, then hide
   const bets = allBets.filter(b => {
     if (b.status !== 'rejected') return true
     if (!b.rejectedAt) return false

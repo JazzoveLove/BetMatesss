@@ -1,4 +1,3 @@
-/** Dane pochodne kreatora nowego zakładu */
 
 import { useEffect, useMemo } from 'react'
 import { GAME_TEMPLATES, type GameTemplate } from '@/shared/constants/games'

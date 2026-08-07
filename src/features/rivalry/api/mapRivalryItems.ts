@@ -1,4 +1,3 @@
-/** Mapowanie danych rywalizacji na typy aplikacyjne */
 
 import type { RivalryDisciplineStats, RivalryMatchItem, RivalryTotals } from './rivalry.types'
 

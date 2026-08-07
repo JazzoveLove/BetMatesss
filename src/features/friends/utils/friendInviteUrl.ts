@@ -1,11 +1,9 @@
 import * as Linking from 'expo-linking'
 
-/** Prosty test formatu UUID (v1–v5) — bez pełnej walidacji wersji. */
 export function isLikelyUserUuid(s: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(s)
 }
 
-/** Z query ?add= wyciąga UUID użytkownika z linku zaproszenia. */
 export function extractFriendIdFromUrl(url: string): string | null {
   try {
     const { queryParams } = Linking.parse(url)
@@ -16,7 +14,6 @@ export function extractFriendIdFromUrl(url: string): string | null {
     try {
       trimmed = decodeURIComponent(trimmed)
     } catch {
-      /* zostaw jak jest */
     }
     trimmed = trimmed.trim()
     if (!isLikelyUserUuid(trimmed)) return null

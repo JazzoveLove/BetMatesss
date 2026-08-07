@@ -22,10 +22,6 @@ export function buildSettlementRows(
     .filter((row): row is SettlementRow => row !== null)
 }
 
-/**
- * Wywołana po potwierdzeniu wyniku przez gracza B.
- * Pobiera uczestników i zwycięzcę, oblicza długi, zapisuje do settlements.
- */
 export async function createSettlements(betId: string): Promise<{ error?: string }> {
   const { count, error: countErr } = await supabase
     .from('settlements')
@@ -88,7 +84,6 @@ export async function createSettlements(betId: string): Promise<{ error?: string
   }
 
   if (stakeMode === 'none') {
-    // Last-line-of-defence: if any participant has a stake_amount > 0, the bet was meant to have money on it
     const { data: checkPart } = await supabase
       .from('bet_participants')
       .select('stake_amount')

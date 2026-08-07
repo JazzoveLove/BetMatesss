@@ -1,4 +1,3 @@
-/** Stan i ładowanie danych szczegółów zakładu */
 
 import { useCallback, useEffect, useState } from 'react'
 import { useAuthContext } from '@/features/auth'

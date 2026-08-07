@@ -10,7 +10,6 @@ export type StakeCustomRowsProps = {
   onChange: (id: string, amount: number) => void
 }
 
-/** Blok stawek custom: „Twoja stawka”. Pola przy znajomych zostają w liście uczestników (StepStake). */
 export function StakeCustomRows({ currentUser, participants: _participants, customStakes, onChange }: StakeCustomRowsProps) {
   if (!currentUser) return null
   return (

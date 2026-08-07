@@ -1,4 +1,3 @@
-/** Stan kreatora nowego zakładu */
 
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react'
 import { useAuthContext } from '@/features/auth'

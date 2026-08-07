@@ -19,7 +19,6 @@ export type FriendStatCardProps = {
   onPress: () => void
 }
 
-/** Style wspólne z wierszem „Zagraj!” na liście znajomych */
 export const friendRowSharedStyles = StyleSheet.create({
   friendCard: {
     backgroundColor: Colors.card,

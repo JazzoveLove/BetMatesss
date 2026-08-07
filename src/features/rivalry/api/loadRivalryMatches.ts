@@ -1,4 +1,3 @@
-/** Pobieranie danych rywalizacji z bazy */
 
 import { supabase } from '@/shared/lib/supabase'
 import { mapBetRowsToRivalryMatchItems } from './mapRivalryItems'
@@ -40,7 +39,6 @@ type ParticipantRow = {
   stake_amount: number | string
 }
 
-/** Błąd pobierania po ustaliu nicku znajomego — zachowuje friendNick jak w poprzednim load. */
 export class RivalryFetchError extends Error {
   constructor(
     message: string,

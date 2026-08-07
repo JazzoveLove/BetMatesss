@@ -54,7 +54,6 @@ export const getDefaultFormat = (
   return ENABLED_FORMATS.includes(format) ? format : 'single'
 }
 
-/** Bilans netto z rozegranych meczów (tylko 2 graczy): zwycięzca +stake, przegrany −stake. */
 export const calculatePerMatchBalance = (
   results: BetResultRow[],
   stakePerMatch: number,

@@ -28,7 +28,6 @@ export type FormatViewProps = {
   openResultModal: () => void
   openPerMatchResultModal: () => void
 }
-// czy to nie jest god table 
 
 export type ActiveBetItem = {
   id: string

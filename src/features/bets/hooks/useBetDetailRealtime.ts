@@ -1,4 +1,3 @@
-/** Subskrypcje realtime dla szczegółów zakładu */
 
 import { useEffect } from 'react'
 import { supabase } from '@/shared/lib/supabase'

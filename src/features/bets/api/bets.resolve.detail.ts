@@ -1,4 +1,3 @@
-/** Pobieranie i mapowanie szczegółów zakładu */
 
 import { supabase } from '@/shared/lib/supabase'
 import { parseStakeAmount } from '@/features/bets/utils/odds'

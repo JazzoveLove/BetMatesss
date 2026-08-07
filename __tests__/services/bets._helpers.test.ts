@@ -1,7 +1,5 @@
 import { parseOddsNumber, normalizeUsersNick } from '@/features/bets/api/_helpers'
 
-// ─── parseOddsNumber ──────────────────────────────────────────────────────────
-
 describe('parseOddsNumber', () => {
   it('zwraca liczbę gdy dostanie liczbę', () => {
     expect(parseOddsNumber(2.5)).toBe(2.5)
@@ -27,8 +25,6 @@ describe('parseOddsNumber', () => {
     expect(parseOddsNumber('brak')).toBe(0)
   })
 })
-
-// ─── normalizeUsersNick ───────────────────────────────────────────────────────
 
 describe('normalizeUsersNick', () => {
   describe('Supabase zwraca obiekt (jeden rekord)', () => {

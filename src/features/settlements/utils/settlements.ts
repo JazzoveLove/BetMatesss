@@ -19,7 +19,6 @@ export type SettlementDraft = {
   amount: number
 }
 
-/** Uczestnik z kwotą stawki (np. z bet_participants). */
 export type ParticipantStake = {
   id: string
   stakeAmount: number
@@ -35,10 +34,6 @@ export type SettlementHandshake = {
   paymentStatus: PaymentStatus
 }
 
-/**
- * Przegrani (wszyscy oprócz zwycięzcy) z stake_amount > 0 płacą zwycięzcy swoją stawkę.
- * Przy stake_mode === 'none' brak rozliczeń pieniężnych.
- */
 export function calculateSettlements(
   participants: ParticipantStake[],
   winnerId: string,
@@ -58,7 +53,6 @@ export function calculateSettlements(
     }))
 }
 
-/** Jedna para przelewów dla 2 graczy z bilansu netto (suma bilansów = 0). */
 export function settlementDraftsFromPairBalances(
   balanceByUserId: Record<string, number>,
   participantIds: string[],

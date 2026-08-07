@@ -38,8 +38,6 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
     setSelectedDiscipline(gameTemplate ?? null)
   }, [gameTemplate])
 
-  // gameTemplate is intentionally excluded from queryKey — we filter locally to avoid
-  // extra fetches when the user switches discipline tabs
   const { data, isLoading, isRefetching, refetch, error: queryError } = useQuery({
     queryKey: queryKeys.rivalry(userId ?? '', friendId),
     queryFn: () => fetchRivalryData(userId!, friendId, null),

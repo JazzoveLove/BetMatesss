@@ -8,7 +8,6 @@ export type AuthContextValue = {
   appState: AppAuthState
   session: Session | null
   userId: string | null
-  /** Call after profile creation on the setup screen. */
   completeSetup: () => void
 }
 

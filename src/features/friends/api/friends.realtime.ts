@@ -1,7 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
 
-// Singleton per userId: multiple callers share one channel to avoid
-// "cannot add postgres_changes callbacks after subscribe()" errors.
 type ChannelEntry = {
   channel: ReturnType<typeof supabase.channel>
   callbacks: Set<() => void>

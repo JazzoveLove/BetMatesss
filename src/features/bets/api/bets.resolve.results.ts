@@ -1,4 +1,3 @@
-/** Zapisywanie i potwierdzanie wyników zakładu */
 
 import { supabase } from '@/shared/lib/supabase'
 import { log } from '@/shared/utils/logger'

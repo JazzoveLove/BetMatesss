@@ -1,4 +1,3 @@
-/** Odczyt rozliczeń z bazy */
 
 import { supabase } from '@/shared/lib/supabase'
 import type { Settlement } from '@/features/bets/types/bet.types'

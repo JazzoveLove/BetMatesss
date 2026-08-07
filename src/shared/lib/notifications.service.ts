@@ -74,12 +74,6 @@ async function sendBetInviteNotification(params: {
   return error ? { error: error.message } : {}
 }
 
-/**
- * Zapis zaproszeń w tabeli `notifications` (widok w Znajomi / odświeżenie listy).
- * Prawdziwy push na iOS/Android wymaga `expo-notifications`, zapisu Expo Push Token w Supabase
- * oraz Edge Function lub serwera wywołującego https://exp.host/--/api/v2/push/send —
- * obecnie w projekcie tego nie ma.
- */
 async function sendBetInvite(params: {
   betId: string
   fromUserId: string

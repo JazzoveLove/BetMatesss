@@ -17,24 +17,18 @@ beforeEach(() => {
 
 describe('AuthService.getCurrentUserId', () => {
   it('zwraca null gdy brak sesji', async () => {
-    // Arrange
     mockGetSession.mockResolvedValue({ data: { session: null }, error: null })
 
-    // Act
     const userId = await AuthService.getCurrentUserId()
 
-    // Assert
     expect(userId).toBeNull()
   })
 
   it('zwraca id użytkownika, gdy sesja istnieje', async () => {
-    // Arrange
     mockGetSession.mockResolvedValue({ data: { session: { user: { id: 'user-1' } } }, error: null })
 
-    // Act
     const userId = await AuthService.getCurrentUserId()
 
-    // Assert
     expect(userId).toBe('user-1')
   })
 })

@@ -49,7 +49,6 @@ export async function getProfileStatsV2(userId: string): Promise<ProfileStatsV2>
   const settlements = (settlementsRes.data ?? []) as SettlementRow[]
   const betResults = (resultsRes.data ?? []) as BetResultRow[]
 
-  // Money bets: W/L from settlements (creditor wins)
   const moneyEntries: WLEntry[] = []
   for (const bet of moneyBets) {
     const active = settlements
@@ -71,7 +70,6 @@ export async function getProfileStatsV2(userId: string): Promise<ProfileStatsV2>
     moneyEntries.push({ win: won, loss: lost, balance, gameTemplate: bet.gameTemplate })
   }
 
-  // Friendly bets: W/L from confirmed bet_results.winner_id
   const resultByBet = new Map<string, string>()
   for (const r of betResults) {
     if (!resultByBet.has(r.bet_id)) resultByBet.set(r.bet_id, r.winner_id)

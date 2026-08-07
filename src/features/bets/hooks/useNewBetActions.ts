@@ -1,4 +1,3 @@
-/** Akcje kreatora nowego zakładu */
 
 import { useCallback, useRef, useState } from 'react'
 import { Alert } from 'react-native'
@@ -75,7 +74,6 @@ export function useNewBetActions(
     if (submittingRef.current) return
     if (!selectedGame || !selectedFormat || !currentUser) return
 
-    // Guard: if user typed an amount but mode was never explicitly changed from 'none', treat as 'equal'
     const stakeModeToSend: typeof stakeMode =
       stakeMode === 'none' && stakeAmount > 0 ? 'equal' : stakeMode
 
