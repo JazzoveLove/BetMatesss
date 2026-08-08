@@ -2,7 +2,8 @@
 import { supabase } from '@/shared/lib/supabase'
 import type { BetParticipant, BetResultRow, ParticipantRole } from '@/features/bets/types/bet.types'
 import { log } from '@/shared/utils/logger'
-import { calculatePerMatchBalance, parseStakeAmount } from '@/features/bets'
+import { calculatePerMatchBalance } from '@/features/bets/utils/formats'
+import { parseStakeAmount } from '@/features/bets/utils/odds'
 import { settlementDraftsFromPairBalances } from '@/features/settlements/utils/settlements'
 import type { BetParticipantRowPerMatch } from './settlements.types'
 

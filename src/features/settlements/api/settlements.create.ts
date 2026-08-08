@@ -2,7 +2,7 @@
 import { supabase } from '@/shared/lib/supabase'
 import type { BetResultRow, StakeMode } from '@/features/bets/types/bet.types'
 import { log } from '@/shared/utils/logger'
-import { parseStakeAmount } from '@/features/bets'
+import { parseStakeAmount } from '@/features/bets/utils/odds'
 import { createSettlementsFromWinner } from './settlements.create.winner'
 import { createSettlementsPerMatch } from './settlements.create.perMatch'
 import type { BetResultRaw, BetParticipantRowPerMatch, SettlementRow } from './settlements.types'
