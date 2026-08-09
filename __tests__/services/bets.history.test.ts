@@ -1,3 +1,6 @@
+jest.mock('@/shared/lib/supabase', () => ({ supabase: {} }))
+jest.mock('@/features/friends', () => ({}))
+
 import { historyBadgeAndAmount } from '@/features/bets/api/bets.history'
 
 describe('historyBadgeAndAmount', () => {
@@ -34,18 +37,18 @@ describe('historyBadgeAndAmount', () => {
   it('status "completed" z profit > 0 → badge "wygrany" i kwota z plusem', () => {
     const result = historyBadgeAndAmount({ status: 'completed' }, 50, true, null)
 
-    expect(result).toEqual({ badge: 'wygrany', amountLabel: '+50 zł' })
+    expect(result).toEqual({ badge: 'wygrany', amountLabel: '+50 j.' })
   })
 
   it('status "completed" z profit < 0 → badge "przegrany"', () => {
     const result = historyBadgeAndAmount({ status: 'completed' }, -50, true, null)
 
-    expect(result).toEqual({ badge: 'przegrany', amountLabel: '-50 zł' })
+    expect(result).toEqual({ badge: 'przegrany', amountLabel: '-50 j.' })
   })
 
   it('status "completed" bez rozliczenia (zakład honorowy) → badge "zakończony", kwota "0 zł"', () => {
     const result = historyBadgeAndAmount({ status: 'completed' }, 0, false, null)
 
-    expect(result).toEqual({ badge: 'zakończony', amountLabel: '0 zł' })
+    expect(result).toEqual({ badge: 'zakończony', amountLabel: '0 j.' })
   })
 })
