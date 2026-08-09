@@ -172,6 +172,19 @@ export async function getPendingBetResult(betId: string): Promise<PendingBetResu
 export async function confirmBetResult(params: ConfirmResultParams): Promise<{ error?: string }> {
   log('[confirmBetResult] start', params)
 
+  const { data: pendingRow, error: fetchError } = await supabase
+    .from('bet_results')
+    .select('recorded_by')
+    .eq('id', params.resultId)
+    .eq('bet_id', params.betId)
+    .maybeSingle()
+
+  if (fetchError) return { error: fetchError.message }
+  if (!pendingRow) return { error: 'Nie znaleziono wyniku do potwierdzenia.' }
+  if ((pendingRow as { recorded_by: string }).recorded_by === params.confirmerId) {
+    return { error: 'Nie możesz potwierdzić własnego wyniku — musi to zrobić druga strona.' }
+  }
+
   const { error: resultError } = await supabase
     .from('bet_results')
     .update({ confirmed: true, confirmed_by: params.confirmerId })

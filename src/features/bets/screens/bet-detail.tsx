@@ -86,6 +86,7 @@ export default function BetDetailScreen() {
 
   const status = bet.status as BetStatus;
   const isCreator = me.role === "creator";
+  const canConfirmResult = !!pendingResult && pendingResult.recordedBy !== currentUserId;
   const game = GAME_MAP[bet.gameTemplate] ?? {
     emoji: "🎲",
     label: bet.gameTemplate,
@@ -139,6 +140,7 @@ export default function BetDetailScreen() {
       <BetActionsPanel
         status={status}
         isCreator={isCreator}
+        canConfirmResult={canConfirmResult}
         accepting={accepting}
         rejecting={rejecting}
         confirming={confirming}

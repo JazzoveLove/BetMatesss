@@ -6,6 +6,7 @@ import { styles } from "./styles/BetActionsPanel.styles";
 export type BetActionsPanelProps = {
   status: BetStatus;
   isCreator: boolean;
+  canConfirmResult: boolean;
   accepting: boolean;
   rejecting: boolean;
   confirming: boolean;
@@ -34,6 +35,7 @@ export type BetActionsPanelProps = {
 export function BetActionsPanel({
   status,
   isCreator,
+  canConfirmResult,
   accepting,
   rejecting,
   confirming,
@@ -85,7 +87,7 @@ export function BetActionsPanel({
         </Pressable>
       )}
 
-      {status === "awaiting_confirmation" && !isCreator && (
+      {status === "awaiting_confirmation" && canConfirmResult && (
         <View style={styles.gap8}>
           <Pressable
             style={[styles.primaryAction, { backgroundColor: Colors.green }]}
