@@ -49,26 +49,24 @@ export async function submitBetResult(params: ResolveParams): Promise<{ error?: 
     .eq('id', params.betId)
     .maybeSingle()
   if (betErr) return { error: betErr.message }
-  const row = betRow as Pick<BetRowFormat, 'format'> | null
+  const row = betRow as { format: string } | null
   if (row?.format === 'per_match') {
     return { error: 'Ten zakład jest rozliczany mecz po meczu — użyj „Wpisz wynik meczu”.' }
   }
 
-  const { error: resultError } = await supabase.from('bet_results').insert({
-    bet_id: params.betId,
-    match_number: 1,
-    winner_id: params.winnerId,
-    scores: { score: params.score },
-    recorded_by: params.recordedBy,
-    confirmed: false,
+  const { error: rpcError } = await supabase.rpc('submit_bet_result', {
+    p_bet_id: params.betId,
+    p_winner_id: params.winnerId,
+    p_score: params.score,
+    p_recorded_by: params.recordedBy,
   })
-  if (resultError) return { error: resultError.message }
 
-  const { error: betError } = await supabase
-    .from('bets')
-    .update({ status: 'awaiting_confirmation' })
-    .eq('id', params.betId)
-  if (betError) return { error: betError.message }
+  if (rpcError) {
+    if (rpcError.code === '23505') {
+      return { error: 'Ktoś już wpisał wynik dla tego zakładu — odśwież ekran.' }
+    }
+    return { error: rpcError.message }
+  }
 
   return {}
 }
@@ -147,6 +145,13 @@ export async function completePerMatchSession(
   return createSettlements(betId)
 }
 
+export function canConfirmResult(
+  pendingResult: PendingBetResult | null,
+  currentUserId: string,
+): boolean {
+  return !!pendingResult && pendingResult.recordedBy !== currentUserId
+}
+
 export async function getPendingBetResult(betId: string): Promise<PendingBetResult | null> {
   const { data, error } = await supabase
     .from('bet_results')
@@ -185,14 +190,19 @@ export async function confirmBetResult(params: ConfirmResultParams): Promise<{ e
     return { error: 'Nie możesz potwierdzić własnego wyniku — musi to zrobić druga strona.' }
   }
 
-  const { error: resultError } = await supabase
+  const { data: updatedRows, error: resultError } = await supabase
     .from('bet_results')
     .update({ confirmed: true, confirmed_by: params.confirmerId })
     .eq('id', params.resultId)
     .eq('bet_id', params.betId)
+    .eq('confirmed', false)
+    .select('id')
 
   log('[confirmBetResult] bet_results update', { resultError })
   if (resultError) return { error: resultError.message }
+  if (!updatedRows || updatedRows.length === 0) {
+    return { error: 'Ten wynik został już rozstrzygnięty.' }
+  }
 
   const { error: betError } = await supabase
     .from('bets')
@@ -209,6 +219,16 @@ export async function confirmBetResult(params: ConfirmResultParams): Promise<{ e
 }
 
 export async function disputeBetResult(betId: string): Promise<{ error?: string }> {
-  const { error } = await supabase.from('bets').update({ status: 'disputed' }).eq('id', betId)
-  return error ? { error: error.message } : {}
+  const { data: updatedRows, error } = await supabase
+    .from('bets')
+    .update({ status: 'disputed' })
+    .eq('id', betId)
+    .eq('status', 'awaiting_confirmation')
+    .select('id')
+
+  if (error) return { error: error.message }
+  if (!updatedRows || updatedRows.length === 0) {
+    return { error: 'Nie można zgłosić sporu — zakład nie czeka już na potwierdzenie.' }
+  }
+  return {}
 }
