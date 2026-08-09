@@ -8,6 +8,7 @@ export function historyBadgeAndAmount(
   bet: { status: BetStatus },
   profit: number,
   hadSettlement: boolean,
+  didWin: boolean | null,
 ): { badge: HistoryBadgeLabel; amountLabel: string } {
   const st = bet.status
   if (st === 'pending') return { badge: 'oczekuje', amountLabel: '—' }
@@ -17,17 +18,15 @@ export function historyBadgeAndAmount(
     return { badge: 'aktywny', amountLabel: '—' }
   }
   if (st === 'completed') {
-    if (!hadSettlement) {
-      return { badge: 'zakończony', amountLabel: '0 j.' }
-    }
     const sign = profit > 0 ? '+' : ''
-    if (profit === 0) {
+    const amountLabel = !hadSettlement || profit === 0 ? '0 j.' : `${sign}${profit} j.`
+    if (didWin !== null) {
+      return { badge: didWin ? 'wygrany' : 'przegrany', amountLabel }
+    }
+    if (!hadSettlement || profit === 0) {
       return { badge: 'zakończony', amountLabel: '0 j.' }
     }
-    return {
-      badge: profit > 0 ? 'wygrany' : 'przegrany',
-      amountLabel: `${sign}${profit} j.`,
-    }
+    return { badge: profit > 0 ? 'wygrany' : 'przegrany', amountLabel }
   }
   return { badge: 'oczekuje', amountLabel: '—' }
 }
@@ -44,18 +43,31 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
   if (bets.length === 0) return []
 
   const betIds = bets.map(b => b.id)
-  const [partsRes, settlementsRes] = await Promise.all([
+  const nonPerMatchCompletedIds = bets
+    .filter(b => b.status === 'completed' && b.format !== 'per_match')
+    .map(b => b.id)
+
+  const [partsRes, settlementsRes, resultsRes] = await Promise.all([
     supabase
       .from('bet_participants')
       .select('bet_id, user_id, users ( nick, deleted_at )')
       .in('bet_id', betIds),
     supabase.from('settlements').select('bet_id, debtor_id, creditor_id, amount, paid, payment_status').in('bet_id', betIds),
+    nonPerMatchCompletedIds.length > 0
+      ? supabase.from('bet_results').select('bet_id, winner_id').in('bet_id', nonPerMatchCompletedIds).eq('confirmed', true)
+      : Promise.resolve({ data: [] as { bet_id: string; winner_id: string }[], error: null }),
   ])
   if (partsRes.error) throw partsRes.error
   if (settlementsRes.error) throw settlementsRes.error
+  if (resultsRes.error) throw resultsRes.error
 
   const parts = partsRes.data
   const settlements = settlementsRes.data
+
+  const winnerByBet = new Map<string, string>()
+  for (const r of (resultsRes.data ?? []) as { bet_id: string; winner_id: string }[]) {
+    winnerByBet.set(r.bet_id, r.winner_id)
+  }
 
   const settlementsList = (settlements ?? []) as {
     bet_id: string
@@ -101,7 +113,9 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
       if (s.debtor_id === userId) profit -= Number(s.amount)
     }
     const hadSettlement = betSettle.length > 0
-    const { badge, amountLabel } = historyBadgeAndAmount(bet, profit, hadSettlement)
+    const winnerId = winnerByBet.get(bet.id) ?? null
+    const didWin = winnerId ? winnerId === userId : null
+    const { badge, amountLabel } = historyBadgeAndAmount(bet, profit, hadSettlement, didWin)
 
     items.push({
       id: bet.id,

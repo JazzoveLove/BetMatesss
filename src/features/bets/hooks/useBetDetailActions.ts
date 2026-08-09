@@ -242,6 +242,7 @@ export function useBetDetailActions(
         Alert.alert('Błąd', result.error)
         return false
       }
+      await loadData()
       Alert.alert('Zakład odrzucony', 'Zakład został odrzucony.')
       return true
     } catch (e) {
@@ -251,7 +252,7 @@ export function useBetDetailActions(
     } finally {
       setAction('rejecting', false)
     }
-  }, [betId, currentUserId, setAction])
+  }, [betId, currentUserId, loadData, setAction])
 
   const sendReminder = useCallback(
     async (s: Settlement) => {
