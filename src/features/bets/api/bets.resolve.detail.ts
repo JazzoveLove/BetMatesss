@@ -22,7 +22,7 @@ type BetDetailRow = {
     odds: number
     role: ParticipantRole
     confirmed: boolean
-    users: { nick: string } | { nick: string }[] | null
+    users: { nick: string; deleted_at: string | null } | { nick: string; deleted_at: string | null }[] | null
   }[]
   bet_results: {
     id: string
@@ -40,7 +40,7 @@ export async function getBetDetail(betId: string): Promise<BetDetail | null> {
       id, creator_id, game_template, format, stake_mode, status, notes, created_at, stake_per_match,
       bet_participants (
         user_id, stake_amount, odds, role, confirmed,
-        users ( nick )
+        users ( nick, deleted_at )
       ),
       bet_results (
         id, match_number, winner_id, scores, confirmed

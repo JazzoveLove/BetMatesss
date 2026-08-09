@@ -1,4 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
+import { DELETED_USER_NICK } from '@/shared/constants/user/deletedUser'
 import type { Friendship, FriendshipRow } from '@/shared/types/user.types'
 
 export type FriendshipsData = {
@@ -24,16 +25,22 @@ type UserProfileMini = {
   avatar_url: string | null
 }
 
+type UserProfileMiniRow = UserProfileMini & { deleted_at: string | null }
+
 async function loadProfilesByIds(ids: string[]): Promise<UserProfileMini[]> {
   const uniq = [...new Set(ids)].filter(Boolean)
   if (uniq.length === 0) return []
   const { data, error } = await supabase
     .from('users')
-    .select('id, nick, avatar_url')
+    .select('id, nick, avatar_url, deleted_at')
     .in('id', uniq)
-    .returns<UserProfileMini[]>()
+    .returns<UserProfileMiniRow[]>()
   if (error || !data) return []
-  return data ?? []
+  return data.map(row => ({
+    id: row.id,
+    nick: row.deleted_at ? DELETED_USER_NICK : row.nick,
+    avatar_url: row.avatar_url,
+  }))
 }
 
 export async function loadFriendships(userId: string): Promise<FriendshipsData> {
@@ -70,9 +77,9 @@ export async function loadFriendships(userId: string): Promise<FriendshipsData> 
 export async function loadNicksByIds(ids: string[]): Promise<Record<string, string>> {
   const uniq = [...new Set(ids)].filter(Boolean)
   if (uniq.length === 0) return {}
-  const { data, error } = await supabase.from('users').select('id, nick').in('id', uniq)
+  const { data, error } = await supabase.from('users').select('id, nick, deleted_at').in('id', uniq)
   if (error || !data) return {}
-  return Object.fromEntries(data.map(u => [u.id, u.nick]))
+  return Object.fromEntries(data.map(u => [u.id, u.deleted_at ? DELETED_USER_NICK : u.nick]))
 }
 
 export async function getAcceptedFriendsList(

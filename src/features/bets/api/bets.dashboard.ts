@@ -37,7 +37,7 @@ type DashRow = {
       user_id: string
       stake_amount?: number | string
       odds?: number | string
-      users: { nick: string } | { nick: string }[] | null
+      users: { nick: string; deleted_at: string | null } | { nick: string; deleted_at: string | null }[] | null
     }[]
   }
   stakeAmount: number
@@ -67,7 +67,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
         stake_amount, odds,
         bets (
           id, game_template, status, created_at,
-          bet_participants ( user_id, stake_amount, odds, users ( nick ) )
+          bet_participants ( user_id, stake_amount, odds, users ( nick, deleted_at ) )
         )
       `)
       .eq('user_id', userId),
@@ -112,7 +112,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
         user_id: string
         stake_amount?: number | string
         odds?: number | string
-        users: { nick: string } | { nick: string }[] | null
+        users: { nick: string; deleted_at: string | null } | { nick: string; deleted_at: string | null }[] | null
       }[]
     } | null
   }[]

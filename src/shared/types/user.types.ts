@@ -18,6 +18,7 @@ export type UserProfileRow = {
   avatar_url?: string | null
   invite_code?: string | null
   created_at?: string
+  deleted_at?: string | null
 }
 export type UserProfile = {
   id: string

@@ -1,4 +1,5 @@
 import { parseOddsNumber, normalizeUsersNick } from '@/features/bets/api/_helpers'
+import { DELETED_USER_NICK } from '@/shared/constants/user/deletedUser'
 
 describe('parseOddsNumber', () => {
   it('zwraca liczbę gdy dostanie liczbę', () => {
@@ -62,6 +63,24 @@ describe('normalizeUsersNick', () => {
 
     it('zwraca null dla undefined', () => {
       expect(normalizeUsersNick(undefined)).toBeNull()
+    })
+  })
+
+  describe('konto usunięte (deleted_at ustawione)', () => {
+    it('zwraca etykietę usuniętego użytkownika zamiast nicku (obiekt)', () => {
+      expect(normalizeUsersNick({ nick: 'Maciek', deleted_at: '2026-01-01T00:00:00Z' })).toBe(
+        DELETED_USER_NICK,
+      )
+    })
+
+    it('zwraca etykietę usuniętego użytkownika zamiast nicku (tablica)', () => {
+      expect(
+        normalizeUsersNick([{ nick: 'Maciek', deleted_at: '2026-01-01T00:00:00Z' }]),
+      ).toBe(DELETED_USER_NICK)
+    })
+
+    it('nie traktuje deleted_at: null jako usunięte konto', () => {
+      expect(normalizeUsersNick({ nick: 'Maciek', deleted_at: null })).toBe('Maciek')
     })
   })
 })

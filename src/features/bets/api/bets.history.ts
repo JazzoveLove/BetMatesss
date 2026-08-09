@@ -47,7 +47,7 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
   const [partsRes, settlementsRes] = await Promise.all([
     supabase
       .from('bet_participants')
-      .select('bet_id, user_id, users ( nick )')
+      .select('bet_id, user_id, users ( nick, deleted_at )')
       .in('bet_id', betIds),
     supabase.from('settlements').select('bet_id, debtor_id, creditor_id, amount, paid, payment_status').in('bet_id', betIds),
   ])
@@ -69,7 +69,7 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
   const partsList = ((parts ?? []) as unknown as {
     bet_id: string
     user_id: string
-    users: { nick: string } | { nick: string }[] | null
+    users: { nick: string; deleted_at: string | null } | { nick: string; deleted_at: string | null }[] | null
   }[]).map(p => ({
     bet_id: p.bet_id,
     user_id: p.user_id,

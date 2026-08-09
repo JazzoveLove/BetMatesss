@@ -1,9 +1,10 @@
 
 import { supabase } from '@/shared/lib/supabase'
+import { DELETED_USER_NICK } from '@/shared/constants/user/deletedUser'
 import { mapBetRowsToRivalryMatchItems } from './mapRivalryItems'
 import type { RivalryData, RivalryPaymentRow } from './rivalry.types'
 
-type FriendRow = { nick: string }
+type FriendRow = { nick: string; deleted_at: string | null }
 
 type RivalryRow = {
   id: string
@@ -56,11 +57,11 @@ export async function fetchRivalryData(
 ): Promise<RivalryData> {
   const { data: friendRow } = await supabase
     .from('users')
-    .select('nick')
+    .select('nick, deleted_at')
     .eq('id', friendId)
     .maybeSingle()
     .returns<FriendRow>()
-  const friendNick = friendRow?.nick ?? 'Znajomy'
+  const friendNick = friendRow?.deleted_at ? DELETED_USER_NICK : friendRow?.nick ?? 'Znajomy'
 
   const { data: rivalries, error: rivalriesError } = await supabase
     .from('rivalries')
