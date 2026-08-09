@@ -1,5 +1,4 @@
 import type { BetDetail, BetStatus, PendingResult, Settlement } from './bet.app.types'
-import type { StakeMode } from './bet.creation.types'
 
 export type FormatViewProps = {
   bet: BetDetail
@@ -58,15 +57,3 @@ export type HistoryListItem = {
   profit: number
 }
 
-export type BetInvitePreview = {
-  betId: string
-  inviteCode: string
-  title: string
-  gameTemplate: string
-  stakeMode: StakeMode
-  status: BetStatus
-  creatorId: string
-  stakeAmount: number
-  alreadyParticipant: boolean
-  alreadyConfirmed: boolean
-}

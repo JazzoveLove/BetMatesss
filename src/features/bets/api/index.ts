@@ -1,6 +1,5 @@
 export { createBet, buildParticipantRows } from './bets.create'
-export { getBetInvitePreview, joinBetFromInvite } from './bets.join'
-export type { BetInvitePreview, ParticipantRow } from '@/features/bets/types/bet.types'
+export type { ParticipantRow } from '@/features/bets/types/bet.types'
 
 export {
   getBetDetail,
@@ -41,7 +40,6 @@ export { getHistoryForUser, historyBadgeAndAmount } from './bets.history'
 export { getProfileStatsV2 } from './bets.profile'
 
 import { createBet } from './bets.create'
-import { getBetInvitePreview, joinBetFromInvite } from './bets.join'
 import {
   getBetDetail,
   submitBetResult,
@@ -75,8 +73,6 @@ import { getProfileStatsV2 } from './bets.profile'
 
 export const BetsService = {
   createBet,
-  getBetInvitePreview,
-  joinBetFromInvite,
   getBet: getBetDetail,
   getBetDetail,
   getUserBets,

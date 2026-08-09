@@ -13,7 +13,6 @@ import LoginScreen from '@/features/auth/screens/login'
 import RegisterScreen from '@/features/auth/screens/register'
 import SetupProfileScreen from '@/features/auth/screens/setup-profile'
 import BetDetailScreen from '@/features/bets/screens/bet-detail'
-import JoinBetScreen from '@/features/bets/screens/join-bet'
 import SettingsScreen from '@/features/profile/screens/settings'
 import RivalryScreen from '@/features/rivalry/screens/rivalry'
 import { hasPendingFriendInvites } from '@/features/friends'
@@ -79,11 +78,6 @@ function AppContent() {
         <Stack.Screen
           name="BetDetail"
           component={withScreenBoundary(BetDetailScreen)}
-          options={{ animation: 'slide_from_right' }}
-        />
-        <Stack.Screen
-          name="JoinBet"
-          component={withScreenBoundary(JoinBetScreen)}
           options={{ animation: 'slide_from_right' }}
         />
         <Stack.Screen
