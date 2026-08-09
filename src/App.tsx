@@ -14,6 +14,7 @@ import RegisterScreen from '@/features/auth/screens/register'
 import SetupProfileScreen from '@/features/auth/screens/setup-profile'
 import BetDetailScreen from '@/features/bets/screens/bet-detail'
 import JoinBetScreen from '@/features/bets/screens/join-bet'
+import SettingsScreen from '@/features/profile/screens/settings'
 import RivalryScreen from '@/features/rivalry/screens/rivalry'
 import { hasPendingFriendInvites } from '@/features/friends'
 import { AppErrorFallback } from '@/shared/components/AppErrorFallback'
@@ -89,6 +90,11 @@ function AppContent() {
           name="Rivalry"
           component={withScreenBoundary(RivalryScreen)}
           options={{ headerShown: false, animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={withScreenBoundary(SettingsScreen)}
+          options={{ animation: 'slide_from_right' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

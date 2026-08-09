@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Alert, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native'
+import { Alert, RefreshControl, ScrollView, Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useQueryClient } from '@tanstack/react-query'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -19,10 +19,10 @@ import { nickSchema } from '@/shared/utils/user/nickValidation'
 import { getFirstValidationError } from '@/shared/utils/validation'
 import { queryKeys } from '@/shared/lib/queryKeys'
 import { styles } from './styles/profile.styles'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import type { RootStackParamList } from '@/navigation/types'
 
-const ImagePicker: any = require('expo-image-picker')
-
-type Nav = { navigate: (screen: string) => void; replace: (screen: string) => void }
+type Nav = NativeStackNavigationProp<RootStackParamList>
 
 export default function ProfileScreen() {
   const navigation = useNavigation<Nav>()
@@ -31,35 +31,18 @@ export default function ProfileScreen() {
   const { signOut } = useAuth()
   const queryClient = useQueryClient()
 
-  const [avatarUri, setAvatarUri] = useState<string | null>(null)
   const [editOpen, setEditOpen] = useState(false)
   const [draftNick, setDraftNick] = useState('')
   const [nickOverride, setNickOverride] = useState<string | null>(null)
-  const [avatarOverride, setAvatarOverride] = useState<string | null>(null)
 
   const profile = data
   const displayNick = nickOverride ?? profile?.user.fullName ?? profile?.user.nick ?? '—'
-  const displayAvatar = avatarOverride ?? avatarUri ?? profile?.user.avatarUrl ?? null
+  const displayAvatar = profile?.user.avatarUrl ?? null
 
   const disciplines = useMemo(
     () => [...(profile?.disciplineStats ?? [])].sort((a, b) => b.total - a.total),
     [profile?.disciplineStats],
   )
-
-  async function pickAvatar() {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
-    if (!permission.granted) {
-      Alert.alert('Brak dostępu', 'Musisz pozwolić na dostęp do galerii, aby zmienić avatar.')
-      return
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    })
-    if (!result.canceled && result.assets[0]?.uri) setAvatarUri(result.assets[0].uri)
-  }
 
   function openEditModal() {
     setDraftNick(displayNick)
@@ -86,7 +69,6 @@ export default function ProfileScreen() {
     }
 
     setNickOverride(trimmed)
-    if (avatarUri) setAvatarOverride(avatarUri)
     setEditOpen(false)
     queryClient.invalidateQueries({ queryKey: queryKeys.profile(userId) })
   }
@@ -110,10 +92,6 @@ export default function ProfileScreen() {
         >
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Mój profil</Text>
-            <View style={styles.headerIcons}>
-              <Pressable style={styles.headerIcon}><Text style={styles.headerIconText}>🖼️</Text></Pressable>
-              <Pressable style={styles.headerIcon}><Text style={styles.headerIconText}>👤+</Text></Pressable>
-            </View>
           </View>
 
           {loading || !profile ? <ProfileSkeleton /> : (
@@ -123,7 +101,6 @@ export default function ProfileScreen() {
                 displayNick={displayNick}
                 memberSince={profile.user.memberSince}
                 displayAvatar={displayAvatar}
-                onPickAvatar={() => void pickAvatar()}
               />
               <ProfileStatsRow
                 totalMatches={profile.stats.totalMatches}
@@ -174,7 +151,6 @@ export default function ProfileScreen() {
           visible={editOpen}
           draftNick={draftNick}
           onChangeNick={setDraftNick}
-          onPickAvatar={() => void pickAvatar()}
           onCancel={() => setEditOpen(false)}
           onSave={applyEdit}
         />

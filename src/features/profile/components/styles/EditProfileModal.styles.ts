@@ -17,14 +17,6 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   modalTitle: { color: Colors.text, fontSize: 18, fontWeight: '700', marginBottom: 12 },
-  modalAvatarButton: {
-    backgroundColor: Colors.cardAlt,
-    borderRadius: 12,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  modalAvatarText: { color: Colors.text, fontSize: 13, fontWeight: '600' },
   input: {
     backgroundColor: Colors.cardAlt,
     borderWidth: 1,

@@ -19,4 +19,9 @@ export const UsersService = {
     if (error) return { error: error.message, code: error.code }
     return {}
   },
+
+  async deleteMyAccount(): Promise<{ error?: string }> {
+    const { error } = await supabase.rpc('delete_my_account')
+    return error ? { error: error.message } : {}
+  },
 }

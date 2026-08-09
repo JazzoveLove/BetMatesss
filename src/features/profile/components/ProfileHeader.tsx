@@ -1,4 +1,4 @@
-import { Image, Pressable, Text, View } from 'react-native'
+import { Image, Text, View } from 'react-native'
 import { styles } from './styles/ProfileHeader.styles'
 
 export type ProfileHeaderProps = {
@@ -6,7 +6,6 @@ export type ProfileHeaderProps = {
   displayNick: string
   memberSince: string
   displayAvatar: string | null
-  onPickAvatar: () => void
 }
 
 export function ProfileHeader({
@@ -14,17 +13,16 @@ export function ProfileHeader({
   displayNick,
   memberSince,
   displayAvatar,
-  onPickAvatar,
 }: ProfileHeaderProps) {
   return (
     <View style={styles.avatarSection}>
-      <Pressable style={styles.avatar} onPress={onPickAvatar}>
+      <View style={styles.avatar}>
         {displayAvatar ? (
           <Image source={{ uri: displayAvatar }} style={styles.avatarImage} />
         ) : (
           <Text style={styles.avatarText}>{initials}</Text>
         )}
-      </Pressable>
+      </View>
       <Text style={styles.nick}>{displayNick}</Text>
       <Text style={styles.memberSince}>w BetMates od {memberSince}</Text>
     </View>

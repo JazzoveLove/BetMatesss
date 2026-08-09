@@ -6,7 +6,6 @@ export type EditProfileModalProps = {
   visible: boolean
   draftNick: string
   onChangeNick: (nick: string) => void
-  onPickAvatar: () => void
   onCancel: () => void
   onSave: () => void
 }
@@ -15,7 +14,6 @@ export function EditProfileModal({
   visible,
   draftNick,
   onChangeNick,
-  onPickAvatar,
   onCancel,
   onSave,
 }: EditProfileModalProps) {
@@ -24,9 +22,6 @@ export function EditProfileModal({
       <View style={styles.modalOverlay}>
         <View style={styles.modalCard}>
           <Text style={styles.modalTitle}>Edytuj profil</Text>
-          <Pressable style={styles.modalAvatarButton} onPress={onPickAvatar}>
-            <Text style={styles.modalAvatarText}>📷 Zmień avatar</Text>
-          </Pressable>
           <TextInput
             value={draftNick}
             onChangeText={onChangeNick}

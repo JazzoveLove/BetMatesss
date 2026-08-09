@@ -14,14 +14,4 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   headerTitle: { color: Colors.text, fontSize: 20, fontWeight: '700' },
-  headerIcons: { flexDirection: 'row', gap: 8 },
-  headerIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: Colors.cardAlt,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerIconText: { color: Colors.text, fontSize: 14, fontWeight: '700' },
 })
