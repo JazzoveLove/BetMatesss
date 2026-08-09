@@ -8,7 +8,6 @@ import { StakeSummaryCard } from './stake/StakeSummaryCard'
 import { stakeStepStyles } from './stake/styles/stakeStyles'
 import { StepStakeChips } from './stake/StepStakeChips'
 import { StepStakeFooter } from './stake/StepStakeFooter'
-import { StepStakeInviteCard } from './stake/StepStakeInviteCard'
 import { StepStakeParticipantsSection } from './stake/StepStakeParticipantsSection'
 import { stepStakeStyles as styles } from './stake/styles/stepStake.styles'
 
@@ -67,7 +66,6 @@ export function StepStake({ state, handlers }: Props) {
             <StakeCustomRows currentUser={currentUser} participants={participants} customStakes={customStakes} onChange={patchCustom} />
           )}
           <StepStakeParticipantsSection state={state} handlers={handlers} />
-          <StepStakeInviteCard />
           {stakeMode === 'custom' && (
             <Text style={stakeStepStyles.customSummary}>
               Pula: {customPool} j. · Twój kurs: {myOdds > 0 ? myOdds.toFixed(2) : '0.00'}×
