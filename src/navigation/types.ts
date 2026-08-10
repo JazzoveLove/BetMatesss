@@ -12,6 +12,5 @@ export type TabParamList = {
 export type RootStackParamList = {
   Tabs: NavigatorScreenParams<TabParamList> | undefined
   BetDetail: { betId: string }
-  Rivalry: { friendId: string }
   Settings: undefined
 }

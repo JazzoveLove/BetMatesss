@@ -199,9 +199,9 @@ export function FriendsScreenContent({
                 <FriendStatCard
                   key={friend.id}
                   friend={friend}
-                  onPress={() =>
-                    navigation.navigate("Rivalry", { friendId: friend.id })
-                  }
+                  // TODO(#17-19): panel szczegółów znajomego (saldo, W/L, historia) —
+                  // dawny ekran "Rivalry" usunięty razem z tabelą rivalries w bazie.
+                  onPress={undefined}
                 />
               );
             }
