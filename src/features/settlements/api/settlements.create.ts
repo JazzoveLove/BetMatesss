@@ -107,7 +107,7 @@ export async function createSettlements(betId: string): Promise<{ error?: string
     return { error: partErr.message }
   }
 
-  const partRows = (participants ?? []) as { user_id: string; stake_amount: number | string }[]
+  const partRows = (participants ?? []) as { user_id: string; stake_amount: number }[]
   if (partRows.length === 0) {
     return {}
   }

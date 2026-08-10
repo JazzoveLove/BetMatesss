@@ -6,7 +6,7 @@ export const UsersService = {
   async getFullProfile(userId: string): Promise<UserProfile | null> {
     const { data, error } = await supabase
       .from('users')
-      .select('id, nick, avatar_url, invite_code, created_at, phone, deleted_at')
+      .select('id, nick, avatar_url, invite_code, created_at, deleted_at')
       .eq('id', userId)
       .maybeSingle()
     if (error) throw error

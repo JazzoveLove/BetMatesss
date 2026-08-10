@@ -27,10 +27,8 @@ export type BetSummary = {
   format: BetFormat
   stakeMode: StakeMode
   status: BetStatus
-  notes: string | null
   createdAt: string
   stakePerMatch?: number
-  rivalryId?: string
   rejectedAt?: string
 }
 
@@ -50,7 +48,6 @@ export type BetDetail = {
   format: BetFormat
   stakeMode: StakeMode
   status: BetStatus
-  notes: string | null
   createdAt: string
   stakePerMatch?: number
   participants: BetParticipant[]

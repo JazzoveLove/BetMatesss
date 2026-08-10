@@ -12,6 +12,8 @@ const baseBet: BetRow = {
   stake_mode: 'equal',
   status: 'pending',
   created_at: '2024-01-01T00:00:00Z',
+  rejected_at: null,
+  stake_per_match: null,
 }
 
 describe('historyBadgeAndAmount', () => {

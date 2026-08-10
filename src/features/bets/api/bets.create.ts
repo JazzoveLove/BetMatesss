@@ -1,13 +1,13 @@
 import { supabase } from '@/shared/lib/supabase'
 import { NotificationsService } from '@/shared/lib/notifications.service'
 import { calcOdds, toStakeNumber } from '@/features/bets/utils/odds'
-import type { CreateBetParams, ParticipantRow } from '@/features/bets/types/bet.types'
+import type { CreateBetParams, ParticipantInsertRow } from '@/features/bets/types/bet.types'
 import { warn } from '@/shared/utils/logger'
 
 export function buildParticipantRows(
   betId: string,
   params: Pick<CreateBetParams, 'creatorId' | 'stakeMode' | 'globalStake' | 'participants'>,
-): ParticipantRow[] {
+): ParticipantInsertRow[] {
   const globalParsed = toStakeNumber(params.globalStake)
   return params.participants.map(p => {
     const amount =

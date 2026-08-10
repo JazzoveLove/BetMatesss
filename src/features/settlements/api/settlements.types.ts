@@ -1,35 +1,16 @@
+import type { Tables } from '@/shared/types/database_types'
 
-export type SettlementRow = {
-  bet_id: string
-  debtor_id: string
-  creditor_id: string
-  amount: number
-}
+export type SettlementRow = Pick<Tables<'settlements'>, 'bet_id' | 'debtor_id' | 'creditor_id' | 'amount'>
 
-export type SettlementListDbRow = {
-  id: string
-  amount: number | string
-  debtor_id: string
-  creditor_id: string
-}
+export type SettlementListDbRow = Pick<Tables<'settlements'>, 'id' | 'amount' | 'debtor_id' | 'creditor_id'>
 
-export type BetResultRaw = {
-  id: string
-  match_number: number
-  winner_id: string
+export type BetResultRaw = Pick<Tables<'bet_results'>, 'id' | 'match_number' | 'winner_id' | 'confirmed'> & {
   scores: { score: string } | null
-  confirmed: boolean
 }
 
-export type BetParticipantRowPerMatch = {
-  user_id: string
-  stake_amount: number | string
-  odds: number | string
-  role: string
-  confirmed: boolean
-}
+export type BetParticipantRowPerMatch = Pick<
+  Tables<'bet_participants'>,
+  'user_id' | 'stake_amount' | 'odds' | 'role' | 'confirmed'
+>
 
-export type BetParticipantStakeRow = {
-  user_id: string
-  stake_amount: number | string
-}
+export type BetParticipantStakeRow = Pick<Tables<'bet_participants'>, 'user_id' | 'stake_amount'>

@@ -7,7 +7,6 @@ export function mapUserProfileRow(row: UserProfileRow): UserProfile {
     nick: row.deleted_at ? DELETED_USER_NICK : row.nick,
     avatarUrl: row.avatar_url ?? undefined,
     inviteCode: row.invite_code ?? undefined,
-    createdAt: row.created_at,
-    phone: row.phone ?? undefined,
+    createdAt: row.created_at ?? undefined,
   }
 }
