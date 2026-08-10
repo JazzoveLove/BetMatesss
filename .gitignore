@@ -53,3 +53,5 @@ build-size-log.csv
 
 # tamagui generated cache
 .tamagui/
+
+.osobiste.txt
