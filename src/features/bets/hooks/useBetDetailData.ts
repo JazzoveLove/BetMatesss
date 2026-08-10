@@ -12,10 +12,6 @@ export type ActionLoadingState = {
   accepting: boolean
   rejecting: boolean
   completingSession: boolean
-  markingPaid: string | null
-  confirmingPayment: string | null
-  rejectingPayment: string | null
-  reminding: string | null
 }
 
 const initialActionLoading: ActionLoadingState = {
@@ -25,10 +21,6 @@ const initialActionLoading: ActionLoadingState = {
   accepting: false,
   rejecting: false,
   completingSession: false,
-  markingPaid: null,
-  confirmingPayment: null,
-  rejectingPayment: null,
-  reminding: null,
 }
 
 export function useBetDetailData(betId: string) {
@@ -94,7 +86,6 @@ export function useBetDetailData(betId: string) {
     actionLoading,
     setAction,
     loadData,
-    setSettlements,
     setPendingResult,
   }
 }

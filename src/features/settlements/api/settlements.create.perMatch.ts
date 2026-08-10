@@ -37,7 +37,6 @@ export async function createSettlementsPerMatch(
     debtor_id: d.debtorId,
     creditor_id: d.creditorId,
     amount: d.amount,
-    paid: false,
   }))
 
   const { error: insErr } = await supabase.from('settlements').insert(settlementRows)

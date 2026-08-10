@@ -1,3 +1,32 @@
+import { createBet } from './bets.create'
+import {
+  getBetDetail,
+  submitBetResult,
+  submitPerMatchBetResult,
+  completePerMatchSession,
+  getPendingBetResult,
+  confirmBetResult,
+  disputeBetResult,
+  getSettlements,
+} from './bets.resolve'
+import {
+  searchUsers,
+  updateBetStatus,
+  addParticipant,
+  confirmParticipation,
+  rejectParticipation,
+} from './bets.participants'
+import { getDashboardData } from './bets.dashboard'
+import { getUserBets } from './bets.userBets'
+import {
+  getUserBetSummaries,
+  getDisciplineStatsForUser,
+  getFriendsBalanceLeaderboard,
+  getProfileScreenData,
+} from './bets.queries'
+import { getHistoryForUser } from './bets.history'
+import { getProfileStatsV2 } from './bets.profile'
+
 export { createBet, buildParticipantRows } from './bets.create'
 export type { ParticipantRow } from '@/features/bets/types/bet.types'
 
@@ -10,9 +39,6 @@ export {
   confirmBetResult,
   disputeBetResult,
   getSettlements,
-  markAsPaid,
-  confirmPayment,
-  rejectPayment,
 } from './bets.resolve'
 export type { PendingBetResult } from './bets.resolve'
 
@@ -39,38 +65,6 @@ export { getHistoryForUser, historyBadgeAndAmount } from './bets.history'
 
 export { getProfileStatsV2 } from './bets.profile'
 
-import { createBet } from './bets.create'
-import {
-  getBetDetail,
-  submitBetResult,
-  submitPerMatchBetResult,
-  completePerMatchSession,
-  getPendingBetResult,
-  confirmBetResult,
-  disputeBetResult,
-  getSettlements,
-  markAsPaid,
-  confirmPayment,
-  rejectPayment,
-} from './bets.resolve'
-import {
-  searchUsers,
-  updateBetStatus,
-  addParticipant,
-  confirmParticipation,
-  rejectParticipation,
-} from './bets.participants'
-import { getDashboardData } from './bets.dashboard'
-import { getUserBets } from './bets.userBets'
-import {
-  getUserBetSummaries,
-  getDisciplineStatsForUser,
-  getFriendsBalanceLeaderboard,
-  getProfileScreenData,
-} from './bets.queries'
-import { getHistoryForUser } from './bets.history'
-import { getProfileStatsV2 } from './bets.profile'
-
 export const BetsService = {
   createBet,
   getBet: getBetDetail,
@@ -90,9 +84,6 @@ export const BetsService = {
   getPendingBetResult,
   confirmBetResult,
   disputeBetResult,
-  markAsPaid,
-  confirmPayment,
-  rejectPayment,
   getDashboardData,
   getProfileStatsV2,
   searchUsers,

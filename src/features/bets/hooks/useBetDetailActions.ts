@@ -2,8 +2,7 @@
 import { useCallback } from 'react'
 import { Alert } from 'react-native'
 import { BetsService } from '@/features/bets/api'
-import { NotificationsService } from '@/shared/lib/notifications.service'
-import type { BetDetail, PendingResult, Settlement } from '@/features/bets/types/bet.types'
+import type { BetDetail, PendingResult } from '@/features/bets/types/bet.types'
 import { error } from '@/shared/utils/logger'
 import type { ActionLoadingState } from './useBetDetailData'
 
@@ -16,7 +15,6 @@ export function useBetDetailActions(
   setScore: (s: string) => void,
   setAction: (key: keyof ActionLoadingState, value: ActionLoadingState[keyof ActionLoadingState]) => void,
   loadData: () => Promise<void>,
-  setSettlements: (settlements: Settlement[]) => void,
 ) {
   const submitResult = useCallback(
     async (winnerId: string, scoreOverride?: string): Promise<boolean> => {
@@ -145,74 +143,6 @@ export function useBetDetailActions(
     }
   }, [betId, pendingResult, loadData, setAction])
 
-  const markPaid = useCallback(
-    async (settlementId: string, debtorId: string) => {
-      if (!currentUserId || debtorId !== currentUserId) {
-        return
-      }
-      setAction('markingPaid', settlementId)
-      try {
-        const result = await BetsService.markAsPaid(settlementId, debtorId)
-        if (result.error) {
-          Alert.alert('Błąd', result.error)
-          return
-        }
-        const settlData = await BetsService.getSettlements(betId)
-        setSettlements(settlData)
-      } catch (e) {
-        error('[useBetDetail] markPaid', e)
-        Alert.alert('Błąd', 'Nie udało się oznaczyć spłaty.')
-      } finally {
-        setAction('markingPaid', null)
-      }
-    },
-    [betId, currentUserId, setAction],
-  )
-
-  const confirmPayment = useCallback(
-    async (settlementId: string, creditorId: string) => {
-      if (!currentUserId || creditorId !== currentUserId) return
-      setAction('confirmingPayment', settlementId)
-      try {
-        const result = await BetsService.confirmPayment(settlementId, creditorId)
-        if (result.error) {
-          Alert.alert('Błąd', result.error)
-          return
-        }
-        const settlData = await BetsService.getSettlements(betId)
-        setSettlements(settlData)
-      } catch (e) {
-        error('[useBetDetail] confirmPayment', e)
-        Alert.alert('Błąd', 'Nie udało się potwierdzić płatności.')
-      } finally {
-        setAction('confirmingPayment', null)
-      }
-    },
-    [betId, currentUserId, setAction, setSettlements],
-  )
-
-  const rejectPayment = useCallback(
-    async (settlementId: string, creditorId: string) => {
-      if (!currentUserId || creditorId !== currentUserId) return
-      setAction('rejectingPayment', settlementId)
-      try {
-        const result = await BetsService.rejectPayment(settlementId, creditorId)
-        if (result.error) {
-          Alert.alert('Błąd', result.error)
-          return
-        }
-        const settlData = await BetsService.getSettlements(betId)
-        setSettlements(settlData)
-      } catch (e) {
-        error('[useBetDetail] rejectPayment', e)
-        Alert.alert('Błąd', 'Nie udało się odrzucić zgłoszenia płatności.')
-      } finally {
-        setAction('rejectingPayment', null)
-      }
-    },
-    [betId, currentUserId, setAction, setSettlements],
-  )
-
   const acceptBet = useCallback(async (): Promise<boolean> => {
     if (!currentUserId) return false
     setAction('accepting', true)
@@ -254,43 +184,13 @@ export function useBetDetailActions(
     }
   }, [betId, currentUserId, loadData, setAction])
 
-  const sendReminder = useCallback(
-    async (s: Settlement) => {
-      if (!currentUserId || currentUserId !== s.creditorId) return
-      setAction('reminding', s.id)
-      try {
-        const result = await NotificationsService.sendSettlementReminderNotification({
-          debtorUserId: s.debtorId,
-          creditorNick: s.creditorNick,
-          betId,
-          amount: s.amount,
-        })
-        if (result.error) {
-          Alert.alert('Błąd', result.error)
-          return
-        }
-        Alert.alert('Wysłano', 'Dłużnik dostał przypomnienie w aplikacji.')
-      } catch (e) {
-        error('[useBetDetail] sendReminder', e)
-        Alert.alert('Błąd', 'Nie udało się wysłać przypomnienia.')
-      } finally {
-        setAction('reminding', null)
-      }
-    },
-    [betId, currentUserId, setAction],
-  )
-
   return {
     submitResult,
     submitPerMatchResult,
     completeMatchSession,
     confirmResult,
     disputeResult,
-    markPaid,
-    confirmPayment,
-    rejectPayment,
     acceptBet,
     rejectBet,
-    sendReminder,
   }
 }

@@ -73,7 +73,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
       .eq('user_id', userId),
     supabase
       .from('settlements')
-      .select('id, amount, paid, payment_status, debtor_id, creditor_id, bet_id')
+      .select('id, amount, debtor_id, creditor_id, bet_id')
       .or(`debtor_id.eq.${userId},creditor_id.eq.${userId}`),
   ])
   if (profileRes.error) throw profileRes.error
@@ -85,16 +85,12 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
   const settlements = (settlementsRes.data ?? []) as {
     id: string
     amount: number
-    paid: boolean
-    payment_status: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed' | null
     debtor_id: string
     creditor_id: string
     bet_id: string
   }[]
 
-  const activeSettlements = settlements.filter(s => (s.payment_status ?? (s.paid ? 'paid' : 'unpaid')) !== 'paid')
-
-  const balance = activeSettlements.reduce((acc, s) => {
+  const balance = settlements.reduce((acc, s) => {
     if (s.creditor_id === userId) return acc + s.amount
     if (s.debtor_id === userId) return acc - s.amount
     return acc

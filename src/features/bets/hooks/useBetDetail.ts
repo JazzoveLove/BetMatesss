@@ -14,7 +14,6 @@ export function useBetDetail(betId: string) {
     data.setScore,
     data.setAction,
     data.loadData,
-    data.setSettlements,
   )
 
   const {
@@ -24,10 +23,6 @@ export function useBetDetail(betId: string) {
     accepting,
     rejecting,
     completingSession,
-    markingPaid,
-    confirmingPayment,
-    rejectingPayment,
-    reminding,
   } =
     data.actionLoading
 
@@ -41,18 +36,10 @@ export function useBetDetail(betId: string) {
     resolving,
     confirming,
     disputing,
-    markingPaid,
-    confirmingPayment,
-    rejectingPayment,
-    reminding,
     pendingResult: data.pendingResult,
     submitResult: actions.submitResult,
     confirmResult: actions.confirmResult,
     disputeResult: actions.disputeResult,
-    markPaid: actions.markPaid,
-    confirmPayment: actions.confirmPayment,
-    rejectPayment: actions.rejectPayment,
-    sendReminder: actions.sendReminder,
     acceptBet: actions.acceptBet,
     rejectBet: actions.rejectBet,
     accepting,

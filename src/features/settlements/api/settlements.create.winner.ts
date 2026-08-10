@@ -51,7 +51,6 @@ export async function createSettlementsFromWinner(
         debtor_id: p.user_id,
         creditor_id: winnerId,
         amount: stake,
-        paid: false,
       }
     })
     .filter((row): row is NonNullable<typeof row> => row !== null)

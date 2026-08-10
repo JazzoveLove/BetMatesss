@@ -119,31 +119,9 @@ async function markNotificationRead(notificationId: string): Promise<{ error?: s
   return error ? { error: error.message } : {}
 }
 
-async function sendSettlementReminderNotification(params: {
-  debtorUserId: string
-  creditorNick: string
-  betId: string
-  amount: number
-}): Promise<{ error?: string }> {
-  const message = `${params.creditorNick} przypomina o spłacie ${params.amount} j. (zakład).`
-  const { error } = await supabase.from('notifications').insert({
-    user_id: params.debtorUserId,
-    type: 'settlement_reminder',
-    payload: {
-      betId: params.betId,
-      amount: params.amount,
-      creditorNick: params.creditorNick,
-      message,
-    },
-    read: false,
-  })
-  return error ? { error: error.message } : {}
-}
-
 export const NotificationsService = {
   sendBetInvite,
   sendBetInviteNotification,
   getPendingBetInviteNotifications,
   markNotificationRead,
-  sendSettlementReminderNotification,
 }

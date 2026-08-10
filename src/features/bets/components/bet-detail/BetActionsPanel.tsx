@@ -1,6 +1,6 @@
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { Colors } from "@/shared/constants/colors";
-import type { BetStatus, Settlement } from "@/features/bets/types/bet.types";
+import type { BetStatus } from "@/features/bets/types/bet.types";
 import { styles } from "./styles/BetActionsPanel.styles";
 
 export type BetActionsPanelProps = {
@@ -12,22 +12,10 @@ export type BetActionsPanelProps = {
   confirming: boolean;
   disputing: boolean;
   resolving: boolean;
-  markingPaid: string | null;
-  confirmingPayment: string | null;
-  rejectingPayment: string | null;
-  reminding: string | null;
-  myDebt: Settlement | null;
-  myCredit: Settlement | null;
-  allPaid: boolean;
-  opponent: { nick: string };
   onAccept: () => void;
   onReject: () => void;
   onConfirm: () => void;
   onDispute: () => void;
-  onMarkPaid: (id: string, debtorId: string) => void;
-  onConfirmPayment: (id: string, creditorId: string) => void;
-  onRejectPayment: (id: string, creditorId: string) => void;
-  onRemind: (settlement: Settlement) => void;
   onOpenScoreModal: () => void;
   paddingBottom: number;
 };
@@ -41,22 +29,10 @@ export function BetActionsPanel({
   confirming,
   disputing,
   resolving: _resolving,
-  markingPaid,
-  confirmingPayment,
-  rejectingPayment,
-  reminding,
-  myDebt,
-  myCredit,
-  allPaid,
-  opponent,
   onAccept,
   onReject,
   onConfirm,
   onDispute,
-  onMarkPaid,
-  onConfirmPayment,
-  onRejectPayment,
-  onRemind,
   onOpenScoreModal,
   paddingBottom,
 }: BetActionsPanelProps) {
@@ -109,87 +85,8 @@ export function BetActionsPanel({
         </View>
       )}
 
-      {status === "completed" && !allPaid && (
-        <View style={styles.gap8}>
-          {myDebt && myDebt.paymentStatus === "unpaid" ? (
-            <Pressable
-              style={styles.primaryAction}
-              onPress={() => void onMarkPaid(myDebt.id, myDebt.debtorId)}
-            >
-              {markingPaid === myDebt.id ? (
-                <ActivityIndicator color={Colors.white} />
-              ) : (
-                <Text style={styles.primaryActionText}>Zapłacono →</Text>
-              )}
-            </Pressable>
-          ) : null}
-
-          {myDebt && myDebt.paymentStatus === "pending_confirmation" ? (
-            <View style={styles.secondaryAction}>
-              <Text style={styles.muted}>Oczekuje na potwierdzenie...</Text>
-            </View>
-          ) : null}
-
-          {myDebt && myDebt.paymentStatus === "paid" ? (
-            <View style={styles.secondaryAction}>
-              <Text style={styles.allPaidText}>Zapłacono ✅</Text>
-            </View>
-          ) : null}
-
-          {myCredit && myCredit.paymentStatus === "pending_confirmation" ? (
-            <View style={styles.gap8}>
-              <Pressable
-                style={[styles.primaryAction, { backgroundColor: Colors.green }]}
-                onPress={() => void onConfirmPayment(myCredit.id, myCredit.creditorId)}
-              >
-                {confirmingPayment === myCredit.id ? (
-                  <ActivityIndicator color={Colors.white} />
-                ) : (
-                  <Text style={styles.primaryActionText}>Potwierdź otrzymanie ✓</Text>
-                )}
-              </Pressable>
-              <Pressable
-                style={styles.secondaryAction}
-                onPress={() => void onRejectPayment(myCredit.id, myCredit.creditorId)}
-              >
-                {rejectingPayment === myCredit.id ? (
-                  <ActivityIndicator color={Colors.red} />
-                ) : (
-                  <Text style={styles.rejectText}>Odrzuć</Text>
-                )}
-              </Pressable>
-            </View>
-          ) : null}
-
-          {myCredit && myCredit.paymentStatus === "unpaid" ? (
-            <Pressable
-              style={styles.secondaryAction}
-              onPress={() => void onRemind(myCredit)}
-            >
-              {reminding === myCredit.id ? (
-                <ActivityIndicator color={Colors.amber} />
-              ) : (
-                <Text style={styles.muted}>Przypomnij {opponent.nick} →</Text>
-              )}
-            </Pressable>
-          ) : null}
-
-          {myCredit && myCredit.paymentStatus === "paid" ? (
-            <View style={styles.secondaryAction}>
-              <Text style={styles.allPaidText}>Otrzymano ✅</Text>
-            </View>
-          ) : null}
-
-          {myCredit && myCredit.paymentStatus === "disputed" ? (
-            <View style={styles.secondaryAction}>
-              <Text style={styles.rejectText}>Spór 🔴</Text>
-            </View>
-          ) : null}
-        </View>
-      )}
-
-      {status === "completed" && allPaid && (
-        <Text style={styles.allPaidText}>Zakład rozliczony ✓</Text>
+      {status === "completed" && (
+        <Text style={styles.allPaidText}>Zakład zakończony ✓</Text>
       )}
 
       {status === "rejected" && (

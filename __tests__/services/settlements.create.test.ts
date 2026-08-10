@@ -1,12 +1,12 @@
 import { chainResponse } from '../helpers/supabaseMock'
 
+import { supabase } from '@/shared/lib/supabase'
+import { createSettlements } from '@/features/settlements/api/settlements.create'
+
 jest.mock('@/shared/lib/supabase', () => {
   const { createSupabaseMock } = require('../helpers/supabaseMock')
   return createSupabaseMock()
 })
-
-import { supabase } from '@/shared/lib/supabase'
-import { createSettlements } from '@/features/settlements/api/settlements.create'
 
 const mockFrom = supabase.from as jest.Mock
 
@@ -59,7 +59,7 @@ describe('createSettlements', () => {
 
     expect(result).toEqual({})
     expect(insertChain.insert).toHaveBeenCalledWith([
-      { bet_id: 'bet-1', debtor_id: 'user-2', creditor_id: 'user-1', amount: 50, paid: false },
+      { bet_id: 'bet-1', debtor_id: 'user-2', creditor_id: 'user-1', amount: 50 },
     ])
   })
 
@@ -101,7 +101,7 @@ describe('createSettlements', () => {
 
     expect(result).toEqual({})
     expect(insertChain.insert).toHaveBeenCalledWith([
-      { bet_id: 'bet-1', debtor_id: 'user-2', creditor_id: 'user-1', amount: 50, paid: false },
+      { bet_id: 'bet-1', debtor_id: 'user-2', creditor_id: 'user-1', amount: 50 },
     ])
   })
 })

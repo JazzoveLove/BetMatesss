@@ -38,19 +38,11 @@ export default function BetDetailScreen() {
     disputing,
     accepting,
     rejecting,
-    markingPaid,
-    confirmingPayment,
-    rejectingPayment,
-    reminding,
     submitResult,
     confirmResult,
     disputeResult,
     acceptBet,
     rejectBet,
-    markPaid,
-    confirmPayment,
-    rejectPayment,
-    sendReminder,
   } = useBetDetail(betId);
 
   const [scoreModalOpen, setScoreModalOpen] = useState(false);
@@ -105,11 +97,6 @@ export default function BetDetailScreen() {
     me.stakeAmount > 0 && opponent.stakeAmount > 0
       ? me.stakeAmount + opponent.stakeAmount
       : null;
-  const myDebt =
-    settlements.find((s) => s.debtorId === currentUserId && s.paymentStatus !== "paid") ?? null;
-  const myCredit =
-    settlements.find((s) => s.creditorId === currentUserId && s.paymentStatus !== "paid") ?? null;
-  const allPaid = settlements.length > 0 && settlements.every((s) => s.paymentStatus === "paid");
   const badge = getStatusBadge(status);
 
   return (
@@ -146,22 +133,10 @@ export default function BetDetailScreen() {
         confirming={confirming}
         disputing={disputing}
         resolving={resolving}
-        markingPaid={markingPaid}
-        confirmingPayment={confirmingPayment}
-        rejectingPayment={rejectingPayment}
-        reminding={reminding}
-        myDebt={myDebt}
-        myCredit={myCredit}
-        allPaid={allPaid}
-        opponent={{ nick: opponent.nick }}
         onAccept={() => void acceptBet()}
         onReject={async () => { const ok = await rejectBet(); if (ok) navigation.goBack() }}
         onConfirm={() => void confirmResult()}
         onDispute={() => void disputeResult()}
-        onMarkPaid={markPaid}
-        onConfirmPayment={confirmPayment}
-        onRejectPayment={rejectPayment}
-        onRemind={sendReminder}
         onOpenScoreModal={() => setScoreModalOpen(true)}
         paddingBottom={insets.bottom + 12}
       />

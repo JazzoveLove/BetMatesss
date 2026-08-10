@@ -17,7 +17,7 @@ export function buildSettlementRows(
     .map(p => {
       const amount = parseStakeAmount(p.stake_amount)
       if (amount <= 0) return null
-      return { bet_id: betId, debtor_id: p.user_id, creditor_id: winnerId, amount, paid: false as const }
+      return { bet_id: betId, debtor_id: p.user_id, creditor_id: winnerId, amount }
     })
     .filter((row): row is SettlementRow => row !== null)
 }

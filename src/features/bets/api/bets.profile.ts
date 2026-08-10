@@ -8,8 +8,6 @@ type SettlementRow = {
   debtor_id: string
   creditor_id: string
   amount: number
-  paid?: boolean
-  payment_status?: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed' | null
 }
 
 type BetResultRow = {
@@ -34,7 +32,7 @@ export async function getProfileStatsV2(userId: string): Promise<ProfileStatsV2>
     moneyBets.length > 0
       ? supabase
           .from('settlements')
-          .select('bet_id, debtor_id, creditor_id, amount, paid, payment_status')
+          .select('bet_id, debtor_id, creditor_id, amount')
           .in('bet_id', moneyBets.map(b => b.id))
       : Promise.resolve({ data: [] as SettlementRow[], error: null }),
     friendlyBets.length > 0
@@ -51,9 +49,7 @@ export async function getProfileStatsV2(userId: string): Promise<ProfileStatsV2>
 
   const moneyEntries: WLEntry[] = []
   for (const bet of moneyBets) {
-    const active = settlements
-      .filter(s => s.bet_id === bet.id)
-      .filter(s => (s.payment_status ?? (s.paid ? 'paid' : 'unpaid')) !== 'paid')
+    const active = settlements.filter(s => s.bet_id === bet.id)
 
     if (active.length === 0) continue
 

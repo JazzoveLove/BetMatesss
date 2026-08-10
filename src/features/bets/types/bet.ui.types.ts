@@ -7,18 +7,12 @@ export type FormatViewProps = {
   resolving: boolean
   confirming: boolean
   disputing: boolean
-  markingPaid: string | null
-  reminding: string | null
   pendingResult: PendingResult | null
   submitResult: (winnerId: string, score?: string) => Promise<boolean>
   submitPerMatchResult: (winnerId: string, score: string, requireScore: boolean) => Promise<boolean>
   completeMatchSession: () => Promise<boolean>
   confirmResult: () => Promise<void>
   disputeResult: () => Promise<void>
-  markPaid: (settlementId: string, debtorId: string) => Promise<void>
-  confirmPayment: (settlementId: string, creditorId: string) => Promise<void>
-  rejectPayment: (settlementId: string, creditorId: string) => Promise<void>
-  sendReminder: (settlement: Settlement) => Promise<void>
   acceptBet: () => Promise<boolean>
   rejectBet: () => Promise<boolean>
   accepting: boolean
