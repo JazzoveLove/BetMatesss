@@ -50,3 +50,6 @@ build-size-log.csv
 
 
 .env.local
+
+# tamagui generated cache
+.tamagui/
