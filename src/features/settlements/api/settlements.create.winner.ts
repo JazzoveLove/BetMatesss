@@ -44,7 +44,7 @@ export async function createSettlementsFromWinner(
   const settlementRows = partRows
     .filter(p => p.user_id !== winnerId)
     .map(p => {
-      const stake = parseStakeAmount(p.stake_amount)
+      const stake = Math.round(parseStakeAmount(p.stake_amount))
       if (stake <= 0) return null
       return {
         bet_id: betId,

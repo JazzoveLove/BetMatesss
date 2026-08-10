@@ -29,17 +29,26 @@ export function StepStake({ state, handlers }: Props) {
   } = state
   const { isSubmitting } = handlers
   const myCustomStake = Number(customStakes[currentUser?.id ?? ''] ?? 0)
-  const isStakeAmountValid = Number.isFinite(stakeAmount) && stakeAmount > 0
-  const isCustomStakeValid =
+  const isStakeAmountPositive = Number.isFinite(stakeAmount) && stakeAmount > 0
+  const isStakeAmountValid = isStakeAmountPositive && Number.isInteger(stakeAmount)
+  const isCustomStakePositive =
     stakeMode !== 'custom' ||
     (myCustomStake > 0 && participants.every(p => Number(customStakes[p.id] ?? 0) > 0))
+  const isCustomStakeInteger =
+    stakeMode !== 'custom' ||
+    (Number.isInteger(myCustomStake) && participants.every(p => Number.isInteger(Number(customStakes[p.id] ?? 0))))
+  const isCustomStakeValid = isCustomStakePositive && isCustomStakeInteger
   const showStakeValidation =
     ((stakeMode === 'equal' && !isStakeAmountValid) || (stakeMode === 'custom' && !isCustomStakeValid)) &&
     (stakeTouched || submitAttempted)
   const stakeValidationError = showStakeValidation
     ? stakeMode === 'custom'
-      ? 'Każdy uczestnik musi mieć stawkę większą niż 0 j.'
-      : 'Stawka musi być większa niż 0 j.'
+      ? !isCustomStakePositive
+        ? 'Każdy uczestnik musi mieć stawkę większą niż 0 j.'
+        : 'Stawka musi być liczbą całkowitą.'
+      : !isStakeAmountPositive
+        ? 'Stawka musi być większa niż 0 j.'
+        : 'Stawka musi być liczbą całkowitą.'
     : null
   const canSubmit =
     participants.length > 0 &&

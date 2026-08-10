@@ -16,7 +16,7 @@ export function StakeCustomRows({ currentUser, participants: _participants, cust
     <View style={styles.customStakeRow}>
       <Text style={styles.customStakeLabel}>Twoja stawka</Text>
       <TextInput
-        keyboardType="numeric"
+        keyboardType="number-pad"
         value={customStakes[currentUser.id] ? String(customStakes[currentUser.id]) : ''}
         onChangeText={v => onChange(currentUser.id, Number(v) || 0)}
         placeholder="0"

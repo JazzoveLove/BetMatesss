@@ -15,7 +15,7 @@ export function buildSettlementRows(
   return participants
     .filter(p => p.user_id !== winnerId)
     .map(p => {
-      const amount = parseStakeAmount(p.stake_amount)
+      const amount = Math.round(parseStakeAmount(p.stake_amount))
       if (amount <= 0) return null
       return { bet_id: betId, debtor_id: p.user_id, creditor_id: winnerId, amount }
     })

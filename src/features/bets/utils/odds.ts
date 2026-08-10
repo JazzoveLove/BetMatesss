@@ -12,7 +12,7 @@ export function parseStakeAmount(input: string | number | null | undefined): num
 export function toStakeNumber(input: string | number | null | undefined): number {
   const n = parseStakeAmount(input)
   if (!Number.isFinite(n) || n < 0) return 0
-  return Math.round(n * 100) / 100
+  return Math.round(n)
 }
 
 export function calcOdds(

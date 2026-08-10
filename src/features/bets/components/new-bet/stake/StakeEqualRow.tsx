@@ -18,7 +18,7 @@ export function StakeEqualRow({ amount, onChange, onBlur, totalPlayers, errorMes
     <View style={styles.equalRow}>
       <Text style={styles.equalLabel}>Stawka za osobę</Text>
       <TextInput
-        keyboardType="numeric"
+        keyboardType="number-pad"
         value={amount > 0 ? String(amount) : ''}
         onChangeText={v => onChange(Number(v) || 0)}
         onBlur={onBlur}
