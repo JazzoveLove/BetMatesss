@@ -46,28 +46,28 @@ describe('historyBadgeAndAmount', () => {
   })
 
   describe('zakłady zakończone', () => {
-    it('wygrany 50 zł → badge wygrany, +50 zł', () => {
+    it('wygrany 50 j. → badge wygrany, +50 j.', () => {
       expect(historyBadgeAndAmount({ ...baseBet, status: 'completed' }, 50, true, null)).toEqual({
         badge: 'wygrany',
         amountLabel: '+50 j.',
       })
     })
 
-    it('przegrany 30 zł → badge przegrany, -30 zł', () => {
+    it('przegrany 30 j. → badge przegrany, -30 j.', () => {
       expect(historyBadgeAndAmount({ ...baseBet, status: 'completed' }, -30, true, null)).toEqual({
         badge: 'przegrany',
         amountLabel: '-30 j.',
       })
     })
 
-    it('completed bez rozliczenia (stake_mode none) → zakończony, 0 zł', () => {
+    it('completed bez rozliczenia (stake_mode none) → zakończony, 0 j.', () => {
       expect(historyBadgeAndAmount({ ...baseBet, status: 'completed' }, 0, false, null)).toEqual({
         badge: 'zakończony',
         amountLabel: '0 j.',
       })
     })
 
-    it('completed z rozliczeniem ale profit 0 → zakończony, 0 zł', () => {
+    it('completed z rozliczeniem ale profit 0 → zakończony, 0 j.', () => {
       expect(historyBadgeAndAmount({ ...baseBet, status: 'completed' }, 0, true, null)).toEqual({
         badge: 'zakończony',
         amountLabel: '0 j.',

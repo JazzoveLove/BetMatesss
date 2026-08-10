@@ -46,7 +46,7 @@ describe('historyBadgeAndAmount', () => {
     expect(result).toEqual({ badge: 'przegrany', amountLabel: '-50 j.' })
   })
 
-  it('status "completed" bez rozliczenia (zakład honorowy) → badge "zakończony", kwota "0 zł"', () => {
+  it('status "completed" bez rozliczenia (zakład honorowy) → badge "zakończony", kwota "0 j."', () => {
     const result = historyBadgeAndAmount({ status: 'completed' }, 0, false, null)
 
     expect(result).toEqual({ badge: 'zakończony', amountLabel: '0 j.' })
