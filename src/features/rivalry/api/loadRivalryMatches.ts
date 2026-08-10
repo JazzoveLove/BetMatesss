@@ -1,4 +1,3 @@
-
 import { supabase } from '@/shared/lib/supabase'
 import { DELETED_USER_NICK } from '@/shared/constants/user/deletedUser'
 import { mapBetRowsToRivalryMatchItems } from './mapRivalryItems'
@@ -31,7 +30,6 @@ type SettlementRow = {
   debtor_id: string
   creditor_id: string
   amount: number
-  payment_status?: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed' | null
 }
 
 type ParticipantRow = {
@@ -87,7 +85,7 @@ export async function fetchRivalryData(
   if (filteredByTemplate.length === 0) {
     const { data: pairSettlements } = await supabase
       .from('settlements')
-      .select('bet_id, debtor_id, creditor_id, amount, payment_status')
+      .select('bet_id, debtor_id, creditor_id, amount')
       .or(`and(debtor_id.eq.${userId},creditor_id.eq.${friendId}),and(debtor_id.eq.${friendId},creditor_id.eq.${userId})`)
       .returns<SettlementRow[]>()
 
@@ -96,7 +94,6 @@ export async function fetchRivalryData(
       fromUserId: row.debtor_id,
       toUserId: row.creditor_id,
       amount: Number(row.amount) || 0,
-      paymentStatus: row.payment_status ?? 'unpaid',
     }))
     return { friendNick, matches: [], payments }
   }
@@ -120,7 +117,7 @@ export async function fetchRivalryData(
         .returns<ResultRow[]>(),
       supabase
         .from('settlements')
-        .select('bet_id, debtor_id, creditor_id, amount, payment_status')
+        .select('bet_id, debtor_id, creditor_id, amount')
         .returns<SettlementRow[]>(),
       supabase
         .from('bet_participants')
@@ -129,7 +126,7 @@ export async function fetchRivalryData(
         .returns<ParticipantRow[]>(),
       supabase
         .from('settlements')
-        .select('bet_id, debtor_id, creditor_id, amount, payment_status')
+        .select('bet_id, debtor_id, creditor_id, amount')
         .or(`and(debtor_id.eq.${userId},creditor_id.eq.${friendId}),and(debtor_id.eq.${friendId},creditor_id.eq.${userId})`)
         .returns<SettlementRow[]>(),
     ])
@@ -183,7 +180,6 @@ export async function fetchRivalryData(
     fromUserId: row.debtor_id,
     toUserId: row.creditor_id,
     amount: Number(row.amount) || 0,
-    paymentStatus: row.payment_status ?? 'unpaid',
   }))
 
   return { friendNick, matches, payments }

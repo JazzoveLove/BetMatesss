@@ -75,20 +75,11 @@ export function useRivalry(friendId: string, gameTemplate?: string): UseRivalryR
       return { totalPaidByMe: 0, totalPaidByRival: 0, pendingAmount: 0, pendingStatus: 'clear', settledBetsCount: 0 }
     }
 
-    const paidRows = payments.filter(p => p.paymentStatus === 'paid')
-    const totalPaidByMe = paidRows.filter(p => p.fromUserId === userId).reduce((sum, p) => sum + p.amount, 0)
-    const totalPaidByRival = paidRows.filter(p => p.fromUserId === friendId).reduce((sum, p) => sum + p.amount, 0)
-    const pendingRows = payments.filter(p => p.paymentStatus === 'unpaid' || p.paymentStatus === 'pending_confirmation')
-    const pendingAmount = pendingRows.reduce((sum, p) => sum + p.amount, 0)
-    const pendingStatus = pendingRows.some(p => p.paymentStatus === 'pending_confirmation')
-      ? 'pending_confirmation'
-      : pendingRows.some(p => p.paymentStatus === 'unpaid')
-        ? 'unpaid'
-        : 'clear'
-    const settledBetsCount = new Set(paidRows.map(p => p.betId)).size
+    const pendingAmount = payments.reduce((sum, p) => sum + p.amount, 0)
+    const pendingStatus = payments.length > 0 ? 'unpaid' : 'clear'
 
-    return { totalPaidByMe, totalPaidByRival, pendingAmount, pendingStatus, settledBetsCount }
-  }, [friendId, payments, userId])
+    return { totalPaidByMe: 0, totalPaidByRival: 0, pendingAmount, pendingStatus, settledBetsCount: 0 }
+  }, [payments, userId])
 
   return {
     loading: isLoading,

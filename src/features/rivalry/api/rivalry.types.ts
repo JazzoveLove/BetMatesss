@@ -33,5 +33,4 @@ export type RivalryPaymentRow = {
   fromUserId: string
   toUserId: string
   amount: number
-  paymentStatus: 'unpaid' | 'pending_confirmation' | 'paid' | 'disputed'
 }
