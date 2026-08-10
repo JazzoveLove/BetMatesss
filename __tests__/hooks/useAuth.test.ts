@@ -1,3 +1,10 @@
+import { act, renderHook } from '@testing-library/react-native'
+import { AuthService } from '@/features/auth/api/auth.service'
+import { useAuth } from '@/features/auth/hooks/useAuth'
+import { credentialsSchema } from '@/features/auth/utils/authValidation'
+import { getFirstValidationError } from '@/shared/utils/validation'
+import { AUTH_ERROR_MESSAGES_PL } from '@/features/auth/constants'
+
 jest.mock('@/features/auth/api/auth.service', () => ({
   AuthService: {
     signIn: jest.fn(),
@@ -6,13 +13,6 @@ jest.mock('@/features/auth/api/auth.service', () => ({
     createProfile: jest.fn(),
   },
 }))
-
-import { act, renderHook } from '@testing-library/react-native'
-import { AuthService } from '@/features/auth/api/auth.service'
-import { useAuth } from '@/features/auth/hooks/useAuth'
-import { credentialsSchema } from '@/features/auth/utils/authValidation'
-import { getFirstValidationError } from '@/shared/utils/validation'
-import { AUTH_ERROR_MESSAGES_PL } from '@/features/auth/constants'
 
 const mockSignIn = AuthService.signIn as jest.Mock
 const mockSignUp = AuthService.signUp as jest.Mock

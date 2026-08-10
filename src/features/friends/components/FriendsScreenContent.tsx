@@ -10,8 +10,7 @@ import {
   View,
 } from "react-native";
 import type { EdgeInsets } from "react-native-safe-area-context";
-import type { Friendship } from "@/shared/types/user.types";
-import type { UserProfile } from "@/shared/types/user.types";
+import type { Friendship , UserProfile } from "@/shared/types/user.types";
 import { Colors } from "@/shared/constants/colors";
 import { type BetInviteNotification } from "@/shared/lib/notifications.service";
 import type { RootStackParamList, TabParamList } from "@/navigation/types";

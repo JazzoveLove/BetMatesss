@@ -25,7 +25,7 @@ export interface ProfileData {
     wins: number
     losses: number
   }
-  disciplineStats: Array<{
+  disciplineStats: {
     gameId: string
     gameName: string
     gameEmoji: string
@@ -35,7 +35,7 @@ export interface ProfileData {
     winRate: number
     balance: number
     hasStake: boolean
-  }>
+  }[]
   moneyStats: ProfileStatSection | null
   friendlyStats: ProfileStatSection | null
   loading: boolean

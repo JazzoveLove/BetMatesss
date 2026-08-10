@@ -1,9 +1,8 @@
 
 import { supabase } from '@/shared/lib/supabase'
 import { parseStakeAmount } from '@/features/bets/utils/odds'
-import type { BetDetail, BetParticipant, BetResultRow } from '@/features/bets/types/bet.types'
+import type { BetDetail, BetParticipant, BetResultRow , BetFormat, BetStatus, ParticipantRole, StakeMode } from '@/features/bets/types/bet.types'
 import { error as logError, warn } from '@/shared/utils/logger'
-import type { BetFormat, BetStatus, ParticipantRole, StakeMode } from '@/features/bets/types/bet.types'
 import { parseOddsNumber, normalizeUsersNick } from './_helpers'
 
 type BetDetailRow = {

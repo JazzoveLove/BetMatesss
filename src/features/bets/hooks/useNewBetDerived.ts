@@ -1,9 +1,8 @@
 
 import { useEffect, useMemo } from 'react'
 import { GAME_TEMPLATES, type GameTemplate } from '@/shared/constants/games'
-import type { BetFormat } from '@/features/bets/types/bet.types'
+import type { BetFormat , BetSummary } from '@/features/bets/types/bet.types'
 import type { Friendship, UserProfile } from '@/shared/types/user.types'
-import type { BetSummary } from '@/features/bets/types/bet.types'
 import { getAvailableFormats, getDefaultFormat } from '@/features/bets/utils/formats'
 import type { UseNewBetStateReturn } from './useNewBetState'
 

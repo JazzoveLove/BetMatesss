@@ -1,3 +1,6 @@
+import { supabase } from '@/shared/lib/supabase'
+import { AuthService } from '@/features/auth/api/auth.service'
+
 jest.mock('@/shared/lib/supabase', () => ({
   supabase: {
     auth: {
@@ -5,9 +8,6 @@ jest.mock('@/shared/lib/supabase', () => ({
     },
   },
 }))
-
-import { supabase } from '@/shared/lib/supabase'
-import { AuthService } from '@/features/auth/api/auth.service'
 
 const mockGetSession = supabase.auth.getSession as jest.Mock
 

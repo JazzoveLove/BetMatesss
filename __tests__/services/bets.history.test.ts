@@ -1,7 +1,7 @@
+import { historyBadgeAndAmount } from '@/features/bets/api/bets.history'
+
 jest.mock('@/shared/lib/supabase', () => ({ supabase: {} }))
 jest.mock('@/features/friends', () => ({}))
-
-import { historyBadgeAndAmount } from '@/features/bets/api/bets.history'
 
 describe('historyBadgeAndAmount', () => {
   it('status "pending" → badge "oczekuje", kwota "—"', () => {

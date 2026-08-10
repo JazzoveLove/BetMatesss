@@ -5,7 +5,7 @@ import { formatBalance, getBalanceColor } from '@/shared/utils/money'
 import { getWinRateColor, styles } from './styles/ProfileDisciplineList.styles'
 
 export type ProfileDisciplineListProps = {
-  disciplines: Array<{
+  disciplines: {
     gameId: string
     gameName: string
     gameEmoji: string
@@ -15,7 +15,7 @@ export type ProfileDisciplineListProps = {
     winRate: number
     balance: number
     hasStake: boolean
-  }>
+  }[]
   isBalanceVisible: boolean
 }
 

@@ -1,10 +1,5 @@
 import { chainResponse } from '../helpers/supabaseMock'
 
-jest.mock('@/shared/lib/supabase', () => {
-  const { createSupabaseMock } = require('../helpers/supabaseMock')
-  return createSupabaseMock()
-})
-
 import { supabase } from '@/shared/lib/supabase'
 import {
   ensureMyInviteCode,
@@ -12,6 +7,11 @@ import {
   handleFriendInvite,
   searchUsersByNick,
 } from '@/features/friends/api/friends.invite'
+
+jest.mock('@/shared/lib/supabase', () => {
+  const { createSupabaseMock } = require('../helpers/supabaseMock')
+  return createSupabaseMock()
+})
 
 const mockFrom = supabase.from as jest.Mock
 const mockRpc = supabase.rpc as jest.Mock

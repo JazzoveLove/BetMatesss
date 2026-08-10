@@ -1,5 +1,10 @@
 import { chainResponse } from '../helpers/supabaseMock'
 
+import { supabase } from '@/shared/lib/supabase'
+import { NotificationsService } from '@/shared/lib/notifications.service'
+import { buildParticipantRows, createBet } from '@/features/bets/api/bets.create'
+import type { CreateBetParams } from '@/features/bets/types/bet.types'
+
 jest.mock('@/shared/lib/supabase', () => {
   const { createSupabaseMock } = require('../helpers/supabaseMock')
   return createSupabaseMock()
@@ -8,11 +13,6 @@ jest.mock('@/shared/lib/supabase', () => {
 jest.mock('@/shared/lib/notifications.service', () => ({
   NotificationsService: { sendBetInvite: jest.fn().mockResolvedValue({}) },
 }))
-
-import { supabase } from '@/shared/lib/supabase'
-import { NotificationsService } from '@/shared/lib/notifications.service'
-import { buildParticipantRows, createBet } from '@/features/bets/api/bets.create'
-import type { CreateBetParams } from '@/features/bets/types/bet.types'
 
 const mockFrom = supabase.from as jest.Mock
 const mockSendBetInvite = NotificationsService.sendBetInvite as jest.Mock
