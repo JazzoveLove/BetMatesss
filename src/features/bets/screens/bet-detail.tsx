@@ -36,11 +36,13 @@ export default function BetDetailScreen() {
     resolving,
     confirming,
     disputing,
+    cancelling,
     accepting,
     rejecting,
     submitResult,
     confirmResult,
     disputeResult,
+    cancelBet,
     acceptBet,
     rejectBet,
   } = useBetDetail(betId);
@@ -132,11 +134,13 @@ export default function BetDetailScreen() {
         rejecting={rejecting}
         confirming={confirming}
         disputing={disputing}
+        cancelling={cancelling}
         resolving={resolving}
         onAccept={() => void acceptBet()}
         onReject={async () => { const ok = await rejectBet(); if (ok) navigation.goBack() }}
         onConfirm={() => void confirmResult()}
         onDispute={() => void disputeResult()}
+        onCancel={() => void cancelBet()}
         onOpenScoreModal={() => setScoreModalOpen(true)}
         paddingBottom={insets.bottom + 12}
       />
@@ -173,5 +177,7 @@ function getStatusBadge(status: BetStatus) {
     return { label: "Zakończony", bg: hexToRgba(Colors.accent, 0.15), text: Colors.accentLight, border: hexToRgba(Colors.accent, 0.2) };
   if (status === "rejected")
     return { label: "Odrzucony", bg: hexToRgba(Colors.red, 0.15), text: Colors.red, border: hexToRgba(Colors.red, 0.2) };
+  if (status === "cancelled")
+    return { label: "Anulowany", bg: hexToRgba(Colors.textMuted, 0.15), text: Colors.textMuted, border: hexToRgba(Colors.textMuted, 0.2) };
   return { label: "Spór", bg: hexToRgba(Colors.red, 0.15), text: Colors.red, border: hexToRgba(Colors.red, 0.2) };
 }

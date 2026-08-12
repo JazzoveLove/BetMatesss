@@ -8,6 +8,7 @@ export type BetStatus =
   | 'completed'
   | 'disputed'
   | 'rejected'
+  | 'cancelled'
 export type ResultType = 'score' | 'legs' | 'sets' | 'winner_only' | 'chips'
 
 export type ParticipantRole = 'creator' | 'participant'

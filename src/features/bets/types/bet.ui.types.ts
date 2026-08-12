@@ -39,7 +39,7 @@ export type RecentResult = {
   won: boolean
 }
 
-export type HistoryBadgeLabel = 'aktywny' | 'wygrany' | 'przegrany' | 'oczekuje' | 'spór' | 'zakończony' | 'odrzucony'
+export type HistoryBadgeLabel = 'aktywny' | 'wygrany' | 'przegrany' | 'oczekuje' | 'spór' | 'zakończony' | 'odrzucony' | 'anulowany'
 
 export type HistoryListItem = {
   id: string

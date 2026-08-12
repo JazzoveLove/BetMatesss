@@ -7,6 +7,7 @@ import {
   getPendingBetResult,
   confirmBetResult,
   disputeBetResult,
+  cancelDisputedBet,
   getSettlements,
 } from './bets.resolve'
 import {
@@ -38,6 +39,7 @@ export {
   getPendingBetResult,
   confirmBetResult,
   disputeBetResult,
+  cancelDisputedBet,
   getSettlements,
 } from './bets.resolve'
 export type { PendingBetResult } from './bets.resolve'
@@ -84,6 +86,7 @@ export const BetsService = {
   getPendingBetResult,
   confirmBetResult,
   disputeBetResult,
+  cancelDisputedBet,
   getDashboardData,
   getProfileStatsV2,
   searchUsers,

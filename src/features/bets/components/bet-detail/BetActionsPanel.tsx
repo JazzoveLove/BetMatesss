@@ -11,11 +11,13 @@ export type BetActionsPanelProps = {
   rejecting: boolean;
   confirming: boolean;
   disputing: boolean;
+  cancelling: boolean;
   resolving: boolean;
   onAccept: () => void;
   onReject: () => void;
   onConfirm: () => void;
   onDispute: () => void;
+  onCancel: () => void;
   onOpenScoreModal: () => void;
   paddingBottom: number;
 };
@@ -28,11 +30,13 @@ export function BetActionsPanel({
   rejecting,
   confirming,
   disputing,
+  cancelling,
   resolving: _resolving,
   onAccept,
   onReject,
   onConfirm,
   onDispute,
+  onCancel,
   onOpenScoreModal,
   paddingBottom,
 }: BetActionsPanelProps) {
@@ -85,12 +89,26 @@ export function BetActionsPanel({
         </View>
       )}
 
+      {status === "disputed" && (
+        <Pressable style={styles.secondaryAction} onPress={onCancel}>
+          {cancelling ? (
+            <ActivityIndicator color={Colors.red} />
+          ) : (
+            <Text style={styles.rejectText}>Anuluj zakład</Text>
+          )}
+        </Pressable>
+      )}
+
       {status === "completed" && (
         <Text style={styles.allPaidText}>Zakład zakończony ✓</Text>
       )}
 
       {status === "rejected" && (
         <Text style={styles.rejectedText}>Zakład odrzucony 🚫</Text>
+      )}
+
+      {status === "cancelled" && (
+        <Text style={styles.rejectedText}>Zakład anulowany 🚫</Text>
       )}
     </View>
   );

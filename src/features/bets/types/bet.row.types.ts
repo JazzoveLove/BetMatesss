@@ -15,6 +15,7 @@ export type BetRow = Omit<Tables<'bets'>, 'format' | 'stake_mode' | 'status'> & 
     | 'completed'
     | 'disputed'
     | 'rejected'
+    | 'cancelled'
 }
 
 // Znormalizowany widok wyniku używany w warstwie UI/rozliczeń — węższy niż pełny

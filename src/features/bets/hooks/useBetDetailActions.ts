@@ -143,6 +143,25 @@ export function useBetDetailActions(
     }
   }, [betId, pendingResult, loadData, setAction])
 
+  const cancelBet = useCallback(async (): Promise<boolean> => {
+    setAction('cancelling', true)
+    try {
+      const result = await BetsService.cancelDisputedBet(betId)
+      if (result.error) {
+        Alert.alert('Błąd', result.error)
+        return false
+      }
+      await loadData()
+      return true
+    } catch (e) {
+      error('[useBetDetail] cancelBet', e)
+      Alert.alert('Błąd', 'Nie udało się anulować zakładu.')
+      return false
+    } finally {
+      setAction('cancelling', false)
+    }
+  }, [betId, loadData, setAction])
+
   const acceptBet = useCallback(async (): Promise<boolean> => {
     if (!currentUserId) return false
     setAction('accepting', true)
@@ -190,7 +209,10 @@ export function useBetDetailActions(
     completeMatchSession,
     confirmResult,
     disputeResult,
+    cancelBet,
     acceptBet,
     rejectBet,
   }
 }
+
+// za dlugi ten plik cbyba

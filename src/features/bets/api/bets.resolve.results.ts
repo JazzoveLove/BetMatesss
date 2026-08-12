@@ -232,3 +232,20 @@ export async function disputeBetResult(betId: string): Promise<{ error?: string 
   }
   return {}
 }
+
+export async function cancelDisputedBet(betId: string): Promise<{ error?: string }> {
+  const { data: updatedRows, error } = await supabase
+    .from('bets')
+    .update({ status: 'cancelled' })
+    .eq('id', betId)
+    .eq('status', 'disputed')
+    .select('id')
+
+  if (error) return { error: error.message }
+  if (!updatedRows || updatedRows.length === 0) {
+    return { error: 'Nie można anulować — zakład nie jest już w sporze.' }
+  }
+  return {}
+}
+
+//Za dlgi ten plik jest chyba

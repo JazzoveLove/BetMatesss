@@ -10,6 +10,7 @@ const BADGE_UI: Record<HistoryBadgeLabel, { text: string; color: string; bg: str
   spór: { text: 'Spór', color: '#E24B4A', bg: '#E24B4A18' },
   zakończony: { text: 'Zakończony', color: 'rgba(232,230,224,0.55)', bg: '#1e2330' },
   odrzucony: { text: 'Odrzucony', color: '#E24B4A', bg: '#E24B4A18' },
+  anulowany: { text: 'Anulowany', color: 'rgba(232,230,224,0.55)', bg: '#1e2330' },
 }
 
 function formatHistoryDate(iso: string): string {

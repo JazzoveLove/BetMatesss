@@ -13,6 +13,7 @@ export function historyBadgeAndAmount(
   const st = bet.status
   if (st === 'pending') return { badge: 'oczekuje', amountLabel: '—' }
   if (st === 'rejected') return { badge: 'odrzucony', amountLabel: '—' }
+  if (st === 'cancelled') return { badge: 'anulowany', amountLabel: '—' }
   if (st === 'disputed') return { badge: 'spór', amountLabel: '—' }
   if (st === 'active' || st === 'awaiting_confirmation') {
     return { badge: 'aktywny', amountLabel: '—' }

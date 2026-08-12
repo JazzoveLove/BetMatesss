@@ -9,6 +9,7 @@ export type ActionLoadingState = {
   resolving: boolean
   confirming: boolean
   disputing: boolean
+  cancelling: boolean
   accepting: boolean
   rejecting: boolean
   completingSession: boolean
@@ -18,6 +19,7 @@ const initialActionLoading: ActionLoadingState = {
   resolving: false,
   confirming: false,
   disputing: false,
+  cancelling: false,
   accepting: false,
   rejecting: false,
   completingSession: false,

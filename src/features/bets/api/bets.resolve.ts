@@ -8,4 +8,5 @@ export {
   getPendingBetResult,
   confirmBetResult,
   disputeBetResult,
+  cancelDisputedBet,
 } from './bets.resolve.results'
