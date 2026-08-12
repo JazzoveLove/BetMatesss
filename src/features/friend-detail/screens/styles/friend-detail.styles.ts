@@ -6,7 +6,8 @@ export const styles = StyleSheet.create({
   loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   content: { padding: 16, paddingBottom: 40 },
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
-  backBtn: { color: Colors.text, fontSize: 20, fontWeight: '700', paddingRight: 4 },
+  backBtn: { padding: 10, marginLeft: -10 },
+  backBtnText: { color: Colors.text, fontSize: 20, fontWeight: '700' },
   title: { color: Colors.text, fontSize: 20, fontWeight: '700' },
   balanceCard: {
     backgroundColor: Colors.card,

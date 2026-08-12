@@ -56,7 +56,9 @@ export default function FriendDetailScreen() {
         }
       >
         <View style={styles.header}>
-          <Text style={styles.backBtn} onPress={() => navigation.goBack()}>{'<'}</Text>
+          <Pressable style={styles.backBtn} onPress={() => navigation.goBack()} hitSlop={12}>
+            <Text style={styles.backBtnText}>{'<'}</Text>
+          </Pressable>
           <Text style={styles.title}>{friendNick}</Text>
         </View>
 
