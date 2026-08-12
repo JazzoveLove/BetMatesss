@@ -10,7 +10,7 @@ import {
   View,
 } from "react-native";
 import type { EdgeInsets } from "react-native-safe-area-context";
-import type { Friendship , UserProfile } from "@/shared/types/user.types";
+import type { Friendship } from "@/shared/types/user.types";
 import { Colors } from "@/shared/constants/colors";
 import { type BetInviteNotification } from "@/shared/lib/notifications.service";
 import type { RootStackParamList, TabParamList } from "@/navigation/types";
@@ -19,7 +19,6 @@ import { FriendStatCard } from "./FriendStatCard";
 import { FriendsSearchBar } from "./FriendsSearchBar";
 import { InviteQrModal } from "./InviteQrModal";
 import { styles } from "./styles/FriendsScreenContent.styles";
-import { friendRowSharedStyles } from "./styles/FriendStatCard.styles";
 import { otherId } from "../utils/friendsFormatting";
 import { InviteCodeCard } from "./InviteCodeCard";
 import { AddFriendCard } from "./AddFriendCard";
@@ -86,7 +85,7 @@ export function FriendsScreenContent({
           nick: friendNick,
           initials: initials || "?",
           avatarUrl: avatar(id) ?? undefined,
-          totalMatches: 0,
+          totalMatches: 0, // Tu jest hardcodded to zmienic 
           wins: 0,
           losses: 0,
           winRate: 0,
@@ -128,22 +127,6 @@ export function FriendsScreenContent({
     if (!q) return pendingCards;
     return pendingCards.filter((item) => item.nick.toLowerCase().includes(q));
   }, [pendingCards, searchText]);
-
-  function openNewBetWithFriend(friend: {
-    id: string;
-    nick: string;
-    avatarUrl?: string;
-  }) {
-    const preselectedFriend: UserProfile = {
-      id: friend.id,
-      nick: friend.nick,
-      avatarUrl: friend.avatarUrl ?? null,
-    };
-    navigation.navigate("Tabs", {
-      screen: "Nowy",
-      params: { preselectedFriend },
-    });
-  }
 
   return (
     <>
@@ -193,45 +176,13 @@ export function FriendsScreenContent({
         </Text>
 
         <View style={styles.listWrap}>
-          {filteredActive.map((friend) => {
-            if (friend.totalMatches > 0) {
-              return (
-                <FriendStatCard
-                  key={friend.id}
-                  friend={friend}
-                  // TODO(#17-19): panel szczegółów znajomego (saldo, W/L, historia) —
-                  // dawny ekran "Rivalry" usunięty razem z tabelą rivalries w bazie.
-                  onPress={undefined}
-                />
-              );
-            }
-            return (
-              <Pressable
-                key={friend.id}
-                style={friendRowSharedStyles.friendCard}
-                onPress={() => openNewBetWithFriend(friend)}
-              >
-                <View style={friendRowSharedStyles.avatarBubble}>
-                  <Text style={friendRowSharedStyles.avatarInitials}>
-                    {friend.initials}
-                  </Text>
-                </View>
-                <View style={friendRowSharedStyles.friendMiddle}>
-                  <View style={friendRowSharedStyles.friendTopRow}>
-                    <Text style={friendRowSharedStyles.friendNick}>
-                      {friend.nick}
-                    </Text>
-                    <View style={styles.playBadge}>
-                      <Text style={styles.playBadgeText}>Zagraj!</Text>
-                    </View>
-                  </View>
-                  <Text style={friendRowSharedStyles.friendSub}>
-                    Brak meczów · {friend.addedLabel}
-                  </Text>
-                </View>
-              </Pressable>
-            );
-          })}
+          {filteredActive.map((friend) => (
+            <FriendStatCard
+              key={friend.id}
+              friend={friend}
+              onPress={() => navigation.navigate("FriendDetail", { friendId: friend.id })}
+            />
+          ))}
 
           {filteredPending.map((item) => (
             <FriendPendingCard
@@ -252,3 +203,5 @@ export function FriendsScreenContent({
     </>
   );
 }
+
+//Za dlugi ten plik 

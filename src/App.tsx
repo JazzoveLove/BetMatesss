@@ -14,6 +14,7 @@ import RegisterScreen from '@/features/auth/screens/register'
 import SetupProfileScreen from '@/features/auth/screens/setup-profile'
 import BetDetailScreen from '@/features/bets/screens/bet-detail'
 import SettingsScreen from '@/features/profile/screens/settings'
+import FriendDetailScreen from '@/features/friend-detail/screens/friend-detail'
 import { hasPendingFriendInvites } from '@/features/friends'
 import { AppErrorFallback } from '@/shared/components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
@@ -78,6 +79,11 @@ function AppContent() {
           name="BetDetail"
           component={withScreenBoundary(BetDetailScreen)}
           options={{ animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+        name="FriendDetail"
+        component={withScreenBoundary(FriendDetailScreen)}
+        options={{ animation: 'slide_from_right' }}
         />
         <Stack.Screen
           name="Settings"

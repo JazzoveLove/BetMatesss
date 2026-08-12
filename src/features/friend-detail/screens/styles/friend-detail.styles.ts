@@ -1,0 +1,46 @@
+import { StyleSheet } from 'react-native'
+import { Colors } from '@/shared/constants/colors'
+
+export const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: Colors.background },
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  content: { padding: 16, paddingBottom: 40 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
+  backBtn: { color: Colors.text, fontSize: 20, fontWeight: '700', paddingRight: 4 },
+  title: { color: Colors.text, fontSize: 20, fontWeight: '700' },
+  balanceCard: {
+    backgroundColor: Colors.card,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.borderSoft,
+    padding: 20,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  balanceLabel: { color: Colors.textMuted, fontSize: 11, letterSpacing: 1 },
+  balanceValue: { fontSize: 32, fontWeight: '700', marginTop: 6 },
+  playCta: {
+    backgroundColor: Colors.accent,
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  playCtaText: { color: Colors.text, fontSize: 15, fontWeight: '700' },
+  sectionLabel: { color: Colors.textMuted, fontSize: 11, letterSpacing: 1, marginBottom: 8 },
+  emptyText: { color: Colors.textMuted, fontSize: 13 },
+  statRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: Colors.card,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.borderSoft,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 8,
+  },
+  statGame: { color: Colors.text, fontSize: 14 },
+  statScore: { color: Colors.textMuted, fontSize: 13 },
+})

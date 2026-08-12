@@ -2,6 +2,7 @@ export const queryKeys = {
   profile: (userId: string) => ['profile', userId] as const,
   history: (userId: string) => ['history', userId] as const,
   dashboard: (userId: string) => ['dashboard', userId] as const,
+  friendDetail: (userId: string, friendId: string) => ['friendDetail', userId, friendId] as const,
   betInvites: (userId: string) => ['betInvites', userId] as const,
   friends: (userId: string) => ['friends', userId] as const,
   myInviteCode: (userId: string) => ['myInviteCode', userId] as const,
