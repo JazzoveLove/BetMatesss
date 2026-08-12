@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native'
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -12,6 +13,8 @@ import { styles } from './styles/friend-detail.styles'
 import { HistoryFilterBar } from '@/features/bets/components/history/HistoryFilterBar'
 import { HistoryListItem } from '@/features/bets/components/history/HistoryListItem'
 import { useFriendHistory } from '@/features/friend-detail/hooks/useFriendHistory'
+import { SettleModal } from '@/features/friend-detail/components/SettleModal'
+import { useSettlePayment } from '@/features/friend-detail/hooks/useSettlePayment'
 
 type FriendDetailRouteProp = RouteProp<RootStackParamList, 'FriendDetail'>
 type Nav = NativeStackNavigationProp<RootStackParamList>
@@ -28,6 +31,10 @@ export default function FriendDetailScreen() {
   const { friendId } = route.params
   const { loading, refreshing, friendNick, balance, stats, refresh } = useFriendDetail(friendId)
   const { items: historyItems, filter, setFilter } = useFriendHistory(friendId)
+  const [settleOpen, setSettleOpen] = useState(false)
+  const { settling, settle } = useSettlePayment(friendId, async () => {
+    await refresh()
+  })
 
   function openNewBetWithFriend() {
     const preselectedFriend: UserProfile = {
@@ -77,6 +84,12 @@ export default function FriendDetailScreen() {
           <Text style={styles.playCtaText}>Zagraj ze znajomym</Text>
         </Pressable>
 
+        {balance !== 0 && (
+          <Pressable style={styles.settleCta} onPress={() => setSettleOpen(true)}>
+            <Text style={styles.settleCtaText}>Rozlicz</Text>
+          </Pressable>
+        )}
+
         <Text style={styles.sectionLabel}>STATYSTYKI WEDŁUG DYSCYPLINY</Text>
         {stats.length === 0 ? (
           <Text style={styles.emptyText}>Brak wspólnych, potwierdzonych zakładów.</Text>
@@ -107,6 +120,15 @@ export default function FriendDetailScreen() {
           ))
         )}
       </ScrollView>
+
+      <SettleModal
+        visible={settleOpen}
+        onClose={() => setSettleOpen(false)}
+        friendNick={friendNick}
+        balance={balance}
+        settling={settling}
+        onConfirm={amount => settle(amount, balance)}
+      />
     </SafeAreaView>
   )
 }

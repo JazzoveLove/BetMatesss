@@ -28,6 +28,16 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
   playCtaText: { color: Colors.text, fontSize: 15, fontWeight: '700' },
+  settleCta: {
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: Colors.accent,
+    backgroundColor: 'transparent',
+  },
+  settleCtaText: { color: Colors.accent, fontSize: 15, fontWeight: '700' },
   sectionLabel: { color: Colors.textMuted, fontSize: 11, letterSpacing: 1, marginBottom: 8 },
   emptyText: { color: Colors.textMuted, fontSize: 13 },
   statRow: {
