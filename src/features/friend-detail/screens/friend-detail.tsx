@@ -9,6 +9,9 @@ import { useFriendDetail } from '@/features/friend-detail/hooks/useFriendDetail'
 import type { RootStackParamList } from '@/navigation/types'
 import type { UserProfile } from '@/shared/types/user.types'
 import { styles } from './styles/friend-detail.styles'
+import { HistoryFilterBar } from '@/features/bets/components/history/HistoryFilterBar'
+import { HistoryListItem } from '@/features/bets/components/history/HistoryListItem'
+import { useFriendHistory } from '@/features/friend-detail/hooks/useFriendHistory'
 
 type FriendDetailRouteProp = RouteProp<RootStackParamList, 'FriendDetail'>
 type Nav = NativeStackNavigationProp<RootStackParamList>
@@ -24,6 +27,7 @@ export default function FriendDetailScreen() {
   const route = useRoute<FriendDetailRouteProp>()
   const { friendId } = route.params
   const { loading, refreshing, friendNick, balance, stats, refresh } = useFriendDetail(friendId)
+  const { items: historyItems, filter, setFilter } = useFriendHistory(friendId)
 
   function openNewBetWithFriend() {
     const preselectedFriend: UserProfile = {
@@ -88,6 +92,19 @@ export default function FriendDetailScreen() {
               </View>
             )
           })
+          
+        )}<Text style={styles.sectionLabel}>HISTORIA WSPÓLNYCH ZAKŁADÓW</Text>
+        <HistoryFilterBar filter={filter} onFilterChange={setFilter} />
+        {historyItems.length === 0 ? (
+          <Text style={styles.emptyText}>Brak zakładów pasujących do filtra.</Text>
+        ) : (
+          historyItems.map(item => (
+            <HistoryListItem
+              key={item.id}
+              item={item}
+              onPress={betId => navigation.navigate('BetDetail', { betId })}
+            />
+          ))
         )}
       </ScrollView>
     </SafeAreaView>

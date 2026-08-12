@@ -46,6 +46,7 @@ export type HistoryListItem = {
   gameTemplate: string
   createdAt: string
   opponentNick: string
+  opponentId: string
   badge: HistoryBadgeLabel
   amountLabel: string
   profit: number

@@ -118,6 +118,7 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
       gameTemplate: bet.gameTemplate,
       createdAt: bet.createdAt,
       opponentNick,
+      opponentId: opponent?.user_id ?? '',
       badge,
       amountLabel,
       profit,

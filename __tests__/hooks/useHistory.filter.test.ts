@@ -11,6 +11,7 @@ const item: HistoryListItem = {
   gameTemplate: 'pilkarzyki',
   createdAt: '2026-08-01T00:00:00.000Z',
   opponentNick: 'Rywal',
+  opponentId: 'friend-1',
   badge: 'aktywny',
   amountLabel: '—',
   profit: 0,
