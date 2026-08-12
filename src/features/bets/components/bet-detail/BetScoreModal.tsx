@@ -5,6 +5,7 @@ import {
   Modal,
   Platform,
   Pressable,
+  StyleSheet,
   Text,
   TextInput,
   View,
@@ -82,12 +83,20 @@ export function BetScoreModal({
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
+        <Pressable
+          style={StyleSheet.absoluteFillObject}
+          onPress={onClose}
+          accessibilityRole="button"
+        />
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
           <View style={styles.sheet}>
             <View style={styles.sheetHandle} />
             <Text style={styles.sheetTitle}>Wpisz wynik</Text>
+            <Pressable style={styles.closeBtn} onPress={onClose} hitSlop={12}>
+              <Text style={styles.closeBtnText}>Anuluj</Text>
+            </Pressable>
 
             {isNumericResult && (
               <>

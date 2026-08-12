@@ -23,6 +23,8 @@ export const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sheetTitle: { color: Colors.text, fontWeight: "700", fontSize: 17 },
+  closeBtn: { alignSelf: "flex-end", marginTop: -8, marginBottom: 4, padding: 6 },
+  closeBtnText: { color: Colors.textMuted, fontSize: 13, fontWeight: "600" },
   scoringLabel: {
     color: Colors.textMuted,
     fontSize: 13,
