@@ -8,7 +8,7 @@ import { StepGameFooter } from './game/StepGameFooter'
 import { gameScreenStyles as styles } from './game/styles/gameScreen.styles'
 import { buildGamesMap, buildOrderedGames, buildTileDisplayById } from './game/stepGameTiles'
 
-type Props = { state: NewBetState; onSelect: (game: GameTemplate) => void; handlers: Pick<NewBetHandlers, 'setSelectedFormat' | 'setStep'> }
+type Props = { state: NewBetState; onSelect: (game: GameTemplate) => void; handlers: Pick<NewBetHandlers, 'setStep'> }
 
 export function StepGame({ state, onSelect, handlers }: Props) {
   const [customOpen, setCustomOpen] = useState(state.selectedGame?.id === 'wlasna')
@@ -49,7 +49,6 @@ export function StepGame({ state, onSelect, handlers }: Props) {
         selectedLabel={selectedLabel}
         onNext={() => {
           if (!state.selectedGame) return
-          handlers.setSelectedFormat(null)
           handlers.setStep(2)
         }}
       />

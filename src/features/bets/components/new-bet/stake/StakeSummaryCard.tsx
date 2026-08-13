@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
 import { Text, View } from 'react-native'
-import { BET_FORMATS } from '@/shared/constants/formats'
 import type { GameTemplate } from '@/shared/constants/games'
-import type { BetFormat, StakeMode } from '@/features/bets/types/bet.types'
+import type { StakeMode } from '@/features/bets/types/bet.types'
 import type { UserProfile } from '@/shared/types/user.types'
 import { stakeStepStyles as styles } from './styles/stakeStyles'
 
@@ -13,7 +12,6 @@ export type StakeSummaryCardProps = {
   stakeAmount: number
   customStakes: Record<string, number>
   selectedGame: GameTemplate | null
-  selectedFormat: BetFormat | null
 }
 
 export function StakeSummaryCard({
@@ -23,7 +21,6 @@ export function StakeSummaryCard({
   stakeAmount,
   customStakes,
   selectedGame,
-  selectedFormat,
 }: StakeSummaryCardProps) {
   const totalPlayers = participants.length + 1
   const equalPool = useMemo(() => (Number(stakeAmount) || 0) * totalPlayers, [stakeAmount, totalPlayers])
@@ -33,15 +30,13 @@ export function StakeSummaryCard({
     return selectedSum + myCustomStake
   }, [customStakes, myCustomStake, participants])
 
-  const formatMeta = BET_FORMATS.find(item => item.id === selectedFormat)
-
   return (
     <View style={styles.summaryCard}>
       <Text style={styles.summaryHeader}>PODSUMOWANIE ZAKŁADU</Text>
       <View style={styles.summaryRow}>
         <Text style={styles.summaryLabel}>Gra</Text>
         <Text style={styles.summaryValue}>
-          {selectedGame ? `${selectedGame.emoji} ${selectedGame.name}` : '—'} · {formatMeta?.name ?? '—'}
+          {selectedGame ? `${selectedGame.emoji} ${selectedGame.name}` : '—'}
         </Text>
       </View>
       <View style={styles.summaryDivider} />

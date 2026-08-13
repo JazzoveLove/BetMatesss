@@ -7,7 +7,6 @@ export const STEP_GAME_TILE_ORDER: { id: string; label: string; emoji: string }[
   { id: 'dart', label: 'Dart', emoji: '🎯' },
   { id: 'koszykowka', label: 'Koszykówka', emoji: '🏀' },
   { id: 'szachy', label: 'Szachy', emoji: '♟️' },
-  { id: 'poker', label: 'Poker', emoji: '🃏' },
   { id: 'fifa', label: 'Gra video', emoji: '🎮' },
   { id: 'bilard', label: 'Bilard', emoji: '🎱' },
 ]

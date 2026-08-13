@@ -1,18 +1,14 @@
 import { Pressable, Text, View } from 'react-native'
-import { BET_FORMATS } from '@/shared/constants/formats'
 import type { GameTemplate } from '@/shared/constants/games'
-import type { BetFormat } from '@/features/bets/types/bet.types'
 import type { NewBetHandlers } from '@/features/bets/hooks/useNewBet'
 import { stepStakeStyles as styles } from './styles/stepStake.styles'
 
 export type StepStakeChipsProps = {
   selectedGame: GameTemplate | null
-  selectedFormat: BetFormat | null
   handlers: Pick<NewBetHandlers, 'setStep'>
 }
 
-export function StepStakeChips({ selectedGame, selectedFormat, handlers }: StepStakeChipsProps) {
-  const formatMeta = BET_FORMATS.find(item => item.id === selectedFormat)
+export function StepStakeChips({ selectedGame, handlers }: StepStakeChipsProps) {
   return (
     <View style={styles.chipsWrap}>
       {selectedGame && (
@@ -22,17 +18,6 @@ export function StepStakeChips({ selectedGame, selectedFormat, handlers }: StepS
           </Text>
           <Text style={styles.chipSep}>|</Text>
           <Pressable onPress={() => handlers.setStep(1)}>
-            <Text style={styles.chipAction}>zmień</Text>
-          </Pressable>
-        </View>
-      )}
-      {!!formatMeta && (
-        <View style={styles.chip}>
-          <Text style={styles.chipText}>
-            {formatMeta.icon} {formatMeta.name}
-          </Text>
-          <Text style={styles.chipSep}>|</Text>
-          <Pressable onPress={() => handlers.setStep(2)}>
             <Text style={styles.chipAction}>zmień</Text>
           </Pressable>
         </View>

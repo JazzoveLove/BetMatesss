@@ -1,16 +1,14 @@
 
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { GAME_TEMPLATES, type GameTemplate } from '@/shared/constants/games'
-import type { BetFormat , BetSummary } from '@/features/bets/types/bet.types'
+import type { BetSummary } from '@/features/bets/types/bet.types'
 import type { Friendship, UserProfile } from '@/shared/types/user.types'
-import { getAvailableFormats, getDefaultFormat } from '@/features/bets/utils/formats'
 import type { UseNewBetStateReturn } from './useNewBetState'
 
 export type UseNewBetDerivedReturn = {
   friendProfiles: UserProfile[]
   recentGames: GameTemplate[]
   gamesFiltered: GameTemplate[]
-  availableFormats: BetFormat[]
   sectionData: { title: string; data: GameTemplate[]; show: boolean }[]
   totalPlayers: number
 }
@@ -22,7 +20,7 @@ export function useNewBetDerived(
   avatar: (id: string) => string | null,
   bets: BetSummary[],
 ): UseNewBetDerivedReturn {
-  const { currentUser, searchQuery, selectedGame, participants, setSelectedFormat, step } = state
+  const { currentUser, searchQuery, participants } = state
 
   const friendProfiles = useMemo<UserProfile[]>(
     () =>
@@ -44,17 +42,6 @@ export function useNewBetDerived(
     return GAME_TEMPLATES.filter(game => game.name.toLowerCase().includes(query))
   }, [searchQuery])
 
-  const availableFormats = useMemo(
-    () => (selectedGame ? getAvailableFormats(selectedGame, participants.length) : []),
-    [participants.length, selectedGame],
-  )
-
-  useEffect(() => {
-    if (!selectedGame || step !== 2) return
-    const nextDefault = getDefaultFormat(selectedGame, participants.length)
-    setSelectedFormat(prev => (prev && availableFormats.includes(prev) ? prev : nextDefault))
-  }, [availableFormats, participants.length, selectedGame, setSelectedFormat, step])
-
   const totalPlayers = participants.length + 1
 
   const sectionData = useMemo(
@@ -73,7 +60,6 @@ export function useNewBetDerived(
     friendProfiles,
     recentGames,
     gamesFiltered,
-    availableFormats,
     sectionData,
     totalPlayers,
   }

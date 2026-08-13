@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react'
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { RouteProp } from '@react-navigation/native'
 import type { GameTemplate } from '@/shared/constants/games'
-import type { BetFormat, PokerMode, StakeMode } from '@/features/bets/types/bet.types'
+import type { StakeMode } from '@/features/bets/types/bet.types'
 import type { UserProfile } from '@/shared/types/user.types'
 
 export type NewBetTabParamList = {
@@ -16,25 +16,18 @@ export type NewBetTabParamList = {
 export type NewBetNavigation = BottomTabNavigationProp<NewBetTabParamList, 'Nowy'>
 export type NewBetRoute = RouteProp<NewBetTabParamList, 'Nowy'>
 
-export type NewBetStep = 1 | 2 | 3
+export type NewBetStep = 1 | 2
 
 export type NewBetState = {
   currentUser: UserProfile | null
   selectedGame: GameTemplate | null
   participants: UserProfile[]
-  selectedFormat: BetFormat | null
-  bestOfCount: 3 | 5 | 7
   stakeMode: StakeMode
   stakeAmount: number
   customStakes: Record<string, number>
-  pokerMode: PokerMode
-  pokerStack: number
-  pokerRebuyStack: number
-  stakePerMatch: number
   searchQuery: string
   searchFocused: boolean
   preselectedFriend: UserProfile | undefined
-  availableFormats: BetFormat[]
   friendProfiles: UserProfile[]
   recentGames: GameTemplate[]
   gamesFiltered: GameTemplate[]
@@ -53,12 +46,6 @@ export type NewBetHandlers = {
   toggleParticipant: (friend: UserProfile) => void
   setParticipants: Dispatch<SetStateAction<UserProfile[]>>
   setStep: Dispatch<SetStateAction<NewBetStep>>
-  setSelectedFormat: Dispatch<SetStateAction<BetFormat | null>>
-  setBestOfCount: Dispatch<SetStateAction<3 | 5 | 7>>
-  setStakePerMatch: Dispatch<SetStateAction<number>>
-  setPokerMode: Dispatch<SetStateAction<PokerMode>>
-  setPokerStack: Dispatch<SetStateAction<number>>
-  setPokerRebuyStack: Dispatch<SetStateAction<number>>
   setStakeMode: Dispatch<SetStateAction<StakeMode>>
   setStakeAmount: Dispatch<SetStateAction<number>>
   setCustomStakes: Dispatch<SetStateAction<Record<string, number>>>

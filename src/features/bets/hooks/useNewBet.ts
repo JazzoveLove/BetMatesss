@@ -20,7 +20,7 @@ export function useNewBet() {
   return {
     step: st.step,
     state: {
-      currentUser: st.currentUser, selectedGame: st.selectedGame, participants: st.participants, selectedFormat: st.selectedFormat, bestOfCount: st.bestOfCount, stakeMode: st.stakeMode, stakeAmount: st.stakeAmount, customStakes: st.customStakes, pokerMode: st.pokerMode, pokerStack: st.pokerStack, pokerRebuyStack: st.pokerRebuyStack, stakePerMatch: st.stakePerMatch, searchQuery: st.searchQuery, searchFocused: st.searchFocused, preselectedFriend: st.preselectedFriend, ...derived, loading, betsError,
+      currentUser: st.currentUser, selectedGame: st.selectedGame, participants: st.participants, stakeMode: st.stakeMode, stakeAmount: st.stakeAmount, customStakes: st.customStakes, searchQuery: st.searchQuery, searchFocused: st.searchFocused, preselectedFriend: st.preselectedFriend, ...derived, loading, betsError,
     } as NewBetState,
     handlers,
   }

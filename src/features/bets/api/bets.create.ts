@@ -39,9 +39,6 @@ export async function createBet(
       format: params.format,
       stake_mode: params.stakeMode,
       status: 'pending',
-      ...(params.format === 'per_match'
-        ? { stake_per_match: Math.max(0, Number(params.stakePerMatch ?? 0)) }
-        : {}),
     })
     .select('id')
     .single()

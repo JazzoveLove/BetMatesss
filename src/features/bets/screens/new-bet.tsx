@@ -6,7 +6,6 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNewBet } from '@/features/bets/hooks/useNewBet'
 import { StepGame } from '@/features/bets/components/new-bet/StepGame'
-import { StepFormat } from '@/features/bets/components/new-bet/StepFormat'
 import { StepStake } from '@/features/bets/components/new-bet/StepStake'
 import type { RootStackParamList, TabParamList } from '@/navigation/types'
 import { styles } from './styles/new-bet.styles'
@@ -51,19 +50,14 @@ export default function NewBetScreen() {
             <Text style={[styles.progressLabel, step === 1 && styles.progressLabelActive]}>{step > 1 ? '1. Gra ✓' : '1. Gra'}</Text>
             <View style={[styles.progressBar, step > 1 ? styles.progressDone : step === 1 ? styles.progressActive : styles.progressIdle]} />
           </Pressable>
-          <Pressable style={styles.progressSegment} onPress={() => step > 2 && handlers.setStep(2)}>
-            <Text style={[styles.progressLabel, step === 2 && styles.progressLabelActive]}>{step > 2 ? '2. Format ✓' : '2. Format'}</Text>
-            <View style={[styles.progressBar, step > 2 ? styles.progressDone : step === 2 ? styles.progressActive : styles.progressIdle]} />
-          </Pressable>
           <View style={styles.progressSegment}>
-            <Text style={[styles.progressLabel, step === 3 && styles.progressLabelActive]}>3. Stawki</Text>
-            <View style={[styles.progressBar, step === 3 ? styles.progressActive : styles.progressIdle]} />
+            <Text style={[styles.progressLabel, step === 2 && styles.progressLabelActive]}>2. Stawki</Text>
+            <View style={[styles.progressBar, step === 2 ? styles.progressActive : styles.progressIdle]} />
           </View>
         </View>
       </View>
       {step === 1 && <StepGame state={state} onSelect={handlers.handleGameSelect} handlers={handlers} />}
-      {step === 2 && <StepFormat state={state} handlers={handlers} />}
-      {step === 3 && <StepStake state={state} handlers={handlers} />}
+      {step === 2 && <StepStake state={state} handlers={handlers} />}
     </SafeAreaView>
   )
 }

@@ -18,7 +18,6 @@ export function StepStake({ state, handlers }: Props) {
   const [submitAttempted, setSubmitAttempted] = useState(false)
   const {
     selectedGame,
-    selectedFormat,
     stakeMode,
     stakeAmount,
     customStakes,
@@ -70,7 +69,7 @@ export function StepStake({ state, handlers }: Props) {
 
   return (
     <View style={styles.container}>
-      <StepStakeChips selectedGame={selectedGame} selectedFormat={selectedFormat} handlers={handlers} />
+      <StepStakeChips selectedGame={selectedGame} handlers={handlers} />
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={Platform.OS === 'ios' ? 12 : 0}>
         <ScrollView style={{ flex: 1 }} bounces showsVerticalScrollIndicator={false} contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 16, paddingBottom: 100 }}>
@@ -100,7 +99,6 @@ export function StepStake({ state, handlers }: Props) {
             stakeAmount={stakeAmount}
             customStakes={customStakes}
             selectedGame={selectedGame}
-            selectedFormat={selectedFormat}
           />
         </ScrollView>
       </KeyboardAvoidingView>

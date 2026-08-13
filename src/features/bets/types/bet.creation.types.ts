@@ -6,7 +6,6 @@ export type BetFormat =
   | 'elimination'
   | 'session'
 export type StakeMode = 'none' | 'equal' | 'custom'
-export type PokerMode = 'winner_takes_all' | 'chip_count'
 
 export type NewBetParticipant = {
   id: string
@@ -17,16 +16,11 @@ export type NewBetParticipant = {
 export interface CreateBetParams {
   creatorId: string
   gameTemplate: string
-  format: BetFormat
+  format: 'single'
   stakeMode: StakeMode
   participants: NewBetParticipant[]
   globalStake: number
-  bestOfCount?: number
   stakeAmount?: number
-  stakePerMatch?: number
   customStakes?: Record<string, number>
-  pokerMode?: PokerMode
-  pokerStack?: number
-  pokerRebuyStack?: number
   participantIds?: string[]
 }

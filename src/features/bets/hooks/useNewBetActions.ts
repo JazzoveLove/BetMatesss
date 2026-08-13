@@ -21,28 +21,16 @@ export function useNewBetActions(
     setSelectedGame,
     participants,
     setParticipants,
-    setSelectedFormat,
-    setBestOfCount,
     setStakeMode,
     setStakeAmount,
     setCustomStakes,
-    setPokerMode,
-    setPokerStack,
-    setPokerRebuyStack,
-    setStakePerMatch,
     setSearchQuery,
     setSearchFocused,
     currentUser,
     selectedGame,
-    selectedFormat,
-    bestOfCount,
     stakeMode,
     stakeAmount,
     customStakes,
-    pokerMode,
-    pokerStack,
-    pokerRebuyStack,
-    stakePerMatch,
   } = state
 
   const submittingRef = useRef(false)
@@ -72,7 +60,7 @@ export function useNewBetActions(
 
   const handleSubmit = useCallback(async () => {
     if (submittingRef.current) return
-    if (!selectedGame || !selectedFormat || !currentUser) return
+    if (!selectedGame || !currentUser) return
 
     const stakeModeToSend: typeof stakeMode =
       stakeMode === 'none' && stakeAmount > 0 ? 'equal' : stakeMode
@@ -93,26 +81,18 @@ export function useNewBetActions(
       customStake: stakeModeToSend === 'custom' ? customStakes[player.id] ?? 0 : stakeAmount,
     }))
 
-    log('[handleSubmit] stakePerMatch:', stakePerMatch)
-    log('[handleSubmit] selectedFormat:', selectedFormat)
-
     submittingRef.current = true
     setIsSubmitting(true)
     try {
       await createBet({
         creatorId: currentUser.id,
         gameTemplate: selectedGame.id,
-        format: selectedFormat,
+        format: 'single',
         stakeMode: stakeModeToSend,
         participants: participantRows,
         globalStake: stakeModeToSend === 'equal' ? stakeAmount : 0,
-        bestOfCount: selectedFormat === 'best_of' ? bestOfCount : undefined,
-        stakePerMatch: selectedFormat === 'per_match' ? stakePerMatch : undefined,
         stakeAmount: stakeModeToSend === 'equal' ? stakeAmount : undefined,
         customStakes: stakeModeToSend === 'custom' ? customStakes : undefined,
-        pokerMode: selectedGame.id === 'poker' ? pokerMode : undefined,
-        pokerStack: selectedGame.id === 'poker' ? pokerStack : undefined,
-        pokerRebuyStack: selectedGame.id === 'poker' ? pokerRebuyStack : undefined,
         participantIds: participants.map(p => p.id),
       })
 
@@ -125,20 +105,14 @@ export function useNewBetActions(
       setIsSubmitting(false)
     }
   }, [
-    bestOfCount,
     createBet,
     currentUser,
     customStakes,
     navigation,
     participants,
-    pokerMode,
-    pokerRebuyStack,
-    pokerStack,
-    selectedFormat,
     selectedGame,
     stakeAmount,
     stakeMode,
-    stakePerMatch,
   ])
 
   const resetNewBet = useCallback(() => {
@@ -147,32 +121,20 @@ export function useNewBetActions(
     setStep(1)
     setSelectedGame(null)
     setParticipants([])
-    setSelectedFormat(null)
-    setBestOfCount(3)
     setStakeMode('equal')
     setStakeAmount(0)
-    setStakePerMatch(0)
     setCustomStakes({})
-    setPokerMode('winner_takes_all')
-    setPokerStack(3000)
-    setPokerRebuyStack(1500)
     setSearchQuery('')
     setSearchFocused(false)
   }, [
-    setBestOfCount,
     setCustomStakes,
     setIsSubmitting,
     setParticipants,
-    setPokerMode,
-    setPokerRebuyStack,
-    setPokerStack,
     setSearchFocused,
     setSearchQuery,
-    setSelectedFormat,
     setSelectedGame,
     setStakeAmount,
     setStakeMode,
-    setStakePerMatch,
     setStep,
   ])
 
@@ -185,12 +147,6 @@ export function useNewBetActions(
     toggleParticipant,
     setParticipants,
     setStep,
-    setSelectedFormat,
-    setBestOfCount,
-    setStakePerMatch,
-    setPokerMode,
-    setPokerStack,
-    setPokerRebuyStack,
     setStakeMode,
     setStakeAmount,
     setCustomStakes,

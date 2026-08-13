@@ -1,4 +1,4 @@
-import type { BetFormat, PokerMode, ResultType } from '@/features/bets/types/bet.types'
+import type { BetFormat, ResultType } from '@/features/bets/types/bet.types'
 
 export type WinCondition = 'higher_score' | 'most_legs' | 'most_sets' | 'winner_only' | 'chip_count'
 
@@ -16,8 +16,4 @@ export interface GameTemplate {
   supportsTeams: boolean
   supportsRematch: boolean
   customName?: boolean
-  pokerModes?: PokerMode[]
-  supportsRebuy?: boolean
-  defaultStack?: number
-  defaultRebuyStack?: number
 }
