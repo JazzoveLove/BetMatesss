@@ -7,6 +7,7 @@ export type DashboardActiveBetsSectionProps = {
   loading: boolean
   activeBets: ActiveDashboardBet[]
   onBetPress: (id: string) => void
+  onAvatarPress: (opponentId: string) => void
   onSeeAll: () => void
 }
 
@@ -14,6 +15,7 @@ export function DashboardActiveBetsSection({
   loading,
   activeBets,
   onBetPress,
+  onAvatarPress,
   onSeeAll,
 }: DashboardActiveBetsSectionProps) {
   return (
@@ -36,7 +38,12 @@ export function DashboardActiveBetsSection({
               <SkeletonBlock width={72} height={30} radius={8} />
             </View>
           ) : (
-            <ActiveBetCard key={item.id} item={item} onPress={() => onBetPress(item.id)} />
+            <ActiveBetCard
+              key={item.id}
+              item={item}
+              onPress={() => onBetPress(item.id)}
+              onAvatarPress={() => onAvatarPress(item.opponentId)}
+            />
           ),
         )}
       </View>

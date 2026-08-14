@@ -6,6 +6,7 @@ export type ActiveDashboardBet = {
   id: string
   opponentNick: string
   opponentInitials: string
+  opponentId: string
   game: string
   amount: number
   timeLabel: string
@@ -15,6 +16,7 @@ export type ActiveDashboardBet = {
 type Props = {
   item: ActiveDashboardBet
   onPress: () => void
+  onAvatarPress: () => void
 }
 
 function formatAmount(amount: number): string {
@@ -33,13 +35,19 @@ const STATUS_STYLES: Record<ActiveDashboardBet['status'], object> = {
   enter_result: { backgroundColor: Colors.accent, color: Colors.white },
 }
 
-export function ActiveBetCard({ item, onPress }: Props) {
+export function ActiveBetCard({ item, onPress, onAvatarPress }: Props) {
   const statusStyle = STATUS_STYLES[item.status] as { backgroundColor: string; color: string }
   return (
     <Pressable onPress={onPress} style={styles.card}>
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>{item.opponentInitials}</Text>
-      </View>
+      {item.opponentId ? (
+        <Pressable onPress={onAvatarPress} style={styles.avatar}>
+          <Text style={styles.avatarText}>{item.opponentInitials}</Text>
+        </Pressable>
+      ) : (
+        <View style={styles.avatar}>
+          <Text style={styles.avatarText}>{item.opponentInitials}</Text>
+        </View>
+      )}
       <View style={styles.center}>
         <Text style={styles.title} numberOfLines={1}>
           {item.game} vs {item.opponentNick}

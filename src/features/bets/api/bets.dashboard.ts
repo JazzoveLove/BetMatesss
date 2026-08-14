@@ -141,7 +141,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
     r.joinNick ?? (r.opponentUserId ? extraNicks[r.opponentUserId] : undefined) ?? 'Przeciwnik'
 
   const active: (ActiveBetItem & { timeLabel: string })[] = []
-  const completed: { id: string; gameTemplate: string; opponentNick: string; createdAt: string }[] = []
+  const completed: { id: string; gameTemplate: string; opponentNick: string; opponentId: string; createdAt: string }[] = []
   const seenBetIds = new Set<string>()
 
   for (const r of dashRows) {
@@ -162,6 +162,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
         stakeAmount: r.stakeAmount,
         odds: r.odds,
         opponentNick,
+        opponentId: r.opponentUserId ?? '',
         timeLabel: formatRelativeTime(bet.created_at),
       })
     } else if (bet.status === 'completed') {
@@ -169,6 +170,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
         id: bet.id,
         gameTemplate: bet.game_template,
         opponentNick,
+        opponentId: r.opponentUserId ?? '',
         createdAt: bet.created_at,
       })
     }
@@ -203,6 +205,7 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
       id: b.id,
       gameTemplate: b.gameTemplate,
       opponentNick: b.opponentNick,
+      opponentId: b.opponentId,
       profit,
       won: winnerByBetId.get(b.id) === userId,
       timeLabel: formatRelativeTime(b.createdAt),

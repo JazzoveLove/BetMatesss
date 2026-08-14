@@ -23,6 +23,7 @@ type ActiveDashboardBet = {
   id: string
   opponentNick: string
   opponentInitials: string
+  opponentId: string
   game: string
   amount: number
   timeLabel: string
@@ -33,6 +34,7 @@ type RecentDashboardMatch = {
   id: string
   opponentNick: string
   opponentInitials: string
+  opponentId: string
   game: string
   amount: number
   dateLabel: string
@@ -96,6 +98,7 @@ export function useDashboard() {
       id: item.id,
       opponentNick: item.opponentNick,
       opponentInitials: getInitials(item.opponentNick),
+      opponentId: item.opponentId,
       game: mapGame(item.gameTemplate),
       amount: item.stakeAmount,
       timeLabel: item.timeLabel,
@@ -109,6 +112,7 @@ export function useDashboard() {
       id: item.id,
       opponentNick: item.opponentNick,
       opponentInitials: getInitials(item.opponentNick),
+      opponentId: item.opponentId,
       game: mapGame(item.gameTemplate),
       amount: item.profit,
       dateLabel: item.timeLabel,

@@ -6,6 +6,7 @@ export type RecentDashboardMatch = {
   id: string
   opponentNick: string
   opponentInitials: string
+  opponentId: string
   game: string
   amount: number
   dateLabel: string
@@ -15,6 +16,7 @@ export type RecentDashboardMatch = {
 type Props = {
   item: RecentDashboardMatch
   onPress: () => void
+  onAvatarPress: () => void
 }
 
 function formatAmount(amount: number): string {
@@ -22,13 +24,19 @@ function formatAmount(amount: number): string {
   return `${prefix}${amount} j.`
 }
 
-export function RecentMatchCard({ item, onPress }: Props) {
+export function RecentMatchCard({ item, onPress, onAvatarPress }: Props) {
   const isWin = item.result === 'win'
   return (
     <Pressable onPress={onPress} style={styles.card}>
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>{item.opponentInitials}</Text>
-      </View>
+      {item.opponentId ? (
+        <Pressable onPress={onAvatarPress} style={styles.avatar}>
+          <Text style={styles.avatarText}>{item.opponentInitials}</Text>
+        </Pressable>
+      ) : (
+        <View style={styles.avatar}>
+          <Text style={styles.avatarText}>{item.opponentInitials}</Text>
+        </View>
+      )}
       <View style={styles.center}>
         <Text style={styles.title} numberOfLines={1}>
           {item.game} vs {item.opponentNick}

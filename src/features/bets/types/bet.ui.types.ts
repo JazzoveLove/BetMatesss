@@ -29,12 +29,14 @@ export type ActiveBetItem = {
   stakeAmount: number
   odds: number
   opponentNick: string
+  opponentId: string
 }
 
 export type RecentResult = {
   id: string
   gameTemplate: string
   opponentNick: string
+  opponentId: string
   profit: number
   won: boolean
 }

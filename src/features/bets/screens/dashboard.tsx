@@ -37,12 +37,14 @@ export default function DashboardScreen() {
             loading={loading}
             activeBets={activeBets}
             onBetPress={id => navigation.navigate('BetDetail', { betId: id })}
+            onAvatarPress={friendId => navigation.navigate('FriendDetail', { friendId })}
             onSeeAll={() => navigation.navigate('Historia', { initialFilter: 'active' })}
           />
           <DashboardRecentResultsSection
             loading={loading}
             recentMatches={recentMatches}
             onMatchPress={id => navigation.navigate('BetDetail', { betId: id })}
+            onAvatarPress={friendId => navigation.navigate('FriendDetail', { friendId })}
             onSeeAll={() => navigation.navigate('Historia')}
           />
         </ScrollView>

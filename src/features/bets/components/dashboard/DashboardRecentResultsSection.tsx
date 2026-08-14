@@ -7,6 +7,7 @@ export type DashboardRecentResultsSectionProps = {
   loading: boolean
   recentMatches: RecentDashboardMatch[]
   onMatchPress: (id: string) => void
+  onAvatarPress: (opponentId: string) => void
   onSeeAll: () => void
 }
 
@@ -14,6 +15,7 @@ export function DashboardRecentResultsSection({
   loading,
   recentMatches,
   onMatchPress,
+  onAvatarPress,
   onSeeAll,
 }: DashboardRecentResultsSectionProps) {
   return (
@@ -36,7 +38,12 @@ export function DashboardRecentResultsSection({
               <SkeletonBlock width={72} height={30} radius={20} />
             </View>
           ) : (
-            <RecentMatchCard key={item.id} item={item} onPress={() => onMatchPress(item.id)} />
+            <RecentMatchCard
+              key={item.id}
+              item={item}
+              onPress={() => onMatchPress(item.id)}
+              onAvatarPress={() => onAvatarPress(item.opponentId)}
+            />
           ),
         )}
       </View>
