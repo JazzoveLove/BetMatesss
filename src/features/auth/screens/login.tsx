@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Ionicons } from '@expo/vector-icons'
 import { useAuth } from '../hooks/useAuth'
 import { Colors } from '@/shared/constants/colors'
-import { styles } from '../styles/authScreen.styles'
+import { styles } from './styles/login.styles'
 
 type Props = { onGoToWelcome: () => void }
 
@@ -36,7 +36,7 @@ export default function LoginScreen({ onGoToWelcome }: Props) {
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView contentContainerStyle={styles.formContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <View style={{ flex: 1 }}>
             <Pressable
               onPress={onGoToWelcome}

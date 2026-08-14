@@ -1,6 +1,6 @@
 import { Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { styles } from '../styles/authScreen.styles'
+import { styles } from './styles/welcome.styles'
 
 type Props = { onGoToLogin: () => void; onGoToRegister: () => void }
 
