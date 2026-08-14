@@ -44,6 +44,8 @@ export default function WelcomeScreen({ onGoToLogin, onGoToRegister }: Props) {
             </Pressable>
           </View>
         </View>
+
+        <View style={styles.bottomSpacer} />
       </View>
     </SafeAreaView>
   )
