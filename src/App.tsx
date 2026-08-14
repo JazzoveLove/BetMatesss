@@ -9,6 +9,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider, useAuthContext } from '@/features/auth'
+import WelcomeScreen from '@/features/auth/screens/welcome'
 import LoginScreen from '@/features/auth/screens/login'
 import RegisterScreen from '@/features/auth/screens/register'
 import SetupProfileScreen from '@/features/auth/screens/setup-profile'
@@ -40,13 +41,21 @@ const Stack = createNativeStackNavigator()
 
 function AppContent() {
   const { appState, session, completeSetup } = useAuthContext()
-  const [authScreen, setAuthScreen] = useState<'login' | 'register'>('login')
+  const [authScreen, setAuthScreen] = useState<'welcome' | 'login' | 'register'>('welcome')
 
   if (appState === 'loading') return null
   if (appState === 'auth') {
+    if (authScreen === 'welcome') {
+      return (
+        <WelcomeScreen
+          onGoToLogin={() => setAuthScreen('login')}
+          onGoToRegister={() => setAuthScreen('register')}
+        />
+      )
+    }
     return authScreen === 'login'
-      ? <LoginScreen onGoToRegister={() => setAuthScreen('register')} />
-      : <RegisterScreen onGoToLogin={() => setAuthScreen('login')} />
+      ? <LoginScreen onGoToWelcome={() => setAuthScreen('welcome')} />
+      : <RegisterScreen onGoToWelcome={() => setAuthScreen('welcome')} />
   }
   if (appState === 'setup' && session) {
     return (
