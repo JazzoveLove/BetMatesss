@@ -44,14 +44,14 @@ export function BetActionsPanel({
     <View style={[styles.bottomActions, { paddingBottom }]}>
       {status === "pending" && !isCreator && (
         <View style={styles.gap8}>
-          <Pressable style={styles.primaryAction} onPress={onAccept}>
+          <Pressable style={styles.primaryAction} onPress={onAccept} disabled={accepting}>
             {accepting ? (
               <ActivityIndicator color={Colors.white} />
             ) : (
               <Text style={styles.primaryActionText}>Akceptuj zakład →</Text>
             )}
           </Pressable>
-          <Pressable style={styles.secondaryAction} onPress={onReject}>
+          <Pressable style={styles.secondaryAction} onPress={onReject} disabled={rejecting}>
             {rejecting ? (
               <ActivityIndicator color={Colors.red} />
             ) : (
@@ -72,6 +72,7 @@ export function BetActionsPanel({
           <Pressable
             style={[styles.primaryAction, { backgroundColor: Colors.green }]}
             onPress={onConfirm}
+            disabled={confirming}
           >
             {confirming ? (
               <ActivityIndicator color={Colors.white} />
@@ -79,7 +80,7 @@ export function BetActionsPanel({
               <Text style={styles.primaryActionText}>Potwierdź wynik ✓</Text>
             )}
           </Pressable>
-          <Pressable style={styles.secondaryAction} onPress={onDispute}>
+          <Pressable style={styles.secondaryAction} onPress={onDispute} disabled={disputing}>
             {disputing ? (
               <ActivityIndicator color={Colors.red} />
             ) : (
@@ -90,7 +91,7 @@ export function BetActionsPanel({
       )}
 
       {status === "disputed" && (
-        <Pressable style={styles.secondaryAction} onPress={onCancel}>
+        <Pressable style={styles.secondaryAction} onPress={onCancel} disabled={cancelling}>
           {cancelling ? (
             <ActivityIndicator color={Colors.red} />
           ) : (

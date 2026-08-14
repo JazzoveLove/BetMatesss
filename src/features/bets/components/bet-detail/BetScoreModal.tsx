@@ -146,6 +146,7 @@ export function BetScoreModal({
 
             <Pressable
               style={[styles.primaryAction, { marginTop: 16 }]}
+              disabled={resolving}
               onPress={async () => {
                 const payload = resolveModalResult(
                   resultType,
