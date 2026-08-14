@@ -1,10 +1,13 @@
 import { useCallback, useState } from 'react'
 import { Alert } from 'react-native'
+import { useQueryClient } from '@tanstack/react-query'
 import { useAuthContext } from '@/features/auth'
+import { queryKeys } from '@/shared/lib/queryKeys'
 import { recordPayment } from '../api'
 
 export function useSettlePayment(friendId: string, onSettled: () => void | Promise<void>) {
   const { userId } = useAuthContext()
+  const queryClient = useQueryClient()
   const [settling, setSettling] = useState(false)
 
   const settle = useCallback(
@@ -25,12 +28,14 @@ export function useSettlePayment(friendId: string, onSettled: () => void | Promi
           return false
         }
         await onSettled()
+        void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard(userId) })
+        void queryClient.invalidateQueries({ queryKey: queryKeys.profile(userId) })
         return true
       } finally {
         setSettling(false)
       }
     },
-    [userId, friendId, onSettled],
+    [userId, friendId, onSettled, queryClient],
   )
 
   return { settling, settle }

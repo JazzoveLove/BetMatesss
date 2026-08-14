@@ -55,36 +55,15 @@ export async function getFriendsBalanceLeaderboard(userId: string): Promise<Frie
   const friends = await getAcceptedFriendsList(userId)
   if (friends.length === 0) return []
 
-  const ids = friends.map(f => f.id)
-  const [debtorRes, creditorRes] = await Promise.all([
-    supabase.from('settlements').select('id, amount, debtor_id, creditor_id').in('debtor_id', ids),
-    supabase.from('settlements').select('id, amount, debtor_id, creditor_id').in('creditor_id', ids),
-  ])
-  if (debtorRes.error) throw debtorRes.error
-  if (creditorRes.error) throw creditorRes.error
+  const { data, error: balancesErr } = await supabase.rpc('get_balances_with_friends', { p_viewer: userId })
+  if (balancesErr) throw balancesErr
 
-  const seen = new Set<string>()
-  const rows: { amount: number; debtor_id: string; creditor_id: string }[] = []
-  for (const list of [debtorRes.data ?? [], creditorRes.data ?? []]) {
-    for (const r of list as { id: string; amount: number; debtor_id: string; creditor_id: string }[]) {
-      if (seen.has(r.id)) continue
-      seen.add(r.id)
-      rows.push({
-        amount: Number(r.amount),
-        debtor_id: r.debtor_id,
-        creditor_id: r.creditor_id,
-      })
-    }
-  }
-
-  const balanceById: Record<string, number> = Object.fromEntries(ids.map(i => [i, 0]))
-  for (const s of rows) {
-    if (ids.includes(s.creditor_id)) balanceById[s.creditor_id] += s.amount
-    if (ids.includes(s.debtor_id)) balanceById[s.debtor_id] -= s.amount
-  }
+  const balanceById = new Map<string, number>(
+    ((data ?? []) as { other_id: string; balance: number }[]).map(r => [r.other_id, Number(r.balance)]),
+  )
 
   return friends
-    .map(f => ({ id: f.id, nick: f.nick, balance: balanceById[f.id] ?? 0 }))
+    .map(f => ({ id: f.id, nick: f.nick, balance: balanceById.get(f.id) ?? 0 }))
     .sort((a, b) => b.balance - a.balance)
 }
 

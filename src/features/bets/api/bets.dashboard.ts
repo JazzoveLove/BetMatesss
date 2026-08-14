@@ -59,7 +59,7 @@ function formatRelativeTime(iso: string): string {
 }
 
 export async function getDashboardData(userId: string): Promise<DashboardData> {
-  const [profileRes, participationsRes, settlementsRes] = await Promise.all([
+  const [profileRes, participationsRes, settlementsRes, balancesRes] = await Promise.all([
     supabase.from('users').select('nick').eq('id', userId).single(),
     supabase
       .from('bet_participants')
@@ -75,10 +75,12 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
       .from('settlements')
       .select('id, amount, debtor_id, creditor_id, bet_id')
       .or(`debtor_id.eq.${userId},creditor_id.eq.${userId}`),
+    supabase.rpc('get_balances_with_friends', { p_viewer: userId }),
   ])
   if (profileRes.error) throw profileRes.error
   if (participationsRes.error) throw participationsRes.error
   if (settlementsRes.error) throw settlementsRes.error
+  if (balancesRes.error) throw balancesRes.error
 
   const nick = (profileRes.data as { nick: string })?.nick ?? 'Graczu'
 
@@ -90,11 +92,8 @@ export async function getDashboardData(userId: string): Promise<DashboardData> {
     bet_id: string
   }[]
 
-  const balance = settlements.reduce((acc, s) => {
-    if (s.creditor_id === userId) return acc + s.amount
-    if (s.debtor_id === userId) return acc - s.amount
-    return acc
-  }, 0)
+  const balances = (balancesRes.data ?? []) as { other_id: string; balance: number }[]
+  const balance = balances.reduce((acc, b) => acc + Number(b.balance), 0)
 
   const participations = (participationsRes.data ?? []) as unknown as {
     stake_amount: number | string

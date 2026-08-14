@@ -386,6 +386,13 @@ export type Database = {
       }
       delete_my_account: { Args: never; Returns: undefined }
       delete_payment: { Args: { p_payment_id: string }; Returns: undefined }
+      get_balances_with_friends: {
+        Args: { p_viewer: string }
+        Returns: {
+          balance: number
+          other_id: string
+        }[]
+      }
       get_pair_balance: {
         Args: { p_other: string; p_viewer: string }
         Returns: number
@@ -554,3 +561,5 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
+// God tablew chuj trzeba rozbić
