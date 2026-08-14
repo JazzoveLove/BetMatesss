@@ -1,52 +1,108 @@
-import { useState } from 'react'
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native'
+import { useRef, useState } from 'react'
+import {
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Ionicons } from '@expo/vector-icons'
 import { useAuth } from '../hooks/useAuth'
 import { Colors } from '@/shared/constants/colors'
 import { styles } from '../styles/authScreen.styles'
 
-type Props = { onGoToLogin: () => void }
+type Props = { onGoToWelcome: () => void }
 
-export default function RegisterScreen({ onGoToLogin }: Props) {
+export default function RegisterScreen({ onGoToWelcome }: Props) {
   const { signUp, loading } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [passwordVisible, setPasswordVisible] = useState(false)
+  const passwordRef = useRef<TextInput>(null)
 
   async function handleSignUp() {
     try {
       await signUp(email, password)
-      Alert.alert('Gotowe!', 'Sprawdź e-mail i potwierdź konto')
     } catch (error) {
       Alert.alert('Błąd', error instanceof Error ? error.message : 'Nie udało się zarejestrować')
     }
   }
 
   return (
-    <KeyboardAvoidingView style={styles.safe} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.title}>BetMates</Text>
-          <Text style={styles.subtitle}>Załóż konto</Text>
+    <SafeAreaView style={styles.safe}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView contentContainerStyle={styles.formContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+          <View style={{ flex: 1 }}>
+            <Pressable
+              onPress={onGoToWelcome}
+              style={({ pressed }) => [styles.backButton, pressed && { opacity: 0.85 }]}
+            >
+              <Text style={styles.backButtonText}>{'<'}</Text>
+            </Pressable>
 
-          <TextInput value={email} onChangeText={setEmail} placeholder="Email" placeholderTextColor={Colors.textMuted} autoCapitalize="none" keyboardType="email-address" style={styles.input} />
-          <TextInput value={password} onChangeText={setPassword} placeholder="Hasło" placeholderTextColor={Colors.textMuted} secureTextEntry style={styles.input} />
+            <Text style={styles.screenTitle}>Zarejestruj się</Text>
 
-          <Pressable
-            disabled={loading}
-            onPress={handleSignUp}
-            style={({ pressed }) => [styles.primaryButton, pressed && { opacity: 0.85 }]}
-          >
-            <Text style={styles.primaryButtonText}>{loading ? 'Ładowanie...' : 'Zarejestruj się'}</Text>
-          </Pressable>
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>Adres e-mail</Text>
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                placeholderTextColor={Colors.textMuted}
+                autoCapitalize="none"
+                autoComplete="email"
+                textContentType="emailAddress"
+                keyboardType="email-address"
+                returnKeyType="next"
+                onSubmitEditing={() => passwordRef.current?.focus()}
+                style={styles.input}
+              />
+            </View>
 
-          <Pressable
-            disabled={loading}
-            onPress={onGoToLogin}
-            style={({ pressed }) => [styles.secondaryButton, pressed && { opacity: 0.85 }]}
-          >
-            <Text style={styles.secondaryButtonText}>Masz już konto? Zaloguj się</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            <View style={styles.fieldGroup}>
+              <Text style={styles.fieldLabel}>Hasło</Text>
+              <View style={styles.passwordRow}>
+                <TextInput
+                  ref={passwordRef}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholderTextColor={Colors.textMuted}
+                  secureTextEntry={!passwordVisible}
+                  autoComplete="new-password"
+                  textContentType="newPassword"
+                  returnKeyType="done"
+                  onSubmitEditing={handleSignUp}
+                  style={[styles.input, styles.passwordInput]}
+                />
+                <Pressable
+                  onPress={() => setPasswordVisible(v => !v)}
+                  style={styles.eyeToggle}
+                  hitSlop={8}
+                >
+                  <Ionicons
+                    name={passwordVisible ? 'eye-off' : 'eye'}
+                    size={20}
+                    color={Colors.textMuted}
+                  />
+                </Pressable>
+              </View>
+              <Text style={styles.fieldHint}>Co najmniej 6 znaków</Text>
+            </View>
+
+            <Pressable
+              disabled={loading}
+              onPress={handleSignUp}
+              style={({ pressed }) => [styles.primaryButton, pressed && { opacity: 0.85 }]}
+            >
+              {loading ? <ActivityIndicator color={Colors.white} /> : <Text style={styles.primaryButtonText}>Dalej</Text>}
+            </Pressable>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   )
 }
