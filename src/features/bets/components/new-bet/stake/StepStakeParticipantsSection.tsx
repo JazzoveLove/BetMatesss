@@ -60,8 +60,14 @@ export function StepStakeParticipantsSection({ state, handlers }: StepStakeParti
       </View>
       {friendsFiltered.map((friend: UserProfile, index: number) => {
         const selected = selectedIds.has(friend.id)
+        const disabled = selectedIds.size > 0 && !selected
         return (
-          <Pressable key={friend.id} onPress={() => handlers.toggleParticipant(friend)} style={[styles.friendRow, selected && styles.friendRowSelected]}>
+          <Pressable
+            key={friend.id}
+            onPress={() => handlers.toggleParticipant(friend)}
+            disabled={disabled}
+            style={[styles.friendRow, selected && styles.friendRowSelected, disabled && styles.friendRowDisabled]}
+          >
             <View style={styles.friendAvatar}>
               <Text style={styles.friendAvatarText}>{initialsFromNick(friend.nick)}</Text>
             </View>
@@ -86,6 +92,9 @@ export function StepStakeParticipantsSection({ state, handlers }: StepStakeParti
           </Pressable>
         )
       })}
+      {selectedIds.size > 0 && (
+        <Text style={styles.participantsLimitHint}>Na razie zakłady są 1 na 1.</Text>
+      )}
     </>
   )
 }

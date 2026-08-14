@@ -43,7 +43,7 @@ export function useNewBetActions(
 
   const toggleParticipant = useCallback((friend: UserProfile) => {
     setParticipants(prev =>
-      prev.some(p => p.id === friend.id) ? prev.filter(p => p.id !== friend.id) : [...prev, friend],
+      prev.some(p => p.id === friend.id) ? prev.filter(p => p.id !== friend.id) : [friend],
     )
   }, [setParticipants])
 

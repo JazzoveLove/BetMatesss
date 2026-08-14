@@ -48,13 +48,11 @@ export function StepStakeFooter({
             <Text style={[styles.submitMain, !canSubmit && styles.submitMainDisabled]}>
               {participants.length === 0
                 ? 'Wybierz uczestników →'
-                : participants.length === 1
-                  ? `Wyślij zakład do ${firstNick} →`
-                  : `Wyślij do ${participants.length} osób →`}
+                : `Wyślij zakład do ${firstNick} →`}
             </Text>
             {participants.length > 0 && (
               <Text style={styles.submitSub}>
-                {participants.length === 1 ? `${firstNick} dostanie powiadomienie push` : `${participants.length} osoby dostaną powiadomienie push`}
+                {firstNick} zobaczy zaproszenie w zakładce Znajomi
               </Text>
             )}
           </>

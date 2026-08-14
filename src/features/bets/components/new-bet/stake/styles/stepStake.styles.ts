@@ -47,6 +47,7 @@ export const stepStakeStyles = StyleSheet.create({
     borderLeftWidth: 3,
     borderLeftColor: Colors.accent,
   },
+  friendRowDisabled: { opacity: 0.4 },
   friendAvatar: {
     width: 40,
     height: 40,
@@ -84,6 +85,13 @@ export const stepStakeStyles = StyleSheet.create({
   },
   checkboxSelected: { backgroundColor: Colors.accent, borderColor: Colors.accent },
   checkboxText: { color: Colors.white, fontSize: 12, fontWeight: '700' },
+  participantsLimitHint: {
+    marginTop: -2,
+    marginBottom: 12,
+    color: Colors.textMuted,
+    fontSize: 12,
+    textAlign: 'center',
+  },
   footer: {
     position: 'absolute',
     left: 0,
