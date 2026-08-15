@@ -81,7 +81,8 @@ export default function RegisterScreen({ onGoToWelcome }: Props) {
                 <Pressable
                   onPress={() => setPasswordVisible(v => !v)}
                   style={styles.eyeToggle}
-                  hitSlop={8}
+                  hitSlop={12}
+                  accessibilityLabel={passwordVisible ? 'Ukryj hasło' : 'Pokaż hasło'}
                 >
                   <Ionicons
                     name={passwordVisible ? 'eye-off' : 'eye'}

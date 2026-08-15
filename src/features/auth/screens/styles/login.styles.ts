@@ -27,7 +27,7 @@ export const styles = StyleSheet.create({
 
   passwordRow: { position: 'relative', justifyContent: 'center' },
   passwordInput: { paddingRight: 48 },
-  eyeToggle: { position: 'absolute', right: 14, height: '100%', justifyContent: 'center', alignItems: 'center' },
+  eyeToggle: { position: 'absolute', top: 0, bottom: 12, right: 14, justifyContent: 'center', alignItems: 'center' },
 
   primaryButton: { backgroundColor: Colors.accent, borderRadius: AuthTheme.pillRadius, height: AuthTheme.buttonHeight, marginBottom: 12, justifyContent: 'center', alignItems: 'center' },
   primaryButtonText: { color: Colors.white, fontSize: 16, fontWeight: '600' },
