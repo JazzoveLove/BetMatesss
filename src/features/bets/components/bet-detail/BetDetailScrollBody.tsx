@@ -107,7 +107,7 @@ export function BetDetailScrollBody({
           {status === "pending" &&
             `Zakład czeka na akceptację przez ${opponent.nick}.`}
           {status === "active" &&
-            `Po meczu wpisz wynik — ${opponent.nick} dostanie powiadomienie.`}
+            `Po meczu wpisz wynik — ${opponent.nick} zobaczy go w aplikacji.`}
           {status === "awaiting_confirmation" &&
             "Wynik wpisany. Potwierdź lub zgłoś spór."}
           {status === "completed" && "Mecz zakończony."}

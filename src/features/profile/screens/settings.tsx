@@ -9,7 +9,6 @@ import { styles } from './styles/settings.styles'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { RootStackParamList } from '@/navigation/types'
 
-// TODO: podmienić przed submitem do sklepów (dokumenty jeszcze nie istnieją — to Faza 3 planu wydania)
 const PRIVACY_POLICY_URL = 'https://betmates.app/privacy'
 const TERMS_URL = 'https://betmates.app/terms'
 

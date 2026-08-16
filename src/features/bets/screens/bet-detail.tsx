@@ -88,7 +88,7 @@ export default function BetDetailScreen() {
   const gameTemplate = GAME_TEMPLATES.find((g) => g.id === bet.gameTemplate);
   const resultType = gameTemplate?.resultType ?? "score";
   const confirmedResult =
-    status === "completed" && bet.format !== "per_match"
+    status === "completed"
       ? (bet.results.find((r) => r.confirmed) ?? null)
       : null;
   const scoreState = parsePendingScore(

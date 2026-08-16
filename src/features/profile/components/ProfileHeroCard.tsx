@@ -8,7 +8,6 @@ export type ProfileHeroCardProps = {
   losses: number
   disciplines: number
   friends: number
-  currentStreak: number
 }
 
 export function ProfileHeroCard({
@@ -16,7 +15,6 @@ export function ProfileHeroCard({
   losses,
   disciplines,
   friends,
-  currentStreak,
 }: ProfileHeroCardProps) {
   const winProgress = useRef(new Animated.Value(0)).current
   const hasMatches = wins + losses > 0
@@ -67,13 +65,6 @@ export function ProfileHeroCard({
         <View style={styles.heroMetric}>
           <Text style={styles.heroMetricValue}>{friends}</Text>
           <Text style={styles.heroMetricLabel}>ZNAJOMI</Text>
-        </View>
-        <View style={styles.heroDivider} />
-        <View style={styles.heroMetric}>
-          <Text style={styles.heroMetricValue}>
-            {currentStreak > 0 ? currentStreak : '—'}
-          </Text>
-          <Text style={styles.heroMetricLabel}>SERIA W.</Text>
         </View>
       </View>
     </View>

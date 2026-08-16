@@ -4,7 +4,7 @@ import { SPORT_GAME_TEMPLATES } from './sport'
 import type { GameTemplate } from './types'
 import { VIDEO_GAME_TEMPLATES } from './video'
 
-export type { GameTemplate, WinCondition } from './types'
+export type { GameTemplate } from './types'
 
 export const GAME_TEMPLATES: GameTemplate[] = [
   ...SPORT_GAME_TEMPLATES,

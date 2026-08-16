@@ -1,16 +1,18 @@
 import { Pressable, Text, View } from 'react-native'
 import { GAME_MAP } from '@/shared/constants/games'
+import { Colors } from '@/shared/constants/colors'
+import { hexToRgba } from '@/shared/utils/colors'
 import type { HistoryBadgeLabel, HistoryListItem as HistoryEntry } from '@/features/bets/types/bet.types'
 
 const BADGE_UI: Record<HistoryBadgeLabel, { text: string; color: string; bg: string }> = {
-  aktywny: { text: 'Aktywny', color: '#7F77DD', bg: '#7F77DD18' },
-  wygrany: { text: 'Wygrany', color: '#1D9E75', bg: '#1D9E7518' },
-  przegrany: { text: 'Przegrany', color: '#E24B4A', bg: '#E24B4A18' },
-  oczekuje: { text: 'Oczekuje', color: '#EF9F27', bg: '#EF9F2718' },
-  spór: { text: 'Spór', color: '#E24B4A', bg: '#E24B4A18' },
-  zakończony: { text: 'Zakończony', color: 'rgba(232,230,224,0.55)', bg: '#1e2330' },
-  odrzucony: { text: 'Odrzucony', color: '#E24B4A', bg: '#E24B4A18' },
-  anulowany: { text: 'Anulowany', color: 'rgba(232,230,224,0.55)', bg: '#1e2330' },
+  aktywny: { text: 'Aktywny', color: Colors.accentLight, bg: `${Colors.accentLight}18` },
+  wygrany: { text: 'Wygrany', color: Colors.green, bg: `${Colors.green}18` },
+  przegrany: { text: 'Przegrany', color: Colors.red, bg: `${Colors.red}18` },
+  oczekuje: { text: 'Oczekuje', color: Colors.amber, bg: `${Colors.amber}18` },
+  spór: { text: 'Spór', color: Colors.red, bg: `${Colors.red}18` },
+  zakończony: { text: 'Zakończony', color: hexToRgba(Colors.text, 0.55), bg: Colors.cardAlt },
+  odrzucony: { text: 'Odrzucony', color: Colors.red, bg: `${Colors.red}18` },
+  anulowany: { text: 'Anulowany', color: hexToRgba(Colors.text, 0.55), bg: Colors.cardAlt },
 }
 
 function formatHistoryDate(iso: string): string {
@@ -27,7 +29,7 @@ function formatHistoryDate(iso: string): string {
 
 function AmountText({ item }: { item: HistoryEntry }) {
   if (item.amountLabel === '—') {
-    return <Text style={{ fontSize: 15, fontWeight: '600', color: 'rgba(232,230,224,0.35)' }}>—</Text>
+    return <Text style={{ fontSize: 15, fontWeight: '600', color: hexToRgba(Colors.text, 0.35) }}>—</Text>
   }
   const positive = item.profit > 0
   const negative = item.profit < 0
@@ -36,7 +38,7 @@ function AmountText({ item }: { item: HistoryEntry }) {
       style={{
         fontSize: 15,
         fontWeight: '700',
-        color: positive ? '#1D9E75' : negative ? '#E24B4A' : 'rgba(232,230,224,0.5)',
+        color: positive ? Colors.green : negative ? Colors.red : Colors.textMuted,
       }}
     >
       {item.amountLabel}
@@ -57,10 +59,10 @@ export function HistoryListItem({ item, onPress }: HistoryListItemProps) {
       onPress={() => onPress(item.id)}
       style={({ pressed }) => [
         {
-          backgroundColor: '#181c24',
+          backgroundColor: Colors.card,
           borderRadius: 14,
           borderWidth: 0.5,
-          borderColor: '#1e2330',
+          borderColor: Colors.border,
           padding: 14,
           marginBottom: 10,
         },
@@ -70,11 +72,11 @@ export function HistoryListItem({ item, onPress }: HistoryListItemProps) {
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 10 }}>
         <Text style={{ fontSize: 28 }}>{game.emoji}</Text>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: '600', color: '#e8e6e0', marginBottom: 3 }}>{game.label}</Text>
-          <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)', marginBottom: 4 }}>
+          <Text style={{ fontSize: 15, fontWeight: '600', color: Colors.text, marginBottom: 3 }}>{game.label}</Text>
+          <Text style={{ fontSize: 13, color: Colors.textMuted, marginBottom: 4 }}>
             vs {item.opponentNick}
           </Text>
-          <Text style={{ fontSize: 12, color: 'rgba(232,230,224,0.35)' }}>{formatHistoryDate(item.createdAt)}</Text>
+          <Text style={{ fontSize: 12, color: hexToRgba(Colors.text, 0.35) }}>{formatHistoryDate(item.createdAt)}</Text>
         </View>
         <AmountText item={item} />
       </View>

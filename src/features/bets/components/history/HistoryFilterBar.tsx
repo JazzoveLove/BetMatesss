@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from 'react-native'
+import { Colors } from '@/shared/constants/colors'
 import type { HistoryFilter } from '@/features/bets/hooks/useHistory'
 
 export type HistoryFilterBarProps = {
@@ -26,9 +27,9 @@ export function HistoryFilterBar({ filter, onFilterChange }: HistoryFilterBarPro
                 paddingHorizontal: 14,
                 paddingVertical: 8,
                 borderRadius: 20,
-                backgroundColor: active ? '#534AB730' : '#181c24',
+                backgroundColor: active ? `${Colors.accent}30` : Colors.card,
                 borderWidth: 0.5,
-                borderColor: active ? '#534AB7' : '#1e2330',
+                borderColor: active ? Colors.accent : Colors.border,
               },
               pressed && { opacity: 0.85 },
             ]}
@@ -37,7 +38,7 @@ export function HistoryFilterBar({ filter, onFilterChange }: HistoryFilterBarPro
               style={{
                 fontSize: 13,
                 fontWeight: '600',
-                color: active ? '#7F77DD' : 'rgba(232,230,224,0.5)',
+                color: active ? Colors.accentLight : Colors.textMuted,
               }}
             >
               {label}

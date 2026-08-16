@@ -30,15 +30,3 @@ export function calcOdds(
   const total = allParticipants.reduce((s, p) => s + parseStakeAmount(p.customStake), 0)
   return participantStake > 0 ? Math.round((total / participantStake) * 100) / 100 : 0
 }
-
-export function calculateOdds(stakes: Record<string, number>): Record<string, number> {
-  const total = Object.values(stakes).reduce((sum, value) => sum + parseStakeAmount(value), 0)
-  const result: Record<string, number> = {}
-
-  Object.entries(stakes).forEach(([userId, stake]) => {
-    const normalizedStake = parseStakeAmount(stake)
-    result[userId] = normalizedStake > 0 ? total / normalizedStake : 0
-  })
-
-  return result
-}

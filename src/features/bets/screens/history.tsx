@@ -6,6 +6,7 @@ import { useHistory } from '@/features/bets/hooks/useHistory'
 import { HistoryFilterBar } from '@/features/bets/components/history/HistoryFilterBar'
 import { HistoryListItem } from '@/features/bets/components/history/HistoryListItem'
 import { HistoryEmptyState } from '@/features/bets/components/history/HistoryEmptyState'
+import { Colors } from '@/shared/constants/colors'
 import { styles } from './styles/history.styles'
 
 type HistoryStackParamList = {
@@ -24,28 +25,28 @@ export default function HistoryScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#0f1117', justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator color="#7F77DD" size="large" />
+      <View style={{ flex: 1, backgroundColor: Colors.background, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator color={Colors.accentLight} size="large" />
       </View>
     )
   }
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: '#0f1117' }}
+      style={{ flex: 1, backgroundColor: Colors.background }}
       contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          tintColor="#7F77DD"
-          colors={['#7F77DD']}
+          tintColor={Colors.accentLight}
+          colors={[Colors.accentLight]}
         />
       }
     >
-      <Text style={{ fontSize: 22, fontWeight: '700', color: '#e8e6e0', marginBottom: 6 }}>Historia</Text>
-      <Text style={{ fontSize: 13, color: 'rgba(232,230,224,0.5)', marginBottom: 20 }}>
+      <Text style={{ fontSize: 22, fontWeight: '700', color: Colors.text, marginBottom: 6 }}>Historia</Text>
+      <Text style={{ fontSize: 13, color: Colors.textMuted, marginBottom: 20 }}>
         Wszystkie zakłady, w których bierzesz udział
       </Text>
 

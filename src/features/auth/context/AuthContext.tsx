@@ -28,14 +28,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAppState('main')
   }, [])
 
-  async function checkProfile(sess: Session) {
-    setSession(sess)
-    const hasProfile = await AuthService.hasProfile(sess.user.id)
-    setAppState(hasProfile ? 'main' : 'setup')
-  }
-
   useEffect(() => {
+    let cancelled = false
+
+    async function checkProfile(sess: Session) {
+      if (cancelled) return
+      setSession(sess)
+      const hasProfile = await AuthService.hasProfile(sess.user.id)
+      if (cancelled) return
+      setAppState(hasProfile ? 'main' : 'setup')
+    }
+
     void AuthService.getSession().then(({ data: { session: initial } }) => {
+      if (cancelled) return
       if (!initial) {
         setAppState('auth')
         return
@@ -46,6 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = AuthService.onAuthStateChange((_event, sess) => {
+      if (cancelled) return
       if (!sess) {
         setSession(null)
         setAppState('auth')
@@ -54,7 +60,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       void checkProfile(sess)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      cancelled = true
+      subscription.unsubscribe()
+    }
   }, [])
 
   return (

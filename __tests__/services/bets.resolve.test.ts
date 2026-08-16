@@ -30,23 +30,7 @@ beforeEach(() => {
 })
 
 describe('submitBetResult', () => {
-  it('zwraca błąd dla zakładu w formacie per_match (nie wolno tą drogą)', async () => {
-    mockFrom.mockReturnValueOnce(chainResponse({ data: { format: 'per_match' }, error: null }))
-
-    const result = await submitBetResult({
-      betId: 'bet-1',
-      winnerId: 'user-1',
-      score: '11:7',
-      recordedBy: 'user-1',
-    })
-
-    expect(result.error).toBeDefined()
-    expect(mockFrom).toHaveBeenCalledTimes(1)
-  })
-
-  it('przechodzi dla zakładu w formacie single', async () => {
-    const betsSelectChain = chainResponse({ data: { format: 'single' }, error: null })
-    mockFrom.mockReturnValueOnce(betsSelectChain)
+  it('woła RPC submit_bet_result i zwraca pusty wynik przy sukcesie', async () => {
     mockRpc.mockResolvedValueOnce({ data: null, error: null })
 
     const result = await submitBetResult({
@@ -66,8 +50,6 @@ describe('submitBetResult', () => {
   })
 
   it('zwraca czytelny błąd, gdy RPC zgłasza konflikt unikalności (23505)', async () => {
-    const betsSelectChain = chainResponse({ data: { format: 'single' }, error: null })
-    mockFrom.mockReturnValueOnce(betsSelectChain)
     mockRpc.mockResolvedValueOnce({ data: null, error: { code: '23505', message: 'duplicate key' } })
 
     const result = await submitBetResult({
@@ -81,8 +63,6 @@ describe('submitBetResult', () => {
   })
 
   it('przekazuje surowy komunikat błędu RPC dla innych kodów', async () => {
-    const betsSelectChain = chainResponse({ data: { format: 'single' }, error: null })
-    mockFrom.mockReturnValueOnce(betsSelectChain)
     mockRpc.mockResolvedValueOnce({ data: null, error: { code: '500', message: 'boom' } })
 
     const result = await submitBetResult({

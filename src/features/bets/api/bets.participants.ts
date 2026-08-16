@@ -1,5 +1,4 @@
 import { supabase } from '@/shared/lib/supabase'
-import type { BetStatus } from '@/features/bets/types/bet.types'
 import { error } from '@/shared/utils/logger'
 
 
@@ -20,30 +19,6 @@ export async function searchUsers(
   }
   const excludeSet = new Set(excludeIds)
   return (data ?? []).filter(u => !excludeSet.has(u.id))
-}
-
-export async function updateBetStatus(id: string, status: BetStatus): Promise<void> {
-  const { error: updateError } = await supabase.from('bets').update({ status }).eq('id', id)
-  if (updateError) {
-    error('[updateBetStatus] supabase error', updateError)
-    throw updateError
-  }
-}
-
-export async function addParticipant(
-  betId: string,
-  userId: string,
-  stake: number,
-): Promise<{ error?: string }> {
-  const { error } = await supabase.from('bet_participants').insert({
-    bet_id: betId,
-    user_id: userId,
-    stake_amount: stake,
-    odds: 0,
-    role: 'participant',
-    confirmed: false,
-  })
-  return error ? { error: error.message } : {}
 }
 
 export async function confirmParticipation(betId: string, userId: string): Promise<{ error?: string }> {
