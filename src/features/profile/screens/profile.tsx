@@ -112,7 +112,6 @@ export default function ProfileScreen() {
                 losses={profile.stats.losses}
                 disciplines={profile.stats.disciplines}
                 friends={profile.stats.friends}
-                currentStreak={profile.stats.currentStreak}
               />
               {profile.moneyStats && (
                 <StatsSectionCard

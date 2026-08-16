@@ -29,17 +29,22 @@ export function useBets() {
     refreshBets().finally(() => setLoading(false))
   }, [refreshBets])
 
+  const betIdsKey = useMemo(() => bets.map(b => b.id).join(','), [bets])
+
   useEffect(() => {
+    if (!userId || !betIdsKey) return
+
     let cancelled = false
 
     const channel = supabase
-      .channel('bets-status-changes')
+      .channel(`bets-status-changes-${userId}`)
       .on(
         'postgres_changes',
         {
           event: 'UPDATE',
           schema: 'public',
           table: 'bets',
+          filter: `id=in.(${betIdsKey})`,
         },
         payload => {
           const prevStatus = (payload.old as { status?: string } | null)?.status
@@ -63,7 +68,7 @@ export function useBets() {
       cancelled = true
       supabase.removeChannel(channel)
     }
-  }, [refreshBets])
+  }, [userId, betIdsKey, refreshBets])
 
   const createBet = useCallback(async (params: CreateBetParams) => {
     setError(null)

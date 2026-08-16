@@ -50,59 +50,6 @@ export function useBetDetailActions(
     [bet, currentUserId, score, betId, loadData, setAction],
   )
 
-  const submitPerMatchResult = useCallback(
-    async (winnerId: string, scoreText: string, requireScore: boolean): Promise<boolean> => {
-      if (!bet || !currentUserId) return false
-      const trimmed = scoreText.trim()
-      if (requireScore && !trimmed) {
-        Alert.alert('Brak wyniku', 'Wpisz wynik meczu.')
-        return false
-      }
-      setAction('resolving', true)
-      try {
-        const result = await BetsService.submitPerMatchBetResult({
-          betId,
-          winnerId,
-          score: trimmed,
-          recordedBy: currentUserId,
-        })
-        if (result.error) {
-          Alert.alert('Błąd', result.error)
-          return false
-        }
-        await loadData()
-        return true
-      } catch (e) {
-        error('[useBetDetail] submitPerMatchResult', e)
-        Alert.alert('Błąd', 'Nie udało się zapisać wyniku meczu.')
-        return false
-      } finally {
-        setAction('resolving', false)
-      }
-    },
-    [bet, currentUserId, betId, loadData, setAction],
-  )
-
-  const completeMatchSession = useCallback(async (): Promise<boolean> => {
-    if (!currentUserId) return false
-    setAction('completingSession', true)
-    try {
-      const result = await BetsService.completePerMatchSession(betId, currentUserId)
-      if (result.error) {
-        Alert.alert('Błąd', result.error)
-        return false
-      }
-      await loadData()
-      return true
-    } catch (e) {
-      error('[useBetDetail] completeMatchSession', e)
-      Alert.alert('Błąd', 'Nie udało się zakończyć sesji.')
-      return false
-    } finally {
-      setAction('completingSession', false)
-    }
-  }, [betId, currentUserId, loadData, setAction])
-
   const confirmResult = useCallback(async () => {
     if (!bet || !currentUserId || !pendingResult) return
     setAction('confirming', true)
@@ -205,8 +152,6 @@ export function useBetDetailActions(
 
   return {
     submitResult,
-    submitPerMatchResult,
-    completeMatchSession,
     confirmResult,
     disputeResult,
     cancelBet,

@@ -44,9 +44,7 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
   if (bets.length === 0) return []
 
   const betIds = bets.map(b => b.id)
-  const nonPerMatchCompletedIds = bets
-    .filter(b => b.status === 'completed' && b.format !== 'per_match')
-    .map(b => b.id)
+  const completedIds = bets.filter(b => b.status === 'completed').map(b => b.id)
 
   const [partsRes, settlementsRes, resultsRes] = await Promise.all([
     supabase
@@ -54,8 +52,8 @@ export async function getHistoryForUser(userId: string): Promise<HistoryListItem
       .select('bet_id, user_id, users ( nick, deleted_at )')
       .in('bet_id', betIds),
     supabase.from('settlements').select('bet_id, debtor_id, creditor_id, amount').in('bet_id', betIds),
-    nonPerMatchCompletedIds.length > 0
-      ? supabase.from('bet_results').select('bet_id, winner_id').in('bet_id', nonPerMatchCompletedIds).eq('confirmed', true)
+    completedIds.length > 0
+      ? supabase.from('bet_results').select('bet_id, winner_id').in('bet_id', completedIds).eq('confirmed', true)
       : Promise.resolve({ data: [] as { bet_id: string; winner_id: string }[], error: null }),
   ])
   if (partsRes.error) throw partsRes.error

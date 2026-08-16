@@ -1,7 +1,6 @@
 
 import { supabase } from '@/shared/lib/supabase'
 import type { Settlement } from '@/features/bets/types/bet.types'
-import { log } from '@/shared/utils/logger'
 import { loadNicksByIds } from '@/features/friends'
 import type { SettlementListDbRow } from './settlements.types'
 
@@ -12,20 +11,16 @@ export async function getSettlements(betId: string): Promise<Settlement[]> {
     .eq('bet_id', betId)
 
   if (error) {
-    log('[getSettlements] query error', error)
     return []
   }
   if (!rows?.length) {
-    log('[getSettlements] no rows found')
     return []
   }
 
   const list = rows as SettlementListDbRow[]
 
   const userIds = [...new Set(list.flatMap(r => [r.debtor_id, r.creditor_id]))]
-  log('[getSettlements] loading nicks for userIds', userIds)
   const nickById = userIds.length > 0 ? await loadNicksByIds(userIds) : {}
-  log('[getSettlements] nickById', nickById)
 
   const result = list
     .map(s => {
@@ -41,6 +36,5 @@ export async function getSettlements(betId: string): Promise<Settlement[]> {
     })
     .filter(s => s.amount > 0)
 
-  log('[getSettlements] returning', result)
   return result
 }

@@ -75,7 +75,7 @@ export function FriendsScreenContent({
           nick: friendNick,
           initials: initials || "?",
           avatarUrl: avatar(id) ?? undefined,
-          totalMatches: 0, // Tu jest hardcodded to zmienic 
+          totalMatches: 0,
           wins: 0,
           losses: 0,
           winRate: 0,
@@ -183,5 +183,3 @@ export function FriendsScreenContent({
     </>
   );
 }
-
-//Za dlugi ten plik 

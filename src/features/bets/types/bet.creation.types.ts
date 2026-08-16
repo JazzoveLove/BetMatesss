@@ -1,10 +1,4 @@
-export type BetFormat =
-  | 'single'
-  | 'best_of'
-  | 'per_match'
-  | 'round_robin'
-  | 'elimination'
-  | 'session'
+export type BetFormat = 'single' | 'session'
 export type StakeMode = 'none' | 'equal' | 'custom'
 
 export type NewBetParticipant = {

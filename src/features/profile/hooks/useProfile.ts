@@ -21,7 +21,6 @@ export interface ProfileData {
     balance: number
     disciplines: number
     friends: number
-    currentStreak: number
     wins: number
     losses: number
   }
@@ -98,7 +97,6 @@ function mapToProfileData(row: ProfileScreenData): ProfileData {
       balance: row.stats.balance,
       disciplines: disciplineStats.length,
       friends: row.friendsRank.length,
-      currentStreak: 0,
       wins: overall.wins,
       losses: overall.losses,
     },

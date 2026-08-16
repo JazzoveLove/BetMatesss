@@ -58,11 +58,7 @@ export function StakeSummaryCard({
       <View style={styles.summaryRow}>
         <Text style={styles.summaryLabel}>Uczestnicy</Text>
         <Text style={styles.summaryParticipants}>
-          {participants.length === 0
-            ? 'Ty'
-            : participants.length === 1
-              ? `Ty + ${participants[0].nick}`
-              : `Ty + ${participants.length} osób`}
+          {participants.length === 0 ? 'Ty' : `Ty + ${participants[0].nick}`}
         </Text>
       </View>
     </View>

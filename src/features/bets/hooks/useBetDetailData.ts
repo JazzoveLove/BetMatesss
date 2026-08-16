@@ -12,7 +12,6 @@ export type ActionLoadingState = {
   cancelling: boolean
   accepting: boolean
   rejecting: boolean
-  completingSession: boolean
 }
 
 const initialActionLoading: ActionLoadingState = {
@@ -22,7 +21,6 @@ const initialActionLoading: ActionLoadingState = {
   cancelling: false,
   accepting: false,
   rejecting: false,
-  completingSession: false,
 }
 
 export function useBetDetailData(betId: string) {
@@ -56,7 +54,6 @@ export function useBetDetailData(betId: string) {
       let nextPending: PendingResult | null = null
       if (
         betData &&
-        betData.format !== 'per_match' &&
         (betData.status === 'awaiting_confirmation' || betData.status === 'disputed')
       ) {
         nextPending = await BetsService.getPendingBetResult(betId)

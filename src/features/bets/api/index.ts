@@ -2,8 +2,6 @@ import { createBet } from './bets.create'
 import {
   getBetDetail,
   submitBetResult,
-  submitPerMatchBetResult,
-  completePerMatchSession,
   getPendingBetResult,
   confirmBetResult,
   disputeBetResult,
@@ -12,8 +10,6 @@ import {
 } from './bets.resolve'
 import {
   searchUsers,
-  updateBetStatus,
-  addParticipant,
   confirmParticipation,
   rejectParticipation,
 } from './bets.participants'
@@ -34,8 +30,6 @@ export type { ParticipantRow } from '@/features/bets/types/bet.types'
 export {
   getBetDetail,
   submitBetResult,
-  submitPerMatchBetResult,
-  completePerMatchSession,
   getPendingBetResult,
   confirmBetResult,
   disputeBetResult,
@@ -46,8 +40,6 @@ export type { PendingBetResult } from './bets.resolve'
 
 export {
   searchUsers,
-  updateBetStatus,
-  addParticipant,
   confirmParticipation,
   rejectParticipation,
 } from './bets.participants'
@@ -75,14 +67,10 @@ export const BetsService = {
   getUserBetSummaries,
   getHistoryForUser,
   getProfileScreenData,
-  updateBetStatus,
-  addParticipant,
   confirmParticipation,
   rejectParticipation,
   getSettlements,
   submitBetResult,
-  submitPerMatchBetResult,
-  completePerMatchSession,
   getPendingBetResult,
   confirmBetResult,
   disputeBetResult,

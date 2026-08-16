@@ -23,7 +23,6 @@ export function useBetDetail(betId: string) {
     cancelling,
     accepting,
     rejecting,
-    completingSession,
   } =
     data.actionLoading
 
@@ -47,9 +46,6 @@ export function useBetDetail(betId: string) {
     rejectBet: actions.rejectBet,
     accepting,
     rejecting,
-    submitPerMatchResult: actions.submitPerMatchResult,
-    completeMatchSession: actions.completeMatchSession,
-    completingSession,
     reload: data.loadData,
   }
 }

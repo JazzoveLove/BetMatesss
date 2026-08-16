@@ -1,26 +1,4 @@
-import type { BetDetail, BetStatus, PendingResult, Settlement } from './bet.app.types'
-
-export type FormatViewProps = {
-  bet: BetDetail
-  currentUserId: string | null
-  settlements: Settlement[]
-  resolving: boolean
-  confirming: boolean
-  disputing: boolean
-  pendingResult: PendingResult | null
-  submitResult: (winnerId: string, score?: string) => Promise<boolean>
-  submitPerMatchResult: (winnerId: string, score: string, requireScore: boolean) => Promise<boolean>
-  completeMatchSession: () => Promise<boolean>
-  confirmResult: () => Promise<void>
-  disputeResult: () => Promise<void>
-  acceptBet: () => Promise<boolean>
-  rejectBet: () => Promise<boolean>
-  accepting: boolean
-  rejecting: boolean
-  completingSession: boolean
-  openResultModal: () => void
-  openPerMatchResultModal: () => void
-}
+import type { BetStatus } from './bet.app.types'
 
 export type ActiveBetItem = {
   id: string
