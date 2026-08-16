@@ -7,32 +7,12 @@ import { BetsService } from '@/features/bets/api'
 import { GAME_MAP } from '@/shared/constants/games'
 import { getInitials } from '@/shared/utils/text'
 import type { DashboardStats } from '@/features/bets/components/dashboard/DashboardStatsRow'
+import type { ActiveDashboardBet } from '@/features/bets/components/dashboard/ActiveBetCard'
+import type { RecentDashboardMatch } from '@/features/bets/components/dashboard/RecentMatchCard'
 
 type DashboardUser = {
   nick: string
   avatarInitials: string
-}
-
-type ActiveDashboardBet = {
-  id: string
-  opponentNick: string
-  opponentInitials: string
-  opponentId: string
-  game: string
-  amount: number
-  timeLabel: string
-  status: 'pending' | 'active' | 'enter_result'
-}
-
-type RecentDashboardMatch = {
-  id: string
-  opponentNick: string
-  opponentInitials: string
-  opponentId: string
-  game: string
-  amount: number
-  dateLabel: string
-  result: 'win' | 'loss'
 }
 
 function mapActiveStatus(rawStatus: string): 'pending' | 'active' | 'enter_result' {
