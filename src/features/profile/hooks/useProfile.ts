@@ -48,11 +48,16 @@ function getInitials(value: string): string {
   return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
 }
 
+const MONTHS_GENITIVE = [
+  'stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca',
+  'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia',
+]
+
 function formatMemberSince(dateInput: string | null): string {
   if (!dateInput) return '—'
   const date = new Date(dateInput)
   if (Number.isNaN(date.getTime())) return '—'
-  return new Intl.DateTimeFormat('pl-PL', { month: 'long', year: 'numeric' }).format(date)
+  return `${MONTHS_GENITIVE[date.getMonth()]} ${date.getFullYear()}`
 }
 
 function mapToProfileData(row: ProfileScreenData): ProfileData {

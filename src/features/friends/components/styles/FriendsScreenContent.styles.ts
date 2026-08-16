@@ -12,16 +12,6 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   headerTitle: { color: Colors.text, fontSize: 20, fontWeight: "700" },
-  headerActions: { flexDirection: "row", gap: 8 },
-  searchBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.cardAlt,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  searchBtnText: { color: Colors.textMuted, fontSize: 14 },
   sectionLabel: {
     marginLeft: 16,
     marginBottom: 12,

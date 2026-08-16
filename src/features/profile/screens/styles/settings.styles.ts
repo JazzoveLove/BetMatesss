@@ -38,6 +38,15 @@ export const styles = StyleSheet.create({
   linkRow: { paddingVertical: 12 },
   linkText: { color: Colors.accentLight, fontSize: 14, fontWeight: '600' },
   divider: { height: 1, backgroundColor: Colors.borderSoft },
+  logoutButton: {
+    backgroundColor: Colors.cardAlt,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.borderSoft,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  logoutButtonText: { color: Colors.text, fontSize: 14, fontWeight: '700' },
   deleteButton: {
     backgroundColor: hexToRgba(Colors.red, 0.12),
     borderRadius: 12,

@@ -2,27 +2,19 @@ import { useMemo, useState } from "react";
 import type { CompositeNavigationProp } from "@react-navigation/native";
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import {
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import type { EdgeInsets } from "react-native-safe-area-context";
 import type { Friendship } from "@/shared/types/user.types";
 import { Colors } from "@/shared/constants/colors";
 import { type BetInviteNotification } from "@/shared/lib/notifications.service";
 import type { RootStackParamList, TabParamList } from "@/navigation/types";
 import { FriendPendingCard } from "./FriendPendingCard";
-import { FriendStatCard } from "./FriendStatCard";
-import { FriendsSearchBar } from "./FriendsSearchBar";
+import { FriendRowCard } from "./FriendRowCard";
 import { InviteQrModal } from "./InviteQrModal";
 import { styles } from "./styles/FriendsScreenContent.styles";
 import { otherId } from "../utils/friendsFormatting";
 import { InviteCodeCard } from "./InviteCodeCard";
 import { AddFriendCard } from "./AddFriendCard";
-import { BetInvitesList } from "./BetInvitesList";
 
 type FriendsNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList, "Znajomi">,
@@ -66,8 +58,6 @@ export function FriendsScreenContent({
   acceptBetInvite,
   rejectBetInvite,
 }: FriendsScreenContentProps) {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchText, setSearchText] = useState("");
   const [qrOpen, setQrOpen] = useState(false);
 
   const activeFriends = useMemo(() => {
@@ -98,35 +88,32 @@ export function FriendsScreenContent({
       .sort((a, b) => b.totalMatches - a.totalMatches);
   }, [friends, me, nick, avatar]);
 
-  const pendingCards = useMemo(() => {
-    const incomingCards = incoming.map((row) => ({
+  const incomingCards = useMemo(() => {
+    return incoming.map((row) => ({
       id: row.id,
       nick: nick(row.userAId),
       status: "pending_received" as const,
       row,
     }));
-    const outgoingCards = outgoing.map((row) => ({
-      id: row.id,
-      nick: nick(row.userBId),
-      status: "pending_sent" as const,
-      row,
-    }));
-    return [...incomingCards, ...outgoingCards];
-  }, [incoming, nick, outgoing]);
+  }, [incoming, nick]);
 
-  const filteredActive = useMemo(() => {
-    const q = searchText.trim().toLowerCase();
-    if (!q) return activeFriends;
-    return activeFriends.filter((friend) =>
-      friend.nick.toLowerCase().includes(q),
-    );
-  }, [activeFriends, searchText]);
-
-  const filteredPending = useMemo(() => {
-    const q = searchText.trim().toLowerCase();
-    if (!q) return pendingCards;
-    return pendingCards.filter((item) => item.nick.toLowerCase().includes(q));
-  }, [pendingCards, searchText]);
+  const outgoingFriends = useMemo(() => {
+    return outgoing.map((row) => {
+      const id = me ? otherId(row, me) : "";
+      const friendNick = nick(id);
+      const words = friendNick.trim().split(/\s+/).filter(Boolean);
+      const initials =
+        words.length > 1
+          ? `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase()
+          : friendNick.slice(0, 2).toUpperCase();
+      return {
+        id: row.id,
+        nick: friendNick,
+        initials: initials || "?",
+        avatarUrl: avatar(id) ?? undefined,
+      };
+    });
+  }, [outgoing, me, nick, avatar]);
 
   return (
     <>
@@ -147,21 +134,7 @@ export function FriendsScreenContent({
       >
         <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
           <Text style={styles.headerTitle}>Znajomi</Text>
-          <View style={styles.headerActions}>
-            <Pressable
-              style={styles.searchBtn}
-              onPress={() => setSearchOpen((prev) => !prev)}
-            >
-              <Text style={styles.searchBtnText}>🔍</Text>
-            </Pressable>
-          </View>
         </View>
-
-        <FriendsSearchBar
-          open={searchOpen}
-          value={searchText}
-          onChangeText={setSearchText}
-        />
 
         <Text style={styles.sectionLabel}>Twój kod</Text>
         <InviteCodeCard me={me} myInviteCode={myInviteCode} onOpenQr={() => setQrOpen(true)} />
@@ -169,28 +142,35 @@ export function FriendsScreenContent({
         <Text style={styles.sectionLabel}>Dodaj znajomego</Text>
         <AddFriendCard me={me} onAdded={onRefresh} />
 
-        <BetInvitesList invites={betInvites} onAccept={acceptBetInvite} onReject={rejectBetInvite} />
+        {incomingCards.length > 0 && (
+          <>
+            <Text style={styles.sectionLabel}>Zaproszenia do Ciebie</Text>
+            <View style={styles.listWrap}>
+              {incomingCards.map((item) => (
+                <FriendPendingCard
+                  key={item.id}
+                  item={item}
+                  onAccept={accept}
+                  onReject={reject}
+                />
+              ))}
+            </View>
+          </>
+        )}
 
-        <Text style={styles.sectionLabel}>
-          Twoi rywale — posortowani po liczbie meczów
-        </Text>
+        <Text style={styles.sectionLabel}>Twoi znajomi</Text>
 
         <View style={styles.listWrap}>
-          {filteredActive.map((friend) => (
-            <FriendStatCard
+          {activeFriends.map((friend) => (
+            <FriendRowCard
               key={friend.id}
               friend={friend}
               onPress={() => navigation.navigate("FriendDetail", { friendId: friend.id })}
             />
           ))}
 
-          {filteredPending.map((item) => (
-            <FriendPendingCard
-              key={item.id}
-              item={item}
-              onAccept={accept}
-              onReject={reject}
-            />
+          {outgoingFriends.map((item) => (
+            <FriendRowCard key={item.id} friend={item} sent />
           ))}
         </View>
       </ScrollView>

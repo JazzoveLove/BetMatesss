@@ -4,7 +4,8 @@ import {
   createNavigationContainerRef,
   type ParamListBase,
 } from '@react-navigation/native'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import * as Linking from 'expo-linking'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -16,7 +17,12 @@ import SetupProfileScreen from '@/features/auth/screens/setup-profile'
 import BetDetailScreen from '@/features/bets/screens/bet-detail'
 import SettingsScreen from '@/features/profile/screens/settings'
 import FriendDetailScreen from '@/features/friend-detail/screens/friend-detail'
-import { hasPendingFriendInvites } from '@/features/friends'
+import {
+  enqueueFriendInvite,
+  extractFriendIdFromUrl,
+  hasPendingFriendInvites,
+  setNavigateToFriendsTab,
+} from '@/features/friends'
 import { AppErrorFallback } from '@/shared/components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
 
@@ -42,6 +48,35 @@ const Stack = createNativeStackNavigator()
 function AppContent() {
   const { appState, session, completeSetup } = useAuthContext()
   const [authScreen, setAuthScreen] = useState<'welcome' | 'login' | 'register'>('welcome')
+
+  useEffect(() => {
+    setNavigateToFriendsTab(() => {
+      if (navigationRef.isReady()) {
+        ;(navigationRef as { navigate: (a: string, b?: object) => void }).navigate(
+          'Tabs',
+          { screen: 'Znajomi' },
+        )
+      }
+    })
+    return () => setNavigateToFriendsTab(null)
+  }, [])
+
+  useEffect(() => {
+    function handleUrl(url: string) {
+      const friendId = extractFriendIdFromUrl(url)
+      if (friendId) {
+        enqueueFriendInvite(friendId)
+        return
+      }
+    }
+
+    Linking.getInitialURL().then((url) => {
+      if (url) handleUrl(url)
+    })
+
+    const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url))
+    return () => subscription.remove()
+  }, [])
 
   if (appState === 'loading') return null
   if (appState === 'auth') {

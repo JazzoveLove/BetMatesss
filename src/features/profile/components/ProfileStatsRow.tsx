@@ -18,15 +18,12 @@ export function ProfileStatsRow({
 }: ProfileStatsRowProps) {
   const balanceText = isBalanceVisible ? formatBalance(balance) : '—'
   const balanceColor = isBalanceVisible ? getBalanceColor(balance) : Colors.textMuted
+  const winRateText = totalMatches === 0 ? '—' : `${winRate}%`
 
   return (
     <View style={styles.statsRow}>
       <View style={styles.statCard}>
-        <Text style={styles.statValue}>{totalMatches}</Text>
-        <Text style={styles.statLabel}>MECZE</Text>
-      </View>
-      <View style={styles.statCard}>
-        <Text style={styles.statValue}>{winRate}%</Text>
+        <Text style={styles.statValue}>{winRateText}</Text>
         <Text style={styles.statLabel}>WIN RATE</Text>
       </View>
       <View style={styles.statCard}>
