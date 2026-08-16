@@ -26,10 +26,16 @@ import {
 import { AppErrorFallback } from '@/shared/components/AppErrorFallback'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
 
-Sentry.init({
-  dsn: 'https://6d2d5497873ff80878f5dc94e18b970f@o4511869702438912.ingest.de.sentry.io/4511869752705104',
-  tracesSampleRate: 1.0,
-})
+const SENTRY_DSN = process.env.EXPO_PUBLIC_SENTRY_DSN
+
+if (!SENTRY_DSN) {
+  console.warn('Brak zmiennej środowiskowej EXPO_PUBLIC_SENTRY_DSN — Sentry nie zostanie zainicjalizowany')
+} else {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    tracesSampleRate: 1.0,
+  })
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
