@@ -27,8 +27,10 @@ export function EditProfileModal({
             onChangeText={onChangeNick}
             placeholder="Nick"
             placeholderTextColor={Colors.textMuted}
+            maxLength={10}
             style={styles.input}
           />
+          <Text style={styles.counter}>{draftNick.length} / 10</Text>
           <View style={styles.modalActions}>
             <Pressable style={styles.modalAction} onPress={onCancel}>
               <Text style={styles.modalActionText}>Anuluj</Text>

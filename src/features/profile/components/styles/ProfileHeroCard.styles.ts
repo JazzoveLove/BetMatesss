@@ -23,6 +23,7 @@ export const styles = StyleSheet.create({
   },
   heroWin: { height: 5, backgroundColor: Colors.green },
   heroLoss: { backgroundColor: Colors.red },
+  heroNeutral: { flex: 1, backgroundColor: 'rgba(232,230,224,0.1)' },
   heroBottom: { marginTop: 16, flexDirection: 'row', alignItems: 'center' },
   heroMetric: { flex: 1, alignItems: 'center', gap: 4 },
   heroDivider: { width: 1, height: 36, backgroundColor: Colors.borderSoft },

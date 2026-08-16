@@ -13,7 +13,7 @@ import { ProfileSkeleton } from '@/features/profile/components/ProfileSkeleton'
 import { ProfileStatsRow } from '@/features/profile/components/ProfileStatsRow'
 import { StatsSectionCard } from '@/features/profile/components/StatsSectionCard'
 import { useProfile } from '@/features/profile/hooks/useProfile'
-import { useAuth, useAuthContext } from '@/features/auth'
+import { useAuthContext } from '@/features/auth'
 import { UsersService } from '@/shared/lib/users.service'
 import { nickSchema } from '@/shared/utils/user/nickValidation'
 import { getFirstValidationError } from '@/shared/utils/validation'
@@ -28,7 +28,6 @@ export default function ProfileScreen() {
   const navigation = useNavigation<Nav>()
   const { loading, refreshing, data, onRefresh } = useProfile()
   const { userId } = useAuthContext()
-  const { signOut } = useAuth()
   const queryClient = useQueryClient()
 
   const [editOpen, setEditOpen] = useState(false)
@@ -117,7 +116,7 @@ export default function ProfileScreen() {
               />
               {profile.moneyStats && (
                 <StatsSectionCard
-                  icon="🏆"
+                  icon="trophy-outline"
                   title="Zakłady na punkty"
                   wins={profile.moneyStats.wins}
                   losses={profile.moneyStats.losses}
@@ -127,7 +126,7 @@ export default function ProfileScreen() {
               )}
               {profile.friendlyStats && (
                 <StatsSectionCard
-                  icon="🤝"
+                  icon="people-outline"
                   title="Mecze towarzyskie"
                   wins={profile.friendlyStats.wins}
                   losses={profile.friendlyStats.losses}
@@ -141,7 +140,6 @@ export default function ProfileScreen() {
               <ProfileActions
                 onSettings={() => navigation.navigate('Settings')}
                 onEditProfile={openEditModal}
-                onLogout={() => void signOut()}
               />
             </>
           )}

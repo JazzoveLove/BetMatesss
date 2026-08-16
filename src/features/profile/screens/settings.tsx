@@ -20,6 +20,13 @@ export default function SettingsScreen() {
   const { signOut } = useAuth()
   const [deleting, setDeleting] = useState(false)
 
+  function handleLogout() {
+    Alert.alert('Wylogowanie', 'Czy na pewno chcesz się wylogować?', [
+      { text: 'Anuluj', style: 'cancel' },
+      { text: 'Wyloguj', style: 'destructive', onPress: () => void signOut() },
+    ])
+  }
+
   function handleDeleteAccount() {
     Alert.alert(
       'Usunąć konto?',
@@ -75,6 +82,12 @@ export default function SettingsScreen() {
             <View style={styles.divider} />
             <Pressable style={styles.linkRow} onPress={() => void Linking.openURL(TERMS_URL)}>
               <Text style={styles.linkText}>Regulamin</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.card}>
+            <Pressable style={styles.logoutButton} onPress={handleLogout}>
+              <Text style={styles.logoutButtonText}>Wyloguj</Text>
             </Pressable>
           </View>
 

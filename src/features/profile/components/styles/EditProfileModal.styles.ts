@@ -27,6 +27,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 14,
   },
+  counter: { fontSize: 12, color: Colors.textFaint, textAlign: 'right', marginTop: 6 },
   modalActions: { marginTop: 12, flexDirection: 'row', gap: 8 },
   modalAction: {
     flex: 1,

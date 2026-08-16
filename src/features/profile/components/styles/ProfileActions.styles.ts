@@ -1,11 +1,14 @@
 import { StyleSheet } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
-import { hexToRgba } from '@/shared/utils/colors'
 
 export const styles = StyleSheet.create({
-  actionsRow: { marginHorizontal: 16, marginTop: 16, marginBottom: 32, flexDirection: 'row', gap: 8 },
+  actionsWrap: { marginHorizontal: 16, marginTop: 16, marginBottom: 32 },
+  actionsRow: { flexDirection: 'row', gap: 8 },
   actionButton: {
     flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
     backgroundColor: Colors.card,
     borderRadius: 12,
     borderWidth: 1,
@@ -15,14 +18,4 @@ export const styles = StyleSheet.create({
   },
   actionText: { color: Colors.text, fontSize: 13, fontWeight: '700', textAlign: 'center' },
   actionEditText: { color: Colors.accentLight, fontSize: 13, fontWeight: '700', textAlign: 'center' },
-  logoutButton: {
-    flex: 1,
-    backgroundColor: hexToRgba(Colors.red, 0.12),
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: hexToRgba(Colors.red, 0.3),
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  logoutText: { color: Colors.red, fontSize: 13, fontWeight: '700', textAlign: 'center' },
 })

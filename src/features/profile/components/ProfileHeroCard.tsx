@@ -19,6 +19,7 @@ export function ProfileHeroCard({
   currentStreak,
 }: ProfileHeroCardProps) {
   const winProgress = useRef(new Animated.Value(0)).current
+  const hasMatches = wins + losses > 0
   const totalWL = Math.max(1, wins + losses)
   const winRatio = wins / totalWL
 
@@ -38,18 +39,24 @@ export function ProfileHeroCard({
       </Text>
       <Text style={styles.heroLabel}>WSZYSTKIE MECZE ŁĄCZNIE</Text>
       <View style={styles.heroTrack}>
-        <Animated.View
-          style={[
-            styles.heroWin,
-            {
-              width: winProgress.interpolate({
-                inputRange: [0, 1],
-                outputRange: ['0%', '100%'],
-              }),
-            },
-          ]}
-        />
-        <View style={[styles.heroLoss, { flex: Math.max(0, 1 - winRatio) }]} />
+        {hasMatches ? (
+          <>
+            <Animated.View
+              style={[
+                styles.heroWin,
+                {
+                  width: winProgress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0%', '100%'],
+                  }),
+                },
+              ]}
+            />
+            <View style={[styles.heroLoss, { flex: Math.max(0, 1 - winRatio) }]} />
+          </>
+        ) : (
+          <View style={styles.heroNeutral} />
+        )}
       </View>
       <View style={styles.heroBottom}>
         <View style={styles.heroMetric}>
