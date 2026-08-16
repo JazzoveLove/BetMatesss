@@ -1,6 +1,7 @@
 import { Animated, Text, View } from 'react-native'
 import { useEffect, useRef } from 'react'
 import { Colors } from '@/shared/constants/colors'
+import { formatBalance, getBalanceColor } from '@/shared/utils/money'
 import { SkeletonBlock } from './SkeletonBlock'
 import { styles } from './styles/DashboardStatsRow.styles'
 
@@ -14,11 +15,6 @@ export type DashboardStats = {
 
 export type DashboardStatsRowProps = {
   stats: DashboardStats
-}
-
-function formatCurrency(value: number): string {
-  const prefix = value > 0 ? '+' : ''
-  return `${prefix}${value} j.`
 }
 
 export function DashboardStatsRowSkeleton() {
@@ -84,8 +80,8 @@ export function DashboardStatsRow({ stats }: DashboardStatsRowProps) {
         </View>
         <View style={styles.metricDivider} />
         <View style={styles.metricCol}>
-          <Text style={[styles.metricValue, { color: stats.balance >= 0 ? Colors.green : Colors.red }]}>
-            {formatCurrency(stats.balance)}
+          <Text style={[styles.metricValue, { color: getBalanceColor(stats.balance) }]}>
+            {formatBalance(stats.balance)}
           </Text>
           <Text style={styles.metricLabel}>BILANS</Text>
         </View>

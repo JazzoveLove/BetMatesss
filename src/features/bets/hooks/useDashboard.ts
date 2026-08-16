@@ -5,18 +5,12 @@ import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '@/features/bets/api'
 import { GAME_MAP } from '@/shared/constants/games'
+import { getInitials } from '@/shared/utils/text'
+import type { DashboardStats } from '@/features/bets/components/dashboard/DashboardStatsRow'
 
 type DashboardUser = {
   nick: string
   avatarInitials: string
-}
-
-type DashboardStats = {
-  wins: number
-  losses: number
-  winRate: number
-  totalMatches: number
-  balance: number
 }
 
 type ActiveDashboardBet = {
@@ -39,13 +33,6 @@ type RecentDashboardMatch = {
   amount: number
   dateLabel: string
   result: 'win' | 'loss'
-}
-
-function getInitials(nick: string): string {
-  const parts = nick.trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return '?'
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
 }
 
 function mapActiveStatus(rawStatus: string): 'pending' | 'active' | 'enter_result' {

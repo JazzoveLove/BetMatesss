@@ -3,17 +3,11 @@ import { Pressable, Text, TextInput, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
 import type { NewBetHandlers, NewBetState } from '@/features/bets/hooks/useNewBet'
 import type { UserProfile } from '@/shared/types/user.types'
+import { getInitials as initialsFromNick } from '@/shared/utils/text'
 import { stakeStepStyles } from './styles/stakeStyles'
 import { stepStakeStyles as styles } from './styles/stepStake.styles'
 
 const ACTIVITY_LABELS = ['wczoraj', '3 dni temu', 'tydzień temu'] as const
-
-function initialsFromNick(nick: string): string {
-  const parts = nick.trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return '?'
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
-}
 
 export type StepStakeParticipantsSectionProps = {
   state: Pick<NewBetState, 'participants' | 'friendProfiles' | 'customStakes' | 'stakeMode'>

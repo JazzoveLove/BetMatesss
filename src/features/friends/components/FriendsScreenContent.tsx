@@ -7,6 +7,7 @@ import type { EdgeInsets } from "react-native-safe-area-context";
 import type { Friendship } from "@/features/friends/types/friendship.types";
 import { Colors } from "@/shared/constants/colors";
 import { type BetInviteNotification } from "@/shared/lib/notifications.service";
+import { getInitials } from "@/shared/utils/text";
 import type { RootStackParamList, TabParamList } from "@/navigation/types";
 import { FriendPendingCard } from "./FriendPendingCard";
 import { FriendRowCard } from "./FriendRowCard";
@@ -65,15 +66,10 @@ export function FriendsScreenContent({
       .map((row) => {
         const id = me ? otherId(row, me) : "";
         const friendNick = nick(id);
-        const words = friendNick.trim().split(/\s+/).filter(Boolean);
-        const initials =
-          words.length > 1
-            ? `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase()
-            : friendNick.slice(0, 2).toUpperCase();
         return {
           id,
           nick: friendNick,
-          initials: initials || "?",
+          initials: getInitials(friendNick),
           avatarUrl: avatar(id) ?? undefined,
           totalMatches: 0,
           wins: 0,
@@ -101,15 +97,10 @@ export function FriendsScreenContent({
     return outgoing.map((row) => {
       const id = me ? otherId(row, me) : "";
       const friendNick = nick(id);
-      const words = friendNick.trim().split(/\s+/).filter(Boolean);
-      const initials =
-        words.length > 1
-          ? `${words[0][0]}${words[words.length - 1][0]}`.toUpperCase()
-          : friendNick.slice(0, 2).toUpperCase();
       return {
         id: row.id,
         nick: friendNick,
-        initials: initials || "?",
+        initials: getInitials(friendNick),
         avatarUrl: avatar(id) ?? undefined,
       };
     });

@@ -25,20 +25,3 @@ export const friendRowSharedStyles = StyleSheet.create({
   friendNick: { color: Colors.text, fontSize: 15, fontWeight: '700' },
   friendSub: { marginTop: 4, color: Colors.textMuted, fontSize: 12 },
 })
-
-export const styles = StyleSheet.create({
-  winRate: { fontSize: 15, fontWeight: '700' },
-  progressTrack: {
-    marginTop: 8,
-    height: 4,
-    borderRadius: 2,
-    overflow: 'hidden',
-    backgroundColor: Colors.cardAlt,
-    flexDirection: 'row',
-  },
-  progressWin: { height: 4, backgroundColor: Colors.green },
-  progressLoss: { backgroundColor: Colors.cardAlt },
-  statsRow: { marginTop: 4, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  metaText: { color: Colors.textMuted, fontSize: 11 },
-  balanceText: { fontSize: 13, fontWeight: '700' },
-})

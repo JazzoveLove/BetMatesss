@@ -5,7 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '@/shared/constants/colors'
 import { GAME_MAP } from '@/shared/constants/games'
-import { formatBalance, balanceHighlight } from '@/features/settlements/utils/settlements'
+import { formatBalance, getBalanceColor } from '@/shared/utils/money'
 import { useFriendDetail } from '@/features/friend-detail/hooks/useFriendDetail'
 import type { RootStackParamList } from '@/navigation/types'
 import type { UserProfile } from '@/shared/types/user.types'
@@ -18,12 +18,6 @@ import { useSettlePayment } from '@/features/friend-detail/hooks/useSettlePaymen
 
 type FriendDetailRouteProp = RouteProp<RootStackParamList, 'FriendDetail'>
 type Nav = NativeStackNavigationProp<RootStackParamList>
-
-const highlightColor = {
-  positive: Colors.green,
-  negative: Colors.red,
-  neutral: Colors.textMuted,
-} as const
 
 export default function FriendDetailScreen() {
   const navigation = useNavigation<Nav>()
@@ -75,7 +69,7 @@ export default function FriendDetailScreen() {
 
         <View style={styles.balanceCard}>
           <Text style={styles.balanceLabel}>SALDO</Text>
-          <Text style={[styles.balanceValue, { color: highlightColor[balanceHighlight(balance)] }]}>
+          <Text style={[styles.balanceValue, { color: getBalanceColor(balance) }]}>
             {formatBalance(balance)}
           </Text>
         </View>

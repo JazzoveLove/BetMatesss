@@ -5,6 +5,7 @@ import { useAuthContext } from '@/features/auth'
 import { queryKeys } from '@/shared/lib/queryKeys'
 import { BetsService } from '@/features/bets'
 import type { ProfileScreenData, ProfileStatSection } from '@/features/bets/types/bet.types'
+import { getInitials } from '@/shared/utils/text'
 
 export interface ProfileData {
   user: {
@@ -38,13 +39,6 @@ export interface ProfileData {
   moneyStats: ProfileStatSection | null
   friendlyStats: ProfileStatSection | null
   loading: boolean
-}
-
-function getInitials(value: string): string {
-  const parts = value.trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return '?'
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
 }
 
 const MONTHS_GENITIVE = [

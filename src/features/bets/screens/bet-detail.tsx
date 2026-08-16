@@ -16,6 +16,7 @@ import { BetDetailScrollBody } from "@/features/bets/components/bet-detail/BetDe
 import { BetScoreModal, parsePendingScore } from "@/features/bets/components/bet-detail/BetScoreModal";
 import { Colors } from "@/shared/constants/colors";
 import { GAME_MAP, GAME_TEMPLATES } from "@/shared/constants/games";
+import { getInitials as initials } from "@/shared/utils/text";
 import { useBetDetail } from "@/features/bets/hooks/useBetDetail";
 import type { RootStackParamList } from "@/navigation/types";
 import type { BetStatus } from "@/features/bets/types/bet.types";
@@ -157,13 +158,6 @@ export default function BetDetailScreen() {
       />
     </SafeAreaView>
   );
-}
-
-function initials(value: string): string {
-  const parts = value.trim().split(/\s+/).filter(Boolean);
-  if (!parts.length) return "?";
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
-  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
 function getStatusBadge(status: BetStatus) {
