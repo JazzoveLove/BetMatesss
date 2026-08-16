@@ -29,7 +29,6 @@ export type BetSummary = {
   stakeMode: StakeMode
   status: BetStatus
   createdAt: string
-  stakePerMatch?: number
   rejectedAt?: string
 }
 
@@ -50,7 +49,6 @@ export type BetDetail = {
   stakeMode: StakeMode
   status: BetStatus
   createdAt: string
-  stakePerMatch?: number
   participants: BetParticipant[]
   results: BetResultRow[]
 }

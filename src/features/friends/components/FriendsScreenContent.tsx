@@ -4,7 +4,7 @@ import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import type { EdgeInsets } from "react-native-safe-area-context";
-import type { Friendship } from "@/shared/types/user.types";
+import type { Friendship } from "@/features/friends/types/friendship.types";
 import { Colors } from "@/shared/constants/colors";
 import { type BetInviteNotification } from "@/shared/lib/notifications.service";
 import type { RootStackParamList, TabParamList } from "@/navigation/types";

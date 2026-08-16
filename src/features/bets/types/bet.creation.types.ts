@@ -1,4 +1,4 @@
-export type BetFormat = 'single' | 'session'
+export type BetFormat = 'single'
 export type StakeMode = 'none' | 'equal' | 'custom'
 
 export type NewBetParticipant = {

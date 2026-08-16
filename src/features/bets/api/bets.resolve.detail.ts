@@ -13,7 +13,6 @@ type BetDetailRow = {
   stake_mode: StakeMode
   status: BetStatus
   created_at: string
-  stake_per_match: number | null
   bet_participants: {
     user_id: string
     stake_amount: number
@@ -35,7 +34,7 @@ export async function getBetDetail(betId: string): Promise<BetDetail | null> {
   const { data, error } = await supabase
     .from('bets')
     .select(`
-      id, creator_id, game_template, format, stake_mode, status, created_at, stake_per_match,
+      id, creator_id, game_template, format, stake_mode, status, created_at,
       bet_participants (
         user_id, stake_amount, odds, role, confirmed,
         users ( nick, deleted_at )
@@ -85,9 +84,6 @@ export async function getBetDetail(betId: string): Promise<BetDetail | null> {
       confirmed: !!r.confirmed,
     }))
 
-  const stakePm = betData.stake_per_match
-  const stakePerMatch = stakePm != null ? Number(stakePm) : undefined
-
   return {
     id: betData.id,
     creatorId: String(betData.creator_id ?? ''),
@@ -96,7 +92,6 @@ export async function getBetDetail(betId: string): Promise<BetDetail | null> {
     stakeMode: betData.stake_mode,
     status: betData.status,
     createdAt: betData.created_at,
-    stakePerMatch: Number.isFinite(stakePerMatch) ? stakePerMatch : undefined,
     participants,
     results,
   }

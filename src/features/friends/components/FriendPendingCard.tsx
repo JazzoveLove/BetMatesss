@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from 'react-native'
-import type { Friendship } from '@/shared/types/user.types'
+import type { Friendship } from '@/features/friends/types/friendship.types'
 import { styles } from './styles/FriendPendingCard.styles'
 
 export type FriendPendingCardItem = {

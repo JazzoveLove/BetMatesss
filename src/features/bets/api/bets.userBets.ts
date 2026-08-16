@@ -10,7 +10,6 @@ function mapBetRowToBetSummary(row: BetRow): BetSummary {
     stakeMode: row.stake_mode,
     status: row.status,
     createdAt: row.created_at,
-    stakePerMatch: row.stake_per_match ?? undefined,
     rejectedAt: row.rejected_at ?? undefined,
   }
 }

@@ -2,7 +2,8 @@
 import { useMemo } from 'react'
 import { GAME_TEMPLATES, type GameTemplate } from '@/shared/constants/games'
 import type { BetSummary } from '@/features/bets/types/bet.types'
-import type { Friendship, UserProfile } from '@/shared/types/user.types'
+import type { Friendship } from '@/features/friends/types/friendship.types'
+import type { UserProfile } from '@/shared/types/user.types'
 import type { UseNewBetStateReturn } from './useNewBetState'
 
 export type UseNewBetDerivedReturn = {

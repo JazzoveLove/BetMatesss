@@ -1,6 +1,6 @@
 import { supabase } from '@/shared/lib/supabase'
 import { DELETED_USER_NICK } from '@/shared/constants/user/deletedUser'
-import type { Friendship, FriendshipRow } from '@/shared/types/user.types'
+import type { Friendship, FriendshipRow } from '@/features/friends/types/friendship.types'
 
 export type FriendshipsData = {
   incoming: Friendship[]

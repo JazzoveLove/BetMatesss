@@ -1,4 +1,4 @@
-import type { Friendship } from '@/shared/types/user.types'
+import type { Friendship } from '@/features/friends/types/friendship.types'
 
 export function otherId(row: Friendship, me: string): string {
   return row.userAId === me ? row.userBId : row.userAId

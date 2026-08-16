@@ -17,6 +17,6 @@ export {
   handleFriendInvite,
   searchUsersByNick,
 } from './friends.invite'
-export type { FriendInviteResult } from '@/shared/types/user.types'
+export type { FriendInviteResult } from '@/features/friends/types/friendship.types'
 
 export { subscribeFriendshipChanges } from './friends.realtime'
