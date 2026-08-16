@@ -123,19 +123,3 @@ export async function handleFriendInvite(
 
   return { type: 'sent' }
 }
-
-export async function searchUsersByNick(
-  query: string,
-  excludeId: string,
-): Promise<{ id: string; nick: string }[]> {
-  if (query.trim().length < 2) return []
-  const { data, error } = await supabase
-    .from('users')
-    .select('id, nick')
-    .ilike('nick', `%${query.trim()}%`)
-    .limit(8)
-  if (error) {
-    return []
-  }
-  return (data ?? []).filter(u => u.id !== excludeId)
-}

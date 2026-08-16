@@ -9,7 +9,6 @@ import {
   getSettlements,
 } from './bets.resolve'
 import {
-  searchUsers,
   confirmParticipation,
   rejectParticipation,
 } from './bets.participants'
@@ -39,7 +38,6 @@ export {
 export type { PendingBetResult } from './bets.resolve'
 
 export {
-  searchUsers,
   confirmParticipation,
   rejectParticipation,
 } from './bets.participants'
@@ -77,5 +75,4 @@ export const BetsService = {
   cancelDisputedBet,
   getDashboardData,
   getProfileStatsV2,
-  searchUsers,
 }

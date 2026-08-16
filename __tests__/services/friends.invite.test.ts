@@ -5,7 +5,6 @@ import {
   ensureMyInviteCode,
   lookupUserByCode,
   handleFriendInvite,
-  searchUsersByNick,
 } from '@/features/friends/api/friends.invite'
 
 jest.mock('@/shared/lib/supabase', () => {
@@ -190,32 +189,5 @@ describe('handleFriendInvite', () => {
     const result = await handleFriendInvite('user-1', 'user-2')
 
     expect(result).toEqual({ type: 'duplicate' })
-  })
-})
-
-describe('searchUsersByNick', () => {
-  it('zwraca pustą tablicę bez odpytywania bazy gdy zapytanie ma mniej niż 2 znaki', async () => {
-    const query = 'a'
-
-    const result = await searchUsersByNick(query, 'user-1')
-
-    expect(result).toEqual([])
-    expect(mockFrom).not.toHaveBeenCalled()
-  })
-
-  it('wyklucza z wyników użytkownika o podanym excludeId', async () => {
-    mockFrom.mockReturnValueOnce(
-      chainResponse({
-        data: [
-          { id: 'user-1', nick: 'Maciek' },
-          { id: 'user-2', nick: 'Maciej' },
-        ],
-        error: null,
-      }),
-    )
-
-    const result = await searchUsersByNick('Maci', 'user-1')
-
-    expect(result).toEqual([{ id: 'user-2', nick: 'Maciej' }])
   })
 })

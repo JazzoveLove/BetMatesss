@@ -54,5 +54,8 @@ build-size-log.csv
 # tamagui generated cache
 .tamagui/
 
+# jscpd report
+report/
+
 .osobiste.txt
 osobiste.txt

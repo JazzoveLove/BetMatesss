@@ -1,0 +1,14 @@
+{
+  "reporters": ["console", "html"],
+  "ignore": [
+    "**/node_modules/**",
+    "**/.expo/**",
+    "**/coverage/**",
+    "**/dist/**",
+    "**/report/**",
+    "**/__tests__/helpers/**",
+    "**/database_types.ts"
+  ],
+  "absolute": true,
+  "gitignore": true
+}

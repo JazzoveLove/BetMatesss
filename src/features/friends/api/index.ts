@@ -15,7 +15,6 @@ export {
   ensureMyInviteCode,
   lookupUserByCode,
   handleFriendInvite,
-  searchUsersByNick,
 } from './friends.invite'
 export type { FriendInviteResult } from '@/features/friends/types/friendship.types'
 

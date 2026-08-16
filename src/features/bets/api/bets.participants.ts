@@ -1,25 +1,4 @@
 import { supabase } from '@/shared/lib/supabase'
-import { error } from '@/shared/utils/logger'
-
-
-export async function searchUsers(
-  query: string,
-  excludeIds: string[],
-): Promise<{ id: string; nick: string }[]> {
-  if (query.trim().length < 2) return []
-  const { data, error: searchError } = await supabase
-    .from('users')
-    .select('id, nick')
-    .ilike('nick', `%${query.trim()}%`)
-    .limit(5)
-
-  if (searchError) {
-    error('[searchUsers] supabase error', searchError)
-    throw searchError
-  }
-  const excludeSet = new Set(excludeIds)
-  return (data ?? []).filter(u => !excludeSet.has(u.id))
-}
 
 export async function confirmParticipation(betId: string, userId: string): Promise<{ error?: string }> {
   const { error: confirmError } = await supabase
