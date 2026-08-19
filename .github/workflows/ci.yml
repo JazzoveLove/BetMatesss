@@ -32,3 +32,8 @@ jobs:
         continue-on-error: true
       - run: npm audit --audit-level=high
         continue-on-error: true
+      - name: Danger
+        if: github.event_name == 'pull_request'
+        run: npx danger ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

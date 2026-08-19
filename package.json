@@ -71,6 +71,7 @@
     "@types/jest": "^30.0.0",
     "@types/react": "~19.1.10",
     "@types/react-native": "^0.72.8",
+    "danger": "^13.0.10",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~10.0.0",
     "eslint-plugin-jest": "^29.16.1",
