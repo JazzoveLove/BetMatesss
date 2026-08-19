@@ -23,6 +23,18 @@ const makeQueryBuilder = () => {
   return chain
 }
 
+// @sentry/react-native rejestruje setInterval (AsyncExpiringMap cleanup) przy
+// samym imporcie — każdy test, który pośrednio importuje logger.ts, zostawia
+// Jestowi otwarty handle ("did not exit one second after the test run") mimo
+// że nie ma to nic wspólnego z testowaną logiką. Sentry i tak nie powinno nic
+// realnie robić w środowisku testowym.
+jest.mock('@sentry/react-native', () => ({
+  init: jest.fn(),
+  wrap: (component: unknown) => component,
+  captureException: jest.fn(),
+  captureMessage: jest.fn(),
+}))
+
 jest.mock('@/shared/lib/supabase', () => {
   const channelBuilder = {
     on: jest.fn(() => channelBuilder),
