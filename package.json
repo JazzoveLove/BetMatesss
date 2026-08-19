@@ -75,7 +75,7 @@
     "jest-expo": "^55.0.16",
     "jscpd": "^5.0.15",
     "knip": "^6.32.2",
-    "react-test-renderer": "^19.1.0",
+    "react-test-renderer": "^19.2.8",
     "typescript": "~5.9.2"
   }
 }
