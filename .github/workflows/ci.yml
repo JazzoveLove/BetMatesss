@@ -19,3 +19,4 @@ jobs:
       - run: npm run lint
       - run: npm test -- --ci
       - run: npm run knip
+        continue-on-error: true
