@@ -59,3 +59,10 @@ report/
 
 .osobiste.txt
 osobiste.txt
+
+.poprawki.txt
+poprawki.txt
+
+wizje.txt
+.wizje.txtsupabase/.branches/
+supabase/.temp/

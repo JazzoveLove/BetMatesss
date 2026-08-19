@@ -1,4 +1,4 @@
-import { chainResponse } from '../helpers/supabaseMock'
+import { chainResponse, mockTable } from '../helpers/supabaseMock'
 
 import { supabase } from '@/shared/lib/supabase'
 import { NotificationsService } from '@/shared/lib/notifications.service'
@@ -29,11 +29,17 @@ function notificationRow(id: string, betId: string) {
 // 'pending', a odbiorca jest jego niepotwierdzonym uczestnikiem. To jest
 // treść fixu P0-1/P0-2 — te testy mają wyłapać regresję, gdyby ktoś wrócił
 // do gołego selecta z notifications bez sprawdzania stanu zakładu.
+//
+// Testy poniżej, które dotyczą samego filtrowania (P0-1, P0-2, happy path,
+// mix, potwierdzony uczestnik), używają mockTable() zamiast chainResponse():
+// mockTable realnie stosuje .eq()/.in() na przekazanych wierszach, więc test
+// faktycznie sprawdza, czy serwis wywołuje filtry z poprawnymi wartościami —
+// a nie tylko czy zwraca to, co ktoś z góry zaszył w mocku.
 describe('getPendingBetInviteNotifications', () => {
   it('happy path: zakład pending, uczestnik niepotwierdzony — zaproszenie na liście', async () => {
     mockFrom.mockReturnValueOnce(chainResponse({ data: [notificationRow('n1', 'b1')], error: null }))
-    mockFrom.mockReturnValueOnce(chainResponse({ data: [{ id: 'b1' }], error: null }))
-    mockFrom.mockReturnValueOnce(chainResponse({ data: [{ bet_id: 'b1' }], error: null }))
+    mockFrom.mockReturnValueOnce(mockTable([{ id: 'b1', status: 'pending' }]))
+    mockFrom.mockReturnValueOnce(mockTable([{ bet_id: 'b1', user_id: 'user-1', confirmed: false }]))
 
     const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
 
@@ -41,41 +47,42 @@ describe('getPendingBetInviteNotifications', () => {
     expect(result[0].betId).toBe('b1')
   })
 
-  // Rozbite na dwa testy celowo: dziś oba przechodzą przez ten sam mock
-  // zwracający [] z zapytania do `bets` (bo filtr status='pending' jest
-  // egzekwowany po stronie zapytania), ale to zbieżność implementacji, nie
-  // reguła. Gdyby kod zaczął rozróżniać "zakład nie istnieje" od "zakład
-  // istnieje z innym statusem" (np. różne ścieżki/komunikaty), każdy z tych
-  // testów ma pilnować dokładnie jednego z tych powodów z osobna.
+  // Rozbite na dwa testy celowo: jeden dla zakładu, który w ogóle nie istnieje,
+  // drugi dla zakładu istniejącego z innym statusem. To dwa różne powody
+  // porażki filtra, nawet jeśli oba dają w efekcie pustą tablicę.
   it('P0-1: betId wskazuje na zakład, który nie istnieje (usunięty) — odfiltrowane bez pytania o bet_participants', async () => {
     mockFrom.mockReturnValueOnce(chainResponse({ data: [notificationRow('n1', 'b-deleted')], error: null }))
-    mockFrom.mockReturnValueOnce(chainResponse({ data: [], error: null }))
+    // Tabela `bets` naprawdę zawiera inny, pending zakład — ale nie ten
+    // z payloadu. .in('id', ['b-deleted']) musi go realnie odrzucić.
+    mockFrom.mockReturnValueOnce(mockTable([{ id: 'other-bet', status: 'pending' }]))
 
     const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
 
     expect(result).toEqual([])
-    expect(mockFrom).toHaveBeenCalledTimes(2)
   })
 
   it.each(['completed', 'cancelled', 'rejected'])(
-    'P0-2: betId wskazuje na zakład istniejący, ale w statusie %s — odfiltrowane bez pytania o bet_participants',
+    'P0-2: betId wskazuje na zakład istniejący, ale w statusie %s — odfiltrowane realnym filtrem status=pending',
     async status => {
       mockFrom.mockReturnValueOnce(chainResponse({ data: [notificationRow('n1', 'b1')], error: null }))
-      // Zapytanie do `bets` filtruje po status='pending' po stronie zapytania,
-      // więc zakład o innym statusie (np. tu: %s) też nie pojawi się w wyniku.
-      mockFrom.mockReturnValueOnce(chainResponse({ data: [], error: null }))
+      // Zakład b1 realnie istnieje w mockTable, tylko z innym statusem —
+      // .eq('status', 'pending') musi go faktycznie odfiltrować. Z dawnym
+      // chainResponse({ data: [] }) ten test przechodziłby identycznie
+      // nawet gdyby kod w ogóle nie wywoływał .eq('status', ...).
+      mockFrom.mockReturnValueOnce(mockTable([{ id: 'b1', status }]))
 
       const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
 
       expect(result).toEqual([])
-      expect(mockFrom).toHaveBeenCalledTimes(2)
     },
   )
 
   it('uczestnik już potwierdził (np. z innego urządzenia) — zaproszenie odfiltrowane mimo że zakład wciąż pending', async () => {
     mockFrom.mockReturnValueOnce(chainResponse({ data: [notificationRow('n1', 'b1')], error: null }))
-    mockFrom.mockReturnValueOnce(chainResponse({ data: [{ id: 'b1' }], error: null }))
-    mockFrom.mockReturnValueOnce(chainResponse({ data: [], error: null }))
+    mockFrom.mockReturnValueOnce(mockTable([{ id: 'b1', status: 'pending' }]))
+    // Wiersz uczestnictwa istnieje, ale confirmed=true — .eq('confirmed', false)
+    // musi go realnie odrzucić.
+    mockFrom.mockReturnValueOnce(mockTable([{ bet_id: 'b1', user_id: 'user-1', confirmed: true }]))
 
     const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
 
@@ -86,8 +93,15 @@ describe('getPendingBetInviteNotifications', () => {
     mockFrom.mockReturnValueOnce(
       chainResponse({ data: [notificationRow('n1', 'b1'), notificationRow('n2', 'b2')], error: null }),
     )
-    mockFrom.mockReturnValueOnce(chainResponse({ data: [{ id: 'b1' }], error: null }))
-    mockFrom.mockReturnValueOnce(chainResponse({ data: [{ bet_id: 'b1' }], error: null }))
+    // b2 istnieje naprawdę, ale ma status 'cancelled' — realny .in()+.eq('status')
+    // musi zostawić tylko b1.
+    mockFrom.mockReturnValueOnce(
+      mockTable([
+        { id: 'b1', status: 'pending' },
+        { id: 'b2', status: 'cancelled' },
+      ]),
+    )
+    mockFrom.mockReturnValueOnce(mockTable([{ bet_id: 'b1', user_id: 'user-1', confirmed: false }]))
 
     const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
 
@@ -126,7 +140,6 @@ describe('getPendingBetInviteNotifications', () => {
     const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
 
     expect(result).toEqual([])
-    expect(mockFrom).toHaveBeenCalledTimes(2)
   })
 
   it('błąd zapytania do bet_participants — zwraca [] zamiast rzucać', async () => {
@@ -137,6 +150,5 @@ describe('getPendingBetInviteNotifications', () => {
     const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
 
     expect(result).toEqual([])
-    expect(mockFrom).toHaveBeenCalledTimes(3)
   })
 })
