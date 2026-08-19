@@ -22,13 +22,18 @@ const CANDIDATE_GLOBS = [
   "ios/build/*.ipa",
 ];
 
+function globToRegExp(pattern) {
+  const escaped = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp("^" + escaped.replace(/\\\*/g, ".*") + "$");
+}
+
 function findFileAutomatically() {
   for (const candidate of CANDIDATE_GLOBS) {
     if (candidate.includes("*")) {
       const dir = path.dirname(candidate);
       const pattern = path.basename(candidate);
       if (fs.existsSync(dir)) {
-        const regex = new RegExp("^" + pattern.replace("*", ".*") + "$");
+        const regex = globToRegExp(pattern);
         const match = fs.readdirSync(dir).find((f) => regex.test(f));
         if (match) return path.join(dir, match);
       }
