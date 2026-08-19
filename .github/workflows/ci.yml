@@ -28,3 +28,5 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - run: npm run knip
         continue-on-error: true
+      - run: npx expo-doctor
+        continue-on-error: true
