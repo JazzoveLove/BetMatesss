@@ -1,0 +1,2 @@
+-- no-op: migracja historyczna, jej efekt jest juz zawarty w 20260810120000_baseline_schema.sql
+-- Plik istnieje wylacznie zeby `supabase migration repair --status applied` mial co wskazac.

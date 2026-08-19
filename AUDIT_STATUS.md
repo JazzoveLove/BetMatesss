@@ -47,6 +47,7 @@ Advisor Supabase (`auth_leaked_password_protection`) nadal WARN. Jeden przełąc
 ### P2 — pozostałe
 - **P2-5** 9 nieużywanych indeksów — nie ruszać teraz, sprawdzić po realnym ruchu
 - **P2-6** `payments`/`settlements` bez polityk UPDATE/DELETE — udokumentować jako świadomą decyzję (dla `settlements` już jest; dla `payments` P0-4 to załatwiło pośrednio przez RPC)
+- **Do rozważenia (nieblokujące)** `anon` ma GRANT ALL na poziomie SQL na wszystkich tabelach, jedyną linią obrony jest RLS — standardowy wzorzec Supabase, ale przy projekcie, który już raz miał realną lukę RLS (P0-3), warto rozważać w przyszłości zawężanie GRANT-ów jako drugiej warstwy obrony, nie tylko RLS.
 
 ### Testy — stan na 18.08 wieczór
 

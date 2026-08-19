@@ -1,3 +1,5 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json"
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": ["src/**/*.styles.ts", "src/shared/types/database_types.ts"]
 }

@@ -8,6 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest",
+    "test:rls": "node __tests__/rls/run.js",
     "size": "node scripts/check-app-size.js",
     "lint": "expo lint",
     "knip": "knip",
@@ -21,6 +22,7 @@
     "testPathIgnorePatterns": [
       "/node_modules/",
       "/__tests__/helpers/",
+      "/__tests__/rls/",
       "/betmates-portfolio/"
     ],
     "modulePathIgnorePatterns": [
@@ -59,7 +61,6 @@
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
     "react-native-web": "^0.21.0",
-    "typescript": "~5.9.2",
     "zod": "^4.4.3"
   },
   "private": true,
