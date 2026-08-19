@@ -1,3 +1,7 @@
+import failOnConsole from 'jest-fail-on-console'
+
+failOnConsole()
+
 const makeQueryBuilder = () => {
   const chain: Record<string, jest.Mock> = {}
   const methods = [
