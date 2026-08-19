@@ -109,9 +109,37 @@ async function getPendingBetInviteNotifications(userId: string): Promise<BetInvi
 
   if (error) return []
 
-  return ((data ?? []) as NotificationRow[])
+  const invites = ((data ?? []) as NotificationRow[])
     .map(toBetInviteNotification)
     .filter((row): row is BetInviteNotification => !!row)
+
+  if (invites.length === 0) return []
+
+  const betIds = [...new Set(invites.map(invite => invite.betId))]
+
+  const { data: pendingBets, error: betsError } = await supabase
+    .from('bets')
+    .select('id')
+    .in('id', betIds)
+    .eq('status', 'pending')
+
+  if (betsError) return []
+
+  const pendingBetIds = ((pendingBets ?? []) as { id: string }[]).map(bet => bet.id)
+  if (pendingBetIds.length === 0) return []
+
+  const { data: unconfirmed, error: participantsError } = await supabase
+    .from('bet_participants')
+    .select('bet_id')
+    .eq('user_id', userId)
+    .eq('confirmed', false)
+    .in('bet_id', pendingBetIds)
+
+  if (participantsError) return []
+
+  const validBetIds = new Set(((unconfirmed ?? []) as { bet_id: string }[]).map(row => row.bet_id))
+
+  return invites.filter(invite => validBetIds.has(invite.betId))
 }
 
 async function markNotificationRead(notificationId: string): Promise<{ error?: string }> {
