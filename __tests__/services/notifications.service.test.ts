@@ -41,14 +41,36 @@ describe('getPendingBetInviteNotifications', () => {
     expect(result[0].betId).toBe('b1')
   })
 
-  it('P0-1/P0-2: betId wskazuje na zakład, który nie istnieje albo nie jest pending — odfiltrowane bez pytania o bet_participants', async () => {
+  // Rozbite na dwa testy celowo: dziś oba przechodzą przez ten sam mock
+  // zwracający [] z zapytania do `bets` (bo filtr status='pending' jest
+  // egzekwowany po stronie zapytania), ale to zbieżność implementacji, nie
+  // reguła. Gdyby kod zaczął rozróżniać "zakład nie istnieje" od "zakład
+  // istnieje z innym statusem" (np. różne ścieżki/komunikaty), każdy z tych
+  // testów ma pilnować dokładnie jednego z tych powodów z osobna.
+  it('P0-1: betId wskazuje na zakład, który nie istnieje (usunięty) — odfiltrowane bez pytania o bet_participants', async () => {
     mockFrom.mockReturnValueOnce(chainResponse({ data: [notificationRow('n1', 'b-deleted')], error: null }))
     mockFrom.mockReturnValueOnce(chainResponse({ data: [], error: null }))
 
     const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
 
     expect(result).toEqual([])
+    expect(mockFrom).toHaveBeenCalledTimes(2)
   })
+
+  it.each(['completed', 'cancelled', 'rejected'])(
+    'P0-2: betId wskazuje na zakład istniejący, ale w statusie %s — odfiltrowane bez pytania o bet_participants',
+    async status => {
+      mockFrom.mockReturnValueOnce(chainResponse({ data: [notificationRow('n1', 'b1')], error: null }))
+      // Zapytanie do `bets` filtruje po status='pending' po stronie zapytania,
+      // więc zakład o innym statusie (np. tu: %s) też nie pojawi się w wyniku.
+      mockFrom.mockReturnValueOnce(chainResponse({ data: [], error: null }))
+
+      const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
+
+      expect(result).toEqual([])
+      expect(mockFrom).toHaveBeenCalledTimes(2)
+    },
+  )
 
   it('uczestnik już potwierdził (np. z innego urządzenia) — zaproszenie odfiltrowane mimo że zakład wciąż pending', async () => {
     mockFrom.mockReturnValueOnce(chainResponse({ data: [notificationRow('n1', 'b1')], error: null }))
@@ -95,5 +117,26 @@ describe('getPendingBetInviteNotifications', () => {
     const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
 
     expect(result).toEqual([])
+  })
+
+  it('błąd zapytania do bets — zwraca [] zamiast rzucać, bez pytania o bet_participants', async () => {
+    mockFrom.mockReturnValueOnce(chainResponse({ data: [notificationRow('n1', 'b1')], error: null }))
+    mockFrom.mockReturnValueOnce(chainResponse({ data: null, error: { message: 'DB error' } }))
+
+    const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
+
+    expect(result).toEqual([])
+    expect(mockFrom).toHaveBeenCalledTimes(2)
+  })
+
+  it('błąd zapytania do bet_participants — zwraca [] zamiast rzucać', async () => {
+    mockFrom.mockReturnValueOnce(chainResponse({ data: [notificationRow('n1', 'b1')], error: null }))
+    mockFrom.mockReturnValueOnce(chainResponse({ data: [{ id: 'b1' }], error: null }))
+    mockFrom.mockReturnValueOnce(chainResponse({ data: null, error: { message: 'DB error' } }))
+
+    const result = await NotificationsService.getPendingBetInviteNotifications('user-1')
+
+    expect(result).toEqual([])
+    expect(mockFrom).toHaveBeenCalledTimes(3)
   })
 })
