@@ -2,5 +2,5 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": ["index.js"],
   "project": ["src/**/*.{ts,tsx}"],
-  "ignore": ["src/**/*.styles.ts", "__tests__/**"]
+  "ignore": ["src/**/*.styles.ts", "__tests__/**", "src/shared/types/database_types.ts"]
 }
