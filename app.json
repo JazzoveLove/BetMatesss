@@ -41,7 +41,8 @@
           "project": "react-native",
           "organization": "jazzovelove"
         }
-      ]
+      ],
+      "expo-font"
     ]
   }
 }
