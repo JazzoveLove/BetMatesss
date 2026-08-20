@@ -15,9 +15,8 @@ describe('emailSchema', () => {
     const result = emailSchema.safeParse(email)
 
     expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues.map(i => i.message)).toContain('Wpisz adres e-mail.')
-    }
+    const messages = !result.success ? result.error.issues.map(i => i.message) : []
+    expect(messages).toContain('Wpisz adres e-mail.')
   })
 
   it('odrzuca adres e-mail w niepoprawnym formacie', () => {
@@ -26,9 +25,8 @@ describe('emailSchema', () => {
     const result = emailSchema.safeParse(email)
 
     expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues.map(i => i.message)).toContain('Podaj poprawny adres e-mail.')
-    }
+    const messages = !result.success ? result.error.issues.map(i => i.message) : []
+    expect(messages).toContain('Podaj poprawny adres e-mail.')
   })
 })
 
@@ -47,9 +45,8 @@ describe('passwordSchema', () => {
     const result = passwordSchema.safeParse(password)
 
     expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues.map(i => i.message)).toContain('Wpisz hasło.')
-    }
+    const messages = !result.success ? result.error.issues.map(i => i.message) : []
+    expect(messages).toContain('Wpisz hasło.')
   })
 
   it('odrzuca hasło krótsze niż 6 znaków', () => {
@@ -58,9 +55,8 @@ describe('passwordSchema', () => {
     const result = passwordSchema.safeParse(password)
 
     expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues.map(i => i.message)).toContain('Hasło musi mieć co najmniej 6 znaków.')
-    }
+    const messages = !result.success ? result.error.issues.map(i => i.message) : []
+    expect(messages).toContain('Hasło musi mieć co najmniej 6 znaków.')
   })
 })
 

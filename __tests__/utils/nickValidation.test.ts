@@ -19,9 +19,8 @@ describe('nickSchema', () => {
     const result = nickSchema.safeParse(nick)
 
     expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues[0].message).toBe('Nick musi mieć co najmniej 5 znaków.')
-    }
+    const message = !result.success ? result.error.issues[0].message : undefined
+    expect(message).toBe('Nick musi mieć co najmniej 5 znaków.')
   })
 
   it('odrzuca nick dłuższy niż 10 znaków', () => {
@@ -30,9 +29,8 @@ describe('nickSchema', () => {
     const result = nickSchema.safeParse(nick)
 
     expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues[0].message).toBe('Nick może mieć maksymalnie 10 znaków.')
-    }
+    const message = !result.success ? result.error.issues[0].message : undefined
+    expect(message).toBe('Nick może mieć maksymalnie 10 znaków.')
   })
 
   it('odrzuca nick zawierający niedozwolone słowo', () => {
@@ -41,8 +39,7 @@ describe('nickSchema', () => {
     const result = nickSchema.safeParse(nick)
 
     expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues[0].message).toBe('Ten nick zawiera niedozwolone słowo.')
-    }
+    const message = !result.success ? result.error.issues[0].message : undefined
+    expect(message).toBe('Ten nick zawiera niedozwolone słowo.')
   })
 })
