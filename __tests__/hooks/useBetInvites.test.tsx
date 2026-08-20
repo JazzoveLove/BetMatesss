@@ -86,6 +86,12 @@ describe('useBetInvites / acceptBetInvite', () => {
   })
 
   it('porażka: confirmParticipation zwraca error -> markNotificationRead NIE zostaje wywołane', async () => {
+    // Ten test celowo wywołuje ścieżkę błędu, która loguje przez logger.error
+    // (console.error) — to zamierzone zachowanie hooka przy porażce
+    // confirmParticipation, nie bug. Wyciszamy, żeby jest-fail-on-console nie
+    // wysypał testu za oczekiwany log.
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+
     mockConfirm.mockResolvedValue({ error: 'Nie udało się dołączyć.' })
     const { result, unmount } = renderHook(() => useBetInvites(), { wrapper: createWrapper() })
     cleanup = unmount
@@ -96,6 +102,8 @@ describe('useBetInvites / acceptBetInvite', () => {
 
     await waitFor(() => expect(mockConfirm).toHaveBeenCalledTimes(1))
     expect(mockMarkRead).not.toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
   })
 })
 
@@ -114,6 +122,10 @@ describe('useBetInvites / rejectBetInvite', () => {
   })
 
   it('porażka: rejectParticipation zwraca error -> markNotificationRead NIE zostaje wywołane', async () => {
+    // Jak wyżej: rejectBetInvite przy błędzie celowo loguje przez logger.error
+    // (console.error) — wyciszamy tylko oczekiwany log, nie ukrywamy problemu.
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+
     mockReject.mockResolvedValue({ error: 'Nie jesteś uczestnikiem tego zakładu.' })
     const { result, unmount } = renderHook(() => useBetInvites(), { wrapper: createWrapper() })
     cleanup = unmount
@@ -124,5 +136,7 @@ describe('useBetInvites / rejectBetInvite', () => {
 
     await waitFor(() => expect(mockReject).toHaveBeenCalledTimes(1))
     expect(mockMarkRead).not.toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
   })
 })
