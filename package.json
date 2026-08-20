@@ -13,8 +13,8 @@
     "test:rls": "node __tests__/rls/run.js",
     "size": "node scripts/check-app-size.js",
     "lint": "expo lint __tests__",
-    "knip": "knip",
-    "jscpd": "jscpd src __tests__"
+    "check:knip": "knip",
+    "check:jscpd": "jscpd src __tests__"
   },
   "jest": {
     "preset": "jest-expo",
@@ -47,9 +47,9 @@
     "@supabase/supabase-js": "^2.103.0",
     "@tanstack/react-query": "^5.100.9",
     "babel-preset-expo": "~54.0.10",
-    "expo": "~54.0.33",
+    "expo": "~54.0.37",
     "expo-clipboard": "~8.0.8",
-    "expo-constants": "~18.0.13",
+    "expo-constants": "~18.0.14",
     "expo-dev-client": "~6.0.21",
     "expo-linking": "~8.0.11",
     "expo-status-bar": "~3.0.9",
@@ -70,7 +70,6 @@
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.1.10",
-    "@types/react-native": "^0.72.8",
     "danger": "^13.0.10",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~10.0.0",
