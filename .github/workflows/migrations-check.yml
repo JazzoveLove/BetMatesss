@@ -18,7 +18,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: npx supabase@2.115.0 start
+      - run: npx --no-install supabase@2.115.0 start
       - run: npm run test:rls
-      - run: npx supabase@2.115.0 stop
+      - run: npx --no-install supabase@2.115.0 stop
         if: always()
