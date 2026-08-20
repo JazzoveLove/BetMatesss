@@ -18,7 +18,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx supabase start
+      - run: npx supabase@2.115.0 start
       - run: npm run test:rls
-      - run: npx supabase stop
+      - run: npx supabase@2.115.0 stop
         if: always()

@@ -28,7 +28,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
       - run: npm run check:knip
         continue-on-error: true
-      - run: npx expo-doctor
+      - run: npx expo-doctor@1.20.2
         continue-on-error: true
       - run: npm audit --audit-level=high
         continue-on-error: true
