@@ -19,7 +19,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx tsc --noEmit
+      - run: npx --no-install tsc --noEmit
       - run: npm run lint
       - run: npm test -- --ci --coverage
       - name: Upload coverage reports to Codecov
@@ -34,6 +34,6 @@ jobs:
         continue-on-error: true
       - name: Danger
         if: github.event_name == 'pull_request'
-        run: npx danger ci
+        run: npx --no-install danger ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
