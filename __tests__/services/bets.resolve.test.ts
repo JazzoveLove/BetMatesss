@@ -88,11 +88,30 @@ describe('confirmBetResult', () => {
 
     const result = await confirmBetResult({ betId: 'bet-1', resultId: 'res-1', confirmerId: 'user-2' })
 
+    // Zapytanie o rekord do potwierdzenia musi trafić w dokładnie ten wiersz —
+    // złe id/bet_id oznaczałoby potwierdzenie cudzego wyniku.
+    expect(fetchChain.select).toHaveBeenCalledWith('recorded_by')
+    expect(fetchChain.eq).toHaveBeenNthCalledWith(1, 'id', 'res-1')
+    expect(fetchChain.eq).toHaveBeenNthCalledWith(2, 'bet_id', 'bet-1')
+
     expect(resultsUpdateChain.update).toHaveBeenCalledWith({
       confirmed: true,
       confirmed_by: 'user-2',
     })
+    // .eq('confirmed', false) to realny guard przed race — bez tej asercji
+    // usunięcie warunku (albo zamiana na `true`) przechodzi wszystkie testy.
+    expect(resultsUpdateChain.eq).toHaveBeenNthCalledWith(1, 'id', 'res-1')
+    expect(resultsUpdateChain.eq).toHaveBeenNthCalledWith(2, 'bet_id', 'bet-1')
+    expect(resultsUpdateChain.eq).toHaveBeenNthCalledWith(3, 'confirmed', false)
+    expect(resultsUpdateChain.select).toHaveBeenCalledWith('id')
+
     expect(betsUpdateChain.update).toHaveBeenCalledWith({ status: 'completed' })
+    expect(betsUpdateChain.eq).toHaveBeenCalledWith('id', 'bet-1')
+
+    expect(mockFrom).toHaveBeenNthCalledWith(1, 'bet_results')
+    expect(mockFrom).toHaveBeenNthCalledWith(2, 'bet_results')
+    expect(mockFrom).toHaveBeenNthCalledWith(3, 'bets')
+
     expect(result).toEqual({})
   })
 
@@ -180,6 +199,13 @@ describe('disputeBetResult', () => {
     const result = await disputeBetResult('bet-1')
 
     expect(chain.update).toHaveBeenCalledWith({ status: 'disputed' })
+    expect(mockFrom).toHaveBeenCalledWith('bets')
+    // Guard na status musi celować w dokładnie ten zakład i w stan
+    // awaiting_confirmation — to jedyna rzecz chroniąca przed zgłoszeniem
+    // sporu dla zakładu w dowolnym innym stanie.
+    expect(chain.eq).toHaveBeenNthCalledWith(1, 'id', 'bet-1')
+    expect(chain.eq).toHaveBeenNthCalledWith(2, 'status', 'awaiting_confirmation')
+    expect(chain.select).toHaveBeenCalledWith('id')
     expect(result).toEqual({})
   })
 

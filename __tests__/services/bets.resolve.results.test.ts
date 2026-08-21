@@ -34,6 +34,12 @@ describe('cancelDisputedBet', () => {
     const result = await cancelDisputedBet('bet-1')
 
     expect(chain.update).toHaveBeenCalledWith({ status: 'cancelled' })
+    expect(mockFrom).toHaveBeenCalledWith('bets')
+    // Guard musi celować w dokładnie ten zakład i w stan disputed — to jedyna
+    // rzecz chroniąca przed anulowaniem zakładu, który nie jest w sporze.
+    expect(chain.eq).toHaveBeenNthCalledWith(1, 'id', 'bet-1')
+    expect(chain.eq).toHaveBeenNthCalledWith(2, 'status', 'disputed')
+    expect(chain.select).toHaveBeenCalledWith('id')
     expect(result).toEqual({})
   })
 
@@ -112,6 +118,13 @@ describe('getPendingBetResult', () => {
       recordedBy: 'user-1',
       confirmed: false,
     })
+    expect(mockFrom).toHaveBeenCalledWith('bet_results')
+    expect(chain.select).toHaveBeenCalledWith('id, winner_id, scores, recorded_by, confirmed')
+    // Musi patrzeć na NIEpotwierdzony wynik dla właściwego zakładu, najnowszy
+    // pierwszy — inaczej pokaże potwierdzony wynik albo cudzy zakład.
+    expect(chain.eq).toHaveBeenNthCalledWith(1, 'bet_id', 'bet-1')
+    expect(chain.eq).toHaveBeenNthCalledWith(2, 'confirmed', false)
+    expect(chain.order).toHaveBeenCalledWith('created_at', { ascending: false })
   })
 
   it('error lub brak danych → null (nie rzuca)', async () => {

@@ -81,6 +81,13 @@ describe('createSettlementsFromWinner', () => {
     expect(insertChain.insert).toHaveBeenCalledWith([
       { bet_id: 'bet-1', debtor_id: 'user-2', creditor_id: 'user-1', amount: 70 },
     ])
+    // Kolumna i sortowanie zapytania o wynik — bez tego literówka w nazwie
+    // kolumny albo zła kolejność sortowania przechodzi testy mimo że w
+    // realnej bazie zwróciłaby złego zwycięzcę.
+    expect(betResultsTable.select).toHaveBeenCalledWith('winner_id')
+    expect(betResultsTable.order).toHaveBeenCalledWith('id', { ascending: false })
+    expect(mockFrom).toHaveBeenNthCalledWith(1, 'bet_results')
+    expect(mockFrom).toHaveBeenNthCalledWith(2, 'settlements')
   })
 
   it('zwycięzca nie trafia na listę settlements (filtr p.user_id !== winnerId)', async () => {
