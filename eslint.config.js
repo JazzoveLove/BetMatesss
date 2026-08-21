@@ -21,6 +21,7 @@ module.exports = defineConfig([
     rules: {
       ...jestPlugin.configs["flat/recommended"].rules,
       ...testingLibraryPlugin.configs["flat/react"].rules,
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
 ]);
