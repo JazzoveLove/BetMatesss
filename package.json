@@ -10,6 +10,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
+    "test:mutation": "stryker run",
     "test:rls": "node __tests__/rls/run.js",
     "size": "node scripts/check-app-size.js",
     "lint": "expo lint __tests__",
@@ -69,6 +70,8 @@
   },
   "private": true,
   "devDependencies": {
+    "@stryker-mutator/core": "^10.0.0",
+    "@stryker-mutator/jest-runner": "^10.0.0",
     "@testing-library/react-native": "^13.3.3",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.1.10",

@@ -57,6 +57,10 @@ build-size-log.csv
 # jscpd report
 report/
 
+# Stryker mutation testing report
+reports/mutation/
+.stryker-tmp/
+
 .osobiste.txt
 osobiste.txt
 

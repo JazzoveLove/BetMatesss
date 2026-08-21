@@ -61,6 +61,24 @@ describe('createSettlements', () => {
     expect(insertChain.insert).toHaveBeenCalledWith([
       { bet_id: 'bet-1', debtor_id: 'user-2', creditor_id: 'user-1', amount: 50 },
     ])
+
+    // Kształt zapytań na całej ścieżce happy-path — bez tego złe
+    // table/column/filter (np. literówka w nazwie kolumny) przechodzi testy
+    // mimo że w realnej bazie zwróciłby złe dane albo błąd.
+    expect(mockFrom).toHaveBeenNthCalledWith(1, 'settlements')
+    expect(countChain.select).toHaveBeenCalledWith('id', { count: 'exact', head: true })
+    expect(countChain.eq).toHaveBeenCalledWith('bet_id', 'bet-1')
+
+    expect(mockFrom).toHaveBeenNthCalledWith(2, 'bets')
+    expect(betChain.select).toHaveBeenCalledWith('id, stake_mode')
+    expect(betChain.eq).toHaveBeenCalledWith('id', 'bet-1')
+
+    expect(mockFrom).toHaveBeenNthCalledWith(3, 'bet_participants')
+    expect(participantsChain.select).toHaveBeenCalledWith('user_id, stake_amount')
+    expect(participantsChain.eq).toHaveBeenCalledWith('bet_id', 'bet-1')
+
+    expect(mockFrom).toHaveBeenNthCalledWith(4, 'bet_results')
+    expect(mockFrom).toHaveBeenNthCalledWith(5, 'settlements')
   })
 
   it('zwraca błąd gdy nie da się pobrać danych zakładu', async () => {
@@ -103,6 +121,13 @@ describe('createSettlements', () => {
     expect(insertChain.insert).toHaveBeenCalledWith([
       { bet_id: 'bet-1', debtor_id: 'user-2', creditor_id: 'user-1', amount: 50 },
     ])
+    // Sprawdzenie "czy ktoś mimo stake_mode=none jednak wpisał stawkę" musi
+    // patrzeć na stawki > 0 DLA TEGO zakładu — inaczej obejście uruchomi się
+    // dla przypadkowych/cudzych danych.
+    expect(mockFrom).toHaveBeenNthCalledWith(3, 'bet_participants')
+    expect(stakeCheckChain.select).toHaveBeenCalledWith('stake_amount')
+    expect(stakeCheckChain.eq).toHaveBeenCalledWith('bet_id', 'bet-1')
+    expect(stakeCheckChain.gt).toHaveBeenCalledWith('stake_amount', 0)
   })
 
   it('idempotencja: gdy rozliczenia już istnieją (count > 0) → natychmiastowe {}, bez dalszych zapytań i insertu', async () => {
