@@ -80,15 +80,17 @@ describe('useSettlePayment', () => {
     expect(Alert.alert).toHaveBeenCalledWith('Błąd', 'Nie udało się zapisać płatności.')
   })
 
-  // Finding: settle() nie sprawdza własnego stanu `settling` przed startem,
-  // więc nic nie chroni przed dwoma nakładającymi się wywołaniami (np. dwa
-  // szybkie kliknięcia zanim UI zdąży się zablokować na `settling`) —
-  // poniższy test dokumentuje realne zachowanie, nie zakłada ochrony.
-  it('dwa wywołania settle() zanim pierwsze się zakończy → recordPayment leci DWA razy (brak ochrony przed współbieżnością)', async () => {
+  // [bug-fix] settle() miał lukę: nie sprawdzał własnego stanu "w trakcie"
+  // przed startem, więc dwa nakładające się wywołania (np. dwa szybkie
+  // kliknięcia zanim UI zdąży się zablokować) wywoływały recordPayment dwa
+  // razy — realne ryzyko podwójnej płatności. Poprawka: settlingRef (ref,
+  // nie tylko stan `settling` — `settle` jest zamemoizowane przez
+  // useCallback bez `settling` w deps, więc odczyt stanu w domknięciu byłby
+  // zawsze nieaktualny) blokuje drugie wywołanie synchronicznie, zanim
+  // pierwsze zdąży się zakończyć.
+  it('[bug-fix] drugie wywołanie settle() w trakcie trwania pierwszego jest ignorowane — recordPayment leci tylko raz', async () => {
     let resolveFirst: (value: { error?: string }) => void = () => {}
-    mockRecordPayment
-      .mockImplementationOnce(() => new Promise(resolve => { resolveFirst = resolve }))
-      .mockResolvedValueOnce({})
+    mockRecordPayment.mockImplementationOnce(() => new Promise(resolve => { resolveFirst = resolve }))
     const onSettled = jest.fn().mockResolvedValue(undefined)
     const { Wrapper } = createWrapper()
     const { result, unmount } = renderHook(() => useSettlePayment('friend-1', onSettled), { wrapper: Wrapper })
@@ -100,12 +102,40 @@ describe('useSettlePayment', () => {
       firstCall = result.current.settle(50, 30)
       secondCall = result.current.settle(50, 30)
     })
-    resolveFirst({})
 
+    // Drugie wywołanie musi zostać zignorowane NATYCHMIAST (przed
+    // rozstrzygnięciem pierwszego) — inaczej ochrona nie chroniłaby przed
+    // dwoma kliknięciami tuż po sobie.
+    await expect(secondCall).resolves.toBe(false)
+    expect(mockRecordPayment).toHaveBeenCalledTimes(1)
+    expect(onSettled).not.toHaveBeenCalled()
+
+    resolveFirst({})
     await act(async () => {
-      await Promise.all([firstCall, secondCall])
+      await firstCall
     })
 
+    expect(mockRecordPayment).toHaveBeenCalledTimes(1)
+    expect(onSettled).toHaveBeenCalledTimes(1)
+  })
+
+  it('po zakończeniu poprzedniego settle() kolejne wywołanie znów działa normalnie (ochrona nie blokuje na stałe)', async () => {
+    mockRecordPayment.mockResolvedValue({})
+    const onSettled = jest.fn().mockResolvedValue(undefined)
+    const { Wrapper } = createWrapper()
+    const { result, unmount } = renderHook(() => useSettlePayment('friend-1', onSettled), { wrapper: Wrapper })
+    cleanup = unmount
+
+    await act(async () => {
+      await result.current.settle(50, 30)
+    })
+
+    let secondReturn: boolean | undefined
+    await act(async () => {
+      secondReturn = await result.current.settle(20, 30)
+    })
+
+    expect(secondReturn).toBe(true)
     expect(mockRecordPayment).toHaveBeenCalledTimes(2)
   })
 })
