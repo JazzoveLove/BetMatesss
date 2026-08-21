@@ -27,7 +27,7 @@ export async function createSettlements(betId: string): Promise<{ error?: string
     return { error: betErr?.message ?? 'Nie znaleziono zakładu.' }
   }
 
-  let stakeMode = (bet as { stake_mode: StakeMode }).stake_mode
+  const stakeMode = (bet as { stake_mode: StakeMode }).stake_mode
 
   if (stakeMode === 'none') {
     const { data: checkPart } = await supabase
@@ -38,7 +38,6 @@ export async function createSettlements(betId: string): Promise<{ error?: string
       .limit(1)
     if (checkPart && checkPart.length > 0) {
       log('[createSettlements] stake_mode=none but participants have stake_amount>0 — treating as equal')
-      stakeMode = 'equal'
     } else {
       return {}
     }
