@@ -45,7 +45,7 @@ export default function HistoryScreen() {
         />
       }
     >
-      <Text style={{ fontSize: 22, fontWeight: '700', color: Colors.text, marginBottom: 6 }}>Historia</Text>
+      <Text style={{ fontSize: 22, fontWeight: '700', color: Colors.text, marginBottom: 6 }}>Zakłady</Text>
       <Text style={{ fontSize: 13, color: Colors.textMuted, marginBottom: 20 }}>
         Wszystkie zakłady, w których bierzesz udział
       </Text>
