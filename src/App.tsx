@@ -24,6 +24,7 @@ import {
   setNavigateToFriendsTab,
 } from '@/features/friends'
 import { AppErrorFallback } from '@/shared/components/AppErrorFallback'
+import { ToastProvider } from '@/shared/components/Toast'
 import { TabNavigator, withScreenBoundary } from './navigation/TabNavigator'
 
 const SENTRY_DSN = process.env.EXPO_PUBLIC_SENTRY_DSN
@@ -149,9 +150,11 @@ export default Sentry.wrap(function App() {
   return (
     <ErrorBoundary FallbackComponent={AppErrorFallback}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </ToastProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   )
