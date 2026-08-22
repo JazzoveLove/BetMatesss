@@ -151,19 +151,25 @@ export function FriendsScreenContent({
 
         <Text style={styles.sectionLabel}>Twoi znajomi</Text>
 
-        <View style={styles.listWrap}>
-          {activeFriends.map((friend) => (
-            <FriendRowCard
-              key={friend.id}
-              friend={friend}
-              onPress={() => navigation.navigate("FriendDetail", { friendId: friend.id })}
-            />
-          ))}
+        {activeFriends.length === 0 && outgoingFriends.length === 0 ? (
+          <View style={styles.emptyFriends}>
+            <Text style={styles.emptyFriendsText}>Dodaj pierwszego znajomego swoim kodem powyżej</Text>
+          </View>
+        ) : (
+          <View style={styles.listWrap}>
+            {activeFriends.map((friend) => (
+              <FriendRowCard
+                key={friend.id}
+                friend={friend}
+                onPress={() => navigation.navigate("FriendDetail", { friendId: friend.id })}
+              />
+            ))}
 
-          {outgoingFriends.map((item) => (
-            <FriendRowCard key={item.id} friend={item} sent />
-          ))}
-        </View>
+            {outgoingFriends.map((item) => (
+              <FriendRowCard key={item.id} friend={item} sent />
+            ))}
+          </View>
+        )}
       </ScrollView>
 
       <InviteQrModal

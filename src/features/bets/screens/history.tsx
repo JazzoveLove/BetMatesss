@@ -1,27 +1,26 @@
 import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native'
-import { useNavigation, useRoute } from '@react-navigation/native'
-import type { RouteProp } from '@react-navigation/native'
+import { useNavigation, useRoute, type CompositeNavigationProp, type RouteProp } from '@react-navigation/native'
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useHistory } from '@/features/bets/hooks/useHistory'
 import { HistoryFilterBar } from '@/features/bets/components/history/HistoryFilterBar'
 import { HistoryListItem } from '@/features/bets/components/history/HistoryListItem'
 import { HistoryEmptyState } from '@/features/bets/components/history/HistoryEmptyState'
 import { Colors } from '@/shared/constants/colors'
+import type { RootStackParamList, TabParamList } from '@/navigation/types'
 import { styles } from './styles/history.styles'
 
-type HistoryStackParamList = {
-  Historia: { initialFilter?: 'active' | 'all' } | undefined
-}
-type HistoryNavProp = NativeStackNavigationProp<
-  HistoryStackParamList & { BetDetail: { betId: string } }
+type HistoryNavProp = CompositeNavigationProp<
+  BottomTabNavigationProp<TabParamList, 'Historia'>,
+  NativeStackNavigationProp<RootStackParamList>
 >
-type HistoryRouteProp = RouteProp<HistoryStackParamList, 'Historia'>
+type HistoryRouteProp = RouteProp<TabParamList, 'Historia'>
 
 export default function HistoryScreen() {
   const navigation = useNavigation<HistoryNavProp>()
   const route = useRoute<HistoryRouteProp>()
   const initialFilter = route.params?.initialFilter === 'active' ? 'active' : 'all'
-  const { loading, refreshing, items, filter, setFilter, onRefresh } = useHistory(initialFilter)
+  const { loading, refreshing, items, hasAnyBets, filter, setFilter, onRefresh } = useHistory(initialFilter)
 
   if (loading) {
     return (
@@ -53,7 +52,11 @@ export default function HistoryScreen() {
       <HistoryFilterBar filter={filter} onFilterChange={setFilter} />
 
       {items.length === 0 ? (
-        <HistoryEmptyState />
+        <HistoryEmptyState
+          filter={filter}
+          hasAnyBets={hasAnyBets}
+          onCreateBet={() => navigation.navigate('Nowy')}
+        />
       ) : (
         items.map(item => (
           <HistoryListItem
