@@ -7,6 +7,7 @@ export type ProfileStatsRowProps = {
   totalMatches: number
   winRate: number
   balance: number
+  hasStake: boolean
   isBalanceVisible: boolean
 }
 
@@ -14,10 +15,11 @@ export function ProfileStatsRow({
   totalMatches,
   winRate,
   balance,
+  hasStake,
   isBalanceVisible,
 }: ProfileStatsRowProps) {
-  const balanceText = isBalanceVisible ? formatBalance(balance) : '—'
-  const balanceColor = isBalanceVisible ? getBalanceColor(balance) : Colors.textMuted
+  const balanceText = !isBalanceVisible ? '—' : !hasStake ? 'bez stawki' : formatBalance(balance)
+  const balanceColor = !isBalanceVisible || !hasStake ? Colors.textMuted : getBalanceColor(balance)
   const winRateText = totalMatches === 0 ? '—' : `${winRate}%`
 
   return (

@@ -2,10 +2,13 @@ import { supabase } from '@/shared/lib/supabase'
 import { loadNicksByIds } from '@/features/friends'
 import { normalizeUsersNick } from './_helpers'
 import { getUserBets } from './bets.userBets'
-import type { BetStatus, HistoryBadgeLabel, HistoryListItem } from '@/features/bets/types/bet.types'
-
-export const NO_STAKE_LABEL = 'bez stawki'
-export const NO_SETTLEMENT_LABEL = 'bez rozliczenia'
+import {
+  NO_SETTLEMENT_LABEL,
+  NO_STAKE_LABEL,
+  type BetStatus,
+  type HistoryBadgeLabel,
+  type HistoryListItem,
+} from '@/features/bets/types/bet.types'
 
 export function historyBadgeAndAmount(
   bet: { status: BetStatus },

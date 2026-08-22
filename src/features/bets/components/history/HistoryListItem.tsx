@@ -2,8 +2,12 @@ import { Pressable, Text, View } from 'react-native'
 import { GAME_MAP } from '@/shared/constants/games'
 import { Colors } from '@/shared/constants/colors'
 import { hexToRgba } from '@/shared/utils/colors'
-import { NO_SETTLEMENT_LABEL, NO_STAKE_LABEL } from '@/features/bets/api/bets.history'
-import type { HistoryBadgeLabel, HistoryListItem as HistoryEntry } from '@/features/bets/types/bet.types'
+import {
+  NO_SETTLEMENT_LABEL,
+  NO_STAKE_LABEL,
+  type HistoryBadgeLabel,
+  type HistoryListItem as HistoryEntry,
+} from '@/features/bets/types/bet.types'
 
 const DESCRIPTIVE_AMOUNT_LABELS: string[] = ['—', NO_STAKE_LABEL, NO_SETTLEMENT_LABEL]
 

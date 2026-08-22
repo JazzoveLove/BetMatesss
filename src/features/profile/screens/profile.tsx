@@ -105,6 +105,7 @@ export default function ProfileScreen() {
                 totalMatches={profile.stats.totalMatches}
                 winRate={profile.stats.winRate}
                 balance={profile.stats.balance}
+                hasStake={profile.moneyStats !== null}
                 isBalanceVisible={profile.user.showBalance}
               />
               <ProfileHeroCard
