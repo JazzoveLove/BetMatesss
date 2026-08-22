@@ -63,10 +63,16 @@ describe('historyBadgeAndAmount', () => {
     expect(result).toEqual({ badge: 'przegrany', amountLabel: '-50 j.' })
   })
 
-  it('status "completed" bez rozliczenia (zakład honorowy) → badge "zakończony", kwota "0 j."', () => {
+  it('status "completed" bez rozliczenia (zakład honorowy) → badge "zakończony", kwota "bez stawki"', () => {
     const result = historyBadgeAndAmount({ status: 'completed' }, 0, false, null)
 
-    expect(result).toEqual({ badge: 'zakończony', amountLabel: '0 j.' })
+    expect(result).toEqual({ badge: 'zakończony', amountLabel: 'bez stawki' })
+  })
+
+  it('status "cancelled" → badge "anulowany", kwota "bez rozliczenia"', () => {
+    const result = historyBadgeAndAmount({ status: 'cancelled' }, 0, false, null)
+
+    expect(result).toEqual({ badge: 'anulowany', amountLabel: 'bez rozliczenia' })
   })
 })
 

@@ -62,10 +62,10 @@ describe('historyBadgeAndAmount', () => {
       })
     })
 
-    it('completed bez rozliczenia (stake_mode none) → zakończony, 0 j.', () => {
+    it('completed bez rozliczenia (stake_mode none) → zakończony, bez stawki', () => {
       expect(historyBadgeAndAmount({ ...baseBet, status: 'completed' }, 0, false, null)).toEqual({
         badge: 'zakończony',
-        amountLabel: '0 j.',
+        amountLabel: 'bez stawki',
       })
     })
 
@@ -73,6 +73,15 @@ describe('historyBadgeAndAmount', () => {
       expect(historyBadgeAndAmount({ ...baseBet, status: 'completed' }, 0, true, null)).toEqual({
         badge: 'zakończony',
         amountLabel: '0 j.',
+      })
+    })
+  })
+
+  describe('zakład anulowany', () => {
+    it('cancelled → anulowany, bez rozliczenia', () => {
+      expect(historyBadgeAndAmount({ ...baseBet, status: 'cancelled' }, 0, false, null)).toEqual({
+        badge: 'anulowany',
+        amountLabel: 'bez rozliczenia',
       })
     })
   })

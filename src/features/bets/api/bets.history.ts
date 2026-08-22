@@ -4,6 +4,9 @@ import { normalizeUsersNick } from './_helpers'
 import { getUserBets } from './bets.userBets'
 import type { BetStatus, HistoryBadgeLabel, HistoryListItem } from '@/features/bets/types/bet.types'
 
+export const NO_STAKE_LABEL = 'bez stawki'
+export const NO_SETTLEMENT_LABEL = 'bez rozliczenia'
+
 export function historyBadgeAndAmount(
   bet: { status: BetStatus },
   profit: number,
@@ -13,19 +16,22 @@ export function historyBadgeAndAmount(
   const st = bet.status
   if (st === 'pending') return { badge: 'oczekuje', amountLabel: '—' }
   if (st === 'rejected') return { badge: 'odrzucony', amountLabel: '—' }
-  if (st === 'cancelled') return { badge: 'anulowany', amountLabel: '—' }
+  if (st === 'cancelled') return { badge: 'anulowany', amountLabel: NO_SETTLEMENT_LABEL }
   if (st === 'disputed') return { badge: 'spór', amountLabel: '—' }
   if (st === 'active' || st === 'awaiting_confirmation') {
     return { badge: 'aktywny', amountLabel: '—' }
   }
   if (st === 'completed') {
-    const sign = profit > 0 ? '+' : ''
-    const amountLabel = !hadSettlement || profit === 0 ? '0 j.' : `${sign}${profit} j.`
+    const amountLabel = !hadSettlement
+      ? NO_STAKE_LABEL
+      : profit === 0
+        ? '0 j.'
+        : `${profit > 0 ? '+' : ''}${profit} j.`
     if (didWin !== null) {
       return { badge: didWin ? 'wygrany' : 'przegrany', amountLabel }
     }
     if (!hadSettlement || profit === 0) {
-      return { badge: 'zakończony', amountLabel: '0 j.' }
+      return { badge: 'zakończony', amountLabel }
     }
     return { badge: profit > 0 ? 'wygrany' : 'przegrany', amountLabel }
   }
