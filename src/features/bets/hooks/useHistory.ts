@@ -55,6 +55,7 @@ export function useHistory(initialFilter: HistoryFilter = 'all') {
     loading: isLoading,
     refreshing: isRefetching,
     items: filteredItems,
+    hasAnyBets: (data?.items.length ?? 0) > 0,
     filter,
     setFilter,
     onRefresh: refetch,

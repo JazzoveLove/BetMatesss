@@ -21,6 +21,9 @@ export type RecentResult = {
 
 export type HistoryBadgeLabel = 'aktywny' | 'wygrany' | 'przegrany' | 'oczekuje' | 'spór' | 'zakończony' | 'odrzucony' | 'anulowany'
 
+export const NO_STAKE_LABEL = 'bez stawki'
+export const NO_SETTLEMENT_LABEL = 'bez rozliczenia'
+
 export type HistoryListItem = {
   id: string
   gameTemplate: string

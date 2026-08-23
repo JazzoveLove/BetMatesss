@@ -22,6 +22,20 @@ export const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   listWrap: { paddingHorizontal: 16, gap: 8 },
+  emptyFriends: {
+    marginHorizontal: 16,
+    backgroundColor: Colors.card,
+    borderRadius: 14,
+    borderWidth: 0.5,
+    borderColor: Colors.borderSoft,
+    padding: 24,
+    alignItems: "center",
+  },
+  emptyFriendsText: {
+    color: Colors.textMuted,
+    fontSize: 14,
+    textAlign: "center",
+  },
   playBadge: {
     backgroundColor: hexToRgba(Colors.amber, 0.15),
     borderRadius: 20,

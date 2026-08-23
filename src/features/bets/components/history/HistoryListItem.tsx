@@ -2,7 +2,14 @@ import { Pressable, Text, View } from 'react-native'
 import { GAME_MAP } from '@/shared/constants/games'
 import { Colors } from '@/shared/constants/colors'
 import { hexToRgba } from '@/shared/utils/colors'
-import type { HistoryBadgeLabel, HistoryListItem as HistoryEntry } from '@/features/bets/types/bet.types'
+import {
+  NO_SETTLEMENT_LABEL,
+  NO_STAKE_LABEL,
+  type HistoryBadgeLabel,
+  type HistoryListItem as HistoryEntry,
+} from '@/features/bets/types/bet.types'
+
+const DESCRIPTIVE_AMOUNT_LABELS: string[] = ['—', NO_STAKE_LABEL, NO_SETTLEMENT_LABEL]
 
 const BADGE_UI: Record<HistoryBadgeLabel, { text: string; color: string; bg: string }> = {
   aktywny: { text: 'Aktywny', color: Colors.accentLight, bg: `${Colors.accentLight}18` },
@@ -28,8 +35,12 @@ function formatHistoryDate(iso: string): string {
 }
 
 function AmountText({ item }: { item: HistoryEntry }) {
-  if (item.amountLabel === '—') {
-    return <Text style={{ fontSize: 15, fontWeight: '600', color: hexToRgba(Colors.text, 0.35) }}>—</Text>
+  if (DESCRIPTIVE_AMOUNT_LABELS.includes(item.amountLabel)) {
+    return (
+      <Text style={{ fontSize: 15, fontWeight: '600', color: hexToRgba(Colors.text, 0.35) }}>
+        {item.amountLabel}
+      </Text>
+    )
   }
   const positive = item.profit > 0
   const negative = item.profit < 0

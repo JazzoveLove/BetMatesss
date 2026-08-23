@@ -2,6 +2,7 @@ import { Text, View } from 'react-native'
 import { Colors } from '@/shared/constants/colors'
 import type { ProfileDisciplineStat } from '@/features/bets/types/bet.types'
 import { formatBalance, getBalanceColor } from '@/shared/utils/money'
+import { pluralize } from '@/shared/utils/text'
 import { getWinRateColor, styles } from './styles/ProfileDisciplineList.styles'
 
 export type ProfileDisciplineListProps = {
@@ -60,7 +61,9 @@ export function ProfileDisciplineList({
                 <Text style={[styles.disciplineBalance, { color: balanceColor }]}>
                   {shownBalance}
                 </Text>
-                <Text style={styles.disciplineMeta}>{item.total} meczów</Text>
+                <Text style={styles.disciplineMeta}>
+                  {item.total} {pluralize(item.total, ['mecz', 'mecze', 'meczów'])}
+                </Text>
               </View>
             </View>
           </View>

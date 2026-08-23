@@ -1,4 +1,4 @@
-import { getInitials } from '@/shared/utils/text'
+import { getInitials, pluralize } from '@/shared/utils/text'
 
 describe('getInitials', () => {
   it('pusty string → "?"', () => {
@@ -33,5 +33,38 @@ describe('getInitials', () => {
   it('same spacje/whitespace → "?"', () => {
     expect(getInitials('   ')).toBe('?')
     expect(getInitials('\t\n')).toBe('?')
+  })
+})
+
+describe('pluralize', () => {
+  const forms: [string, string, string] = ['mecz', 'mecze', 'meczów']
+
+  it('1 → forma pojedyncza', () => {
+    expect(pluralize(1, forms)).toBe('mecz')
+  })
+
+  it('2 → forma "kilka"', () => {
+    expect(pluralize(2, forms)).toBe('mecze')
+  })
+
+  it('4 → forma "kilka"', () => {
+    expect(pluralize(4, forms)).toBe('mecze')
+  })
+
+  it('5 → forma mnoga', () => {
+    expect(pluralize(5, forms)).toBe('meczów')
+  })
+
+  // Pułapka nastek: 12 kończy się na "2", ale mieści się w wyjątku 11-14
+  it('12 → forma mnoga (nastka, mimo końcówki 2)', () => {
+    expect(pluralize(12, forms)).toBe('meczów')
+  })
+
+  it('22 → forma "kilka" (poza zakresem nastek)', () => {
+    expect(pluralize(22, forms)).toBe('mecze')
+  })
+
+  it('25 → forma mnoga', () => {
+    expect(pluralize(25, forms)).toBe('meczów')
   })
 })

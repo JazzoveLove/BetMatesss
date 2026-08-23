@@ -1,5 +1,6 @@
 import { Pressable, Text, View, Alert, Share } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import { useToast } from "@/shared/components/Toast";
 import { styles } from "./styles/FriendsScreenContent.styles";
 import { formatInviteCodeDisplay } from "../utils/friendsFormatting";
 
@@ -10,10 +11,12 @@ type InviteCodeCardProps = {
 };
 
 export function InviteCodeCard({ me, myInviteCode, onOpenQr }: InviteCodeCardProps) {
+  const { showToast } = useToast();
+
   async function copyMyCode() {
     if (!myInviteCode) return;
     await Clipboard.setStringAsync(myInviteCode);
-    Alert.alert("Schowek", "Kod skopiowany.");
+    showToast("Skopiowano");
   }
 
   async function shareInvite() {
