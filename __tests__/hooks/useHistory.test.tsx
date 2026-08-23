@@ -3,8 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react-native'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useHistory } from '@/features/bets/hooks/useHistory'
 import { BetsService } from '@/features/bets/api'
-import type { BetSummary } from '@/features/bets/types/bet.types'
-import type { HistoryListItem } from '@/features/bets/types/bet.types'
+import type { BetSummary, HistoryListItem } from '@/features/bets/types/bet.types'
 
 jest.mock('@/features/auth', () => ({
   useAuthContext: () => ({ userId: 'user-1' }),
