@@ -26,6 +26,23 @@ type CardContent = {
 }
 
 function buildContent(summary: BalanceSummary, allSettled: boolean): CardContent {
+  // allSettled ⟹ każde saldo === 0 (counts.positive === 0 && counts.negative === 0),
+  // więc aktywny filtr nie ma znaczenia dla treści karty. Sprawdzane PRZED
+  // gałęziami filtrów: filter to useState w hooku i przeżywa zmianę danych, więc
+  // STAN B jest osiągalny z filter === 'positive' (rozliczenie ostatniego długu
+  // przy aktywnym filtrze "Na plusie") — bez tego karta pokazałaby wtedy
+  // "RAZEM NA PLUSIE / Brak wyników dla tego filtra".
+  if (allSettled) {
+    return {
+      label: 'RAZEM',
+      iconName: 'checkmark-circle',
+      iconColor: Colors.green,
+      iconBg: `${Colors.green}20`,
+      value: <Text style={[styles.value, { color: getBalanceColor(0) }]}>{formatBalance(0)}</Text>,
+      subtitle: 'Wszystko rozliczone',
+    }
+  }
+
   if (summary.filter === 'positive') {
     return {
       label: 'RAZEM NA PLUSIE',
@@ -67,15 +84,16 @@ function buildContent(summary: BalanceSummary, allSettled: boolean): CardContent
     }
   }
 
+  // filter === 'all', a nie wszystko rozliczone: netSum może być 0 mimo
+  // otwartych sald (+50 / −50), więc bez podtytułu i bez ikony sukcesu.
   return {
     label: 'RAZEM',
-    iconName: allSettled ? 'checkmark-circle' : 'swap-horizontal-outline',
-    iconColor: allSettled ? Colors.green : Colors.textMuted,
-    iconBg: allSettled ? `${Colors.green}20` : Colors.cardAlt,
+    iconName: 'swap-horizontal-outline',
+    iconColor: Colors.textMuted,
+    iconBg: Colors.cardAlt,
     value: (
       <Text style={[styles.value, { color: getBalanceColor(summary.netSum) }]}>{formatBalance(summary.netSum)}</Text>
     ),
-    subtitle: allSettled ? 'Wszystko rozliczone' : undefined,
   }
 }
 

@@ -82,6 +82,25 @@ describe('BalancesScreen — rozróżnienie stanów A / B / C', () => {
     expect(screen.getByText('3 znajomych, zero otwartych rozliczeń.')).toBeTruthy()
   })
 
+  it('STAN B z nieaktualnym filtrem "positive": karta nadal pokazuje RAZEM / Wszystko rozliczone', () => {
+    // Ścieżka: STAN C → tap "Na plusie" → wejście w znajomego → Rozlicz → goBack
+    // → useFocusEffect refetch → wszystkie salda 0. filter (useState) przeżył,
+    // więc summary.filter === 'positive'. Karta nie może pokazać
+    // "RAZEM NA PLUSIE / Brak wyników dla tego filtra".
+    mockState({
+      hasAnyFriends: true,
+      filter: 'positive',
+      counts: { all: 3, positive: 0, negative: 0, zero: 3 },
+      summary: { filter: 'positive', totalCount: 3, filteredCount: 0, sum: 0 },
+    })
+
+    render(<BalancesScreen />)
+
+    expect(screen.getByText('Wszystko rozliczone')).toBeTruthy()
+    expect(screen.queryByText('Brak wyników dla tego filtra')).toBeNull()
+    expect(screen.queryByText('RAZEM NA PLUSIE')).toBeNull()
+  })
+
   it('STAN B z jednym znajomym: pluralize daje "1 znajomy"', () => {
     mockState({
       hasAnyFriends: true,

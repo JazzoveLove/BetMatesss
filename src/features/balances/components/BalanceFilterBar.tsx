@@ -28,7 +28,11 @@ export function BalanceFilterBar({ filter, onFilterChange, counts }: BalanceFilt
     >
       {FILTERS.map(({ key, label }) => {
         const active = filter === key
-        const disabled = counts[key] === 0
+        // Zerowy licznik → chip wyłączony (wejście w filtr dałoby pustą listę).
+        // Wyjątek: chip aktualnie aktywny nie może się zablokować (licznik mógł
+        // spaść do 0 już po wybraniu filtra) — inaczej zostałby zaznaczony
+        // i nieklikalny naraz.
+        const disabled = counts[key] === 0 && !active
         return (
           <Pressable
             key={key}
