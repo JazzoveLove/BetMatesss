@@ -20,6 +20,6 @@ export const styles = StyleSheet.create({
   },
   label: { color: Colors.textMuted, fontSize: 11, letterSpacing: 1, fontWeight: '600' },
   value: { fontSize: 32, fontWeight: '700' },
+  subtitle: { color: Colors.textMuted, fontSize: 13, marginTop: 4 },
   emptyText: { color: Colors.textMuted, fontSize: 14, paddingVertical: 4 },
-  zeroText: { color: Colors.text, fontSize: 15, fontWeight: '600', textAlign: 'center', paddingVertical: 4 },
 })

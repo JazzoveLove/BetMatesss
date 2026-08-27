@@ -11,7 +11,7 @@ export function useBalances() {
   const { userId } = useAuthContext()
   const [filter, setFilter] = useState<BalanceFilter>('all')
 
-  const { data, isLoading, isRefetching, refetch } = useQuery({
+  const { data, isLoading, isRefetching, isError, refetch } = useQuery({
     queryKey: queryKeys.balances(userId ?? ''),
     queryFn: () => getBalancesScreenData(userId!),
     enabled: !!userId,
@@ -32,6 +32,9 @@ export function useBalances() {
   return {
     loading: isLoading,
     refreshing: isRefetching,
+    // Surowy stan błędu z react-query — ekran pokazuje "Spróbuj ponownie".
+    // To nie jest zmiana logiki API, tylko przekazanie istniejącego stanu useQuery.
+    isError,
     hasAnyFriends: allRows.length > 0,
     items,
     counts,
