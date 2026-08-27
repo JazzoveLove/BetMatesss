@@ -4,6 +4,23 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    # Pakiety zarządzane przez Expo SDK nie mogą być aktualizowane przez
+    # Dependabota — ich wersje muszą pozostać zgodne z aktualnym Expo SDK
+    # i aktualizujemy je świadomie przez `npx expo install --fix`.
+    # Osobne semver-owe PR-y od Dependabota prowadzą do niezgodności wersji
+    # (mieliśmy już taki przypadek z react-native-gesture-handler).
+    ignore:
+      - dependency-name: "expo*"
+      - dependency-name: "react-native*"
+      - dependency-name: "@react-native-async-storage/*"
+      - dependency-name: "@react-native-community/*"
+    # Pozostałe aktualizacje npm (dev dependencies, testing, narzędzia CI
+    # jak codecov) trafiają do jednego zbiorczego PR-a tygodniowo zamiast
+    # osobnego PR-a per pakiet.
+    groups:
+      npm-dependencies:
+        patterns:
+          - "*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
