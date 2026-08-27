@@ -4,6 +4,7 @@ import { Colors } from '@/shared/constants/colors'
 export const styles = StyleSheet.create({
   actionsWrap: { marginHorizontal: 16, marginTop: 16, marginBottom: 32 },
   actionsRow: { flexDirection: 'row', gap: 8 },
+  balancesButton: { marginTop: 8 },
   actionButton: {
     flex: 1,
     flexDirection: 'row',

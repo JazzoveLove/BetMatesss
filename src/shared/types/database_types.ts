@@ -393,6 +393,13 @@ export type Database = {
           other_id: string
         }[]
       }
+      get_match_counts_with_friends: {
+        Args: { p_viewer: string }
+        Returns: {
+          match_count: number
+          other_id: string
+        }[]
+      }
       get_pair_balance: {
         Args: { p_other: string; p_viewer: string }
         Returns: number

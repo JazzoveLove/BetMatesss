@@ -17,6 +17,7 @@ import SetupProfileScreen from '@/features/auth/screens/setup-profile'
 import BetDetailScreen from '@/features/bets/screens/bet-detail'
 import SettingsScreen from '@/features/profile/screens/settings'
 import FriendDetailScreen from '@/features/friend-detail/screens/friend-detail'
+import BalancesScreen from '@/features/balances/screens/balances'
 import {
   enqueueFriendInvite,
   extractFriendIdFromUrl,
@@ -139,6 +140,11 @@ function AppContent() {
         <Stack.Screen
           name="Settings"
           component={withScreenBoundary(SettingsScreen)}
+          options={{ animation: 'slide_from_right' }}
+        />
+        <Stack.Screen
+          name="Bilanse"
+          component={withScreenBoundary(BalancesScreen)}
           options={{ animation: 'slide_from_right' }}
         />
       </Stack.Navigator>
