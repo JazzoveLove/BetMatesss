@@ -8,5 +8,6 @@ export const queryKeys = {
   friends: (userId: string) => ['friends', userId] as const,
   myInviteCode: (userId: string) => ['myInviteCode', userId] as const,
   bets: (userId: string) => ['bets', userId] as const,
+  balances: (userId: string) => ['balances', userId] as const,
   betDetail: (betId: string) => ['betDetail', betId] as const,
 }

@@ -140,6 +140,7 @@ export default function ProfileScreen() {
               <ProfileActions
                 onSettings={() => navigation.navigate('Settings')}
                 onEditProfile={openEditModal}
+                onBalances={() => navigation.navigate('Bilanse')}
               />
             </>
           )}

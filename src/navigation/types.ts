@@ -14,4 +14,5 @@ export type RootStackParamList = {
   BetDetail: { betId: string }
   FriendDetail: { friendId: string }
   Settings: undefined
+  Bilanse: undefined
 }

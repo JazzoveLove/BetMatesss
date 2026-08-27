@@ -6,9 +6,10 @@ import { styles } from './styles/ProfileActions.styles'
 export type ProfileActionsProps = {
   onSettings: () => void
   onEditProfile: () => void
+  onBalances: () => void
 }
 
-export function ProfileActions({ onSettings, onEditProfile }: ProfileActionsProps) {
+export function ProfileActions({ onSettings, onEditProfile, onBalances }: ProfileActionsProps) {
   return (
     <View style={styles.actionsWrap}>
       <View style={styles.actionsRow}>
@@ -21,6 +22,10 @@ export function ProfileActions({ onSettings, onEditProfile }: ProfileActionsProp
           <Text style={styles.actionEditText}>Edytuj profil</Text>
         </Pressable>
       </View>
+      <Pressable style={[styles.actionButton, styles.balancesButton]} onPress={onBalances}>
+        <Ionicons name="swap-horizontal-outline" size={16} color={Colors.text} />
+        <Text style={styles.actionText}>Bilanse</Text>
+      </Pressable>
     </View>
   )
 }
