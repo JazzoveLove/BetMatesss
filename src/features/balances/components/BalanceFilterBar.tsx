@@ -20,14 +20,25 @@ export function BalanceFilterBar({ filter, onFilterChange, counts }: BalanceFilt
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ flexDirection: 'row', gap: 8, paddingBottom: 4, marginBottom: 16 }}
+      style={{ marginBottom: 16, marginHorizontal: -16 }}
+      // paddingRight + wcięcie na start, żeby ostatni chip nie był ucinany
+      // przez krawędź ekranu (wcześniej czwarty chip wychodził poza widok).
+      contentContainerStyle={{ flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingBottom: 4 }}
+      testID="balances-filter-bar"
     >
       {FILTERS.map(({ key, label }) => {
         const active = filter === key
+        // Zerowy licznik → chip wyłączony (wejście w filtr dałoby pustą listę).
+        // Wyjątek: chip aktualnie aktywny nie może się zablokować (licznik mógł
+        // spaść do 0 już po wybraniu filtra) — inaczej zostałby zaznaczony
+        // i nieklikalny naraz.
+        const disabled = counts[key] === 0 && !active
         return (
           <Pressable
             key={key}
-            onPress={() => onFilterChange(key)}
+            testID={`balances-filter-${key}`}
+            disabled={disabled}
+            onPress={disabled ? undefined : () => onFilterChange(key)}
             style={({ pressed }) => [
               {
                 paddingHorizontal: 14,
@@ -37,6 +48,7 @@ export function BalanceFilterBar({ filter, onFilterChange, counts }: BalanceFilt
                 borderWidth: 0.5,
                 borderColor: active ? Colors.accent : Colors.border,
               },
+              disabled && { opacity: 0.4 },
               pressed && { opacity: 0.85 },
             ]}
           >
@@ -47,7 +59,7 @@ export function BalanceFilterBar({ filter, onFilterChange, counts }: BalanceFilt
                 color: active ? Colors.accentLight : Colors.textMuted,
               }}
             >
-              {label} ({counts[key]})
+              {`${label} ${counts[key]}`}
             </Text>
           </Pressable>
         )
