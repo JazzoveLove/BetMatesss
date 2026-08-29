@@ -7,7 +7,7 @@ import {
 import type { BalanceRow } from '@/features/balances/types/balance.types'
 
 function row(id: string, nick: string, balance: number): BalanceRow {
-  return { id, nick, avatarUrl: null, balance, matchCount: 0 }
+  return { id, nick, avatarUrl: null, balance, matchCount: 0, isFriend: true }
 }
 
 const EMPTY: BalanceRow[] = []

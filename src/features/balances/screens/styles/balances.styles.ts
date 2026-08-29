@@ -13,4 +13,13 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: { color: Colors.text, fontSize: 20, fontWeight: '700' },
+  sectionHeader: {
+    color: Colors.textMuted,
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+    marginTop: 24,
+    marginBottom: 4,
+  },
 })
