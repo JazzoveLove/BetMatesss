@@ -65,7 +65,10 @@ export async function getPendingActions(viewerId: string): Promise<PendingAction
       kind: row.kind,
       betId: row.bet_id,
       otherId: row.other_id,
-      otherNickname: profile?.nick ?? '',
+      // Ten sam fallback co getPairDetail (friendDetail.queries.ts) dla drugiej
+      // strony, której profilu nie da się ustalić — spójna etykieta zamiast
+      // pustego miejsca obok sprawy.
+      otherNickname: profile?.nick ?? 'Znajomy',
       otherAvatarUrl: profile?.avatarUrl ?? null,
       gameTemplate: row.game_template,
       stake: row.stake === null || row.stake === undefined ? null : Number(row.stake),

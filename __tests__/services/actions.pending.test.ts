@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs'
+import { readdirSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { chainResponse } from '../helpers/supabaseMock'
 
@@ -89,7 +89,7 @@ describe('getPendingActions — mapowanie i wzbogacanie', () => {
     expect(result[0].otherNickname).toBe('Usunięty użytkownik')
   })
 
-  it('brak profilu drugiej strony (np. niewidoczny) → sprawa NADAL się pokazuje, nick pusty', async () => {
+  it('brak profilu drugiej strony (np. niewidoczny) → sprawa NADAL się pokazuje, fallback nicku', async () => {
     mockRpc.mockResolvedValueOnce({
       data: [{ kind: 'dispute', bet_id: 'bet-1', other_id: 'user-2', game_template: 'x', stake: null, created_at: null }],
       error: null,
@@ -99,7 +99,7 @@ describe('getPendingActions — mapowanie i wzbogacanie', () => {
     const result = await getPendingActions('user-1')
 
     expect(result).toHaveLength(1)
-    expect(result[0]).toMatchObject({ betId: 'bet-1', otherNickname: '', otherAvatarUrl: null })
+    expect(result[0]).toMatchObject({ betId: 'bet-1', otherNickname: 'Znajomy', otherAvatarUrl: null })
   })
 
   it('błąd zapytania o profile NIE ukrywa spraw (fail-open na profilach)', async () => {
@@ -112,7 +112,7 @@ describe('getPendingActions — mapowanie i wzbogacanie', () => {
     const result = await getPendingActions('user-1')
 
     expect(result).toHaveLength(1)
-    expect(result[0].otherNickname).toBe('')
+    expect(result[0].otherNickname).toBe('Znajomy')
   })
 })
 
@@ -172,10 +172,16 @@ describe('getPendingActions — fail-closed na RPC', () => {
 // weryfikujemy świadomie na prawdziwej bazie przy review PR-a (tak jak przy
 // get_match_counts_with_friends).
 describe('migracja get_pending_actions — predykaty krytyczne w SQL', () => {
-  const sql = readFileSync(
-    join(__dirname, '../../supabase/migrations/20260829120000_add_get_pending_actions.sql'),
-    'utf8',
-  )
+  // Nie zaszywamy nazwy pliku — migracje bywają konsolidowane do baseline
+  // (patrz *_consolidated_into_baseline.sql). Szukamy pliku po zawartości.
+  const migrationsDir = join(__dirname, '../../supabase/migrations')
+  const sql = readdirSync(migrationsDir)
+    .filter(f => f.endsWith('.sql'))
+    .map(f => readFileSync(join(migrationsDir, f), 'utf8'))
+    .find(content => content.includes('function public.get_pending_actions'))
+
+  if (!sql) throw new Error('Nie znaleziono migracji definiującej get_pending_actions')
+
   // Komentarze opisują wzorzec ("bez security definer"), więc predykaty
   // sprawdzamy na treści bez linii `-- ...`.
   const sqlBody = sql.replace(/^\s*--.*$/gm, '')

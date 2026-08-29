@@ -9,7 +9,7 @@ export type PendingAction = {
    * przez LEFT JOIN, więc typ to dopuszcza.
    */
   otherId: string | null
-  /** Pusty string, gdy nie udało się ustalić drugiej strony (patrz otherId). */
+  /** Nick drugiej strony; fallback 'Znajomy', gdy profilu nie da się ustalić. */
   otherNickname: string
   otherAvatarUrl: string | null
   gameTemplate: string
