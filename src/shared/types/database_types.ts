@@ -412,6 +412,17 @@ export type Database = {
           wins: number
         }[]
       }
+      get_pending_actions: {
+        Args: { p_viewer: string }
+        Returns: {
+          bet_id: string
+          created_at: string
+          game_template: string
+          kind: string
+          other_id: string
+          stake: number
+        }[]
+      }
       is_bet_participant: {
         Args: { p_bet_id: string; p_user_id: string }
         Returns: boolean
