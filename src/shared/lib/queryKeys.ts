@@ -9,5 +9,6 @@ export const queryKeys = {
   myInviteCode: (userId: string) => ['myInviteCode', userId] as const,
   bets: (userId: string) => ['bets', userId] as const,
   balances: (userId: string) => ['balances', userId] as const,
+  pendingActions: (userId: string) => ['pendingActions', userId] as const,
   betDetail: (betId: string) => ['betDetail', betId] as const,
 }
