@@ -386,6 +386,18 @@ export type Database = {
       }
       delete_my_account: { Args: never; Returns: undefined }
       delete_payment: { Args: { p_payment_id: string }; Returns: undefined }
+      get_balances_screen_data: {
+        Args: { p_viewer: string }
+        Returns: {
+          avatar_url: string
+          balance: number
+          deleted_at: string
+          is_friend: boolean
+          match_count: number
+          nick: string
+          other_id: string
+        }[]
+      }
       get_balances_with_friends: {
         Args: { p_viewer: string }
         Returns: {

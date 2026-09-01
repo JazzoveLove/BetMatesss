@@ -1,8 +1,18 @@
 import { historyBadgeAndAmount } from '@/features/bets/api/bets.history'
+import { getFriendsBalanceLeaderboard } from '@/features/bets/api/bets.queries'
+import { getBalancesScreenData } from '@/features/balances/api/balances.queries'
 import type { BetRow } from '@/features/bets/types/bet.types'
+import type { BalanceRow } from '@/features/balances/types/balance.types'
 
 jest.mock('@/shared/lib/supabase', () => ({ supabase: {} }))
 jest.mock('@/features/friends', () => ({}))
+jest.mock('@/features/balances/api/balances.queries', () => ({ getBalancesScreenData: jest.fn() }))
+
+const mockGetBalancesScreenData = getBalancesScreenData as jest.Mock
+
+function balRow(over: Partial<BalanceRow> = {}): BalanceRow {
+  return { id: 'x', nick: 'X', avatarUrl: null, balance: 0, matchCount: 0, isFriend: true, ...over }
+}
 
 const baseBet: BetRow = {
   id: '1',
@@ -84,5 +94,64 @@ describe('historyBadgeAndAmount', () => {
         amountLabel: 'bez rozliczenia',
       })
     })
+  })
+})
+
+describe('getFriendsBalanceLeaderboard', () => {
+  beforeEach(() => mockGetBalancesScreenData.mockReset())
+
+  it('woła to samo RPC co ekran Bilanse (getBalancesScreenData), nie duplikuje logiki', async () => {
+    mockGetBalancesScreenData.mockResolvedValue([])
+
+    await getFriendsBalanceLeaderboard('user-1')
+
+    expect(mockGetBalancesScreenData).toHaveBeenCalledWith('user-1')
+  })
+
+  it('zawęża do aktywnych znajomych (isFriend), ale NIE gubi reszty danych — po prostu ich nie pokazuje w rankingu', async () => {
+    mockGetBalancesScreenData.mockResolvedValue([
+      balRow({ id: 'friend-1', nick: 'Ola', balance: 20, isFriend: true }),
+      balRow({ id: 'ghost-1', nick: 'Usunięty użytkownik', balance: 999, isFriend: false }),
+      balRow({ id: 'friend-2', nick: 'Kuba', balance: -5, isFriend: true }),
+    ])
+
+    const result = await getFriendsBalanceLeaderboard('user-1')
+
+    expect(result.map(r => r.id)).toEqual(['friend-1', 'friend-2'])
+    expect(result.find(r => r.id === 'ghost-1')).toBeUndefined()
+  })
+
+  it('sortuje malejąco po saldzie', async () => {
+    mockGetBalancesScreenData.mockResolvedValue([
+      balRow({ id: 'a', balance: -10, isFriend: true }),
+      balRow({ id: 'b', balance: 30, isFriend: true }),
+      balRow({ id: 'c', balance: 5, isFriend: true }),
+    ])
+
+    const result = await getFriendsBalanceLeaderboard('user-1')
+
+    expect(result.map(r => r.balance)).toEqual([30, 5, -10])
+  })
+
+  it('mapuje na FriendRankRow (id, nick, balance) — bez avatarUrl / matchCount', async () => {
+    mockGetBalancesScreenData.mockResolvedValue([
+      balRow({ id: 'f1', nick: 'Ola', avatarUrl: 'http://a', balance: 7, matchCount: 3, isFriend: true }),
+    ])
+
+    const result = await getFriendsBalanceLeaderboard('user-1')
+
+    expect(result).toEqual([{ id: 'f1', nick: 'Ola', balance: 7 }])
+  })
+
+  it('pusty wynik → pusta lista (bez wczesnego return po friends.length)', async () => {
+    mockGetBalancesScreenData.mockResolvedValue([])
+
+    await expect(getFriendsBalanceLeaderboard('user-1')).resolves.toEqual([])
+  })
+
+  it('błąd propaguje się z getBalancesScreenData (fail-closed)', async () => {
+    mockGetBalancesScreenData.mockRejectedValue(new Error('rpc down'))
+
+    await expect(getFriendsBalanceLeaderboard('user-1')).rejects.toThrow('rpc down')
   })
 })
