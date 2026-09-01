@@ -4,11 +4,22 @@ import { AuthService } from '../api/auth.service'
 
 export type AppAuthState = 'loading' | 'auth' | 'setup' | 'main'
 
+/** Który ekran pokazać, gdy appState === 'auth'. */
+export type AuthScreen = 'welcome' | 'login' | 'register'
+
 export type AuthContextValue = {
   appState: AppAuthState
   session: Session | null
   userId: string | null
   completeSetup: () => void
+  /**
+   * Współdzielony, bo przeżywa wejście do 'main': po udanym logowaniu zostaje
+   * na 'login' i nikt go nie resetuje. Po usunięciu konta flow kasowania
+   * ustawia go z powrotem na 'welcome', żeby nie wracać do formularza logowania
+   * do nieistniejącego już konta (zwykłe wylogowanie go nie rusza).
+   */
+  authScreen: AuthScreen
+  setAuthScreen: (screen: AuthScreen) => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -22,6 +33,7 @@ export function useAuthContext(): AuthContextValue {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [appState, setAppState] = useState<AppAuthState>('loading')
   const [session, setSession] = useState<Session | null>(null)
+  const [authScreen, setAuthScreen] = useState<AuthScreen>('welcome')
   const userId = session?.user.id ?? null
 
   const completeSetup = useCallback(() => {
@@ -67,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ appState, session, userId, completeSetup }}>
+    <AuthContext.Provider value={{ appState, session, userId, completeSetup, authScreen, setAuthScreen }}>
       {children}
     </AuthContext.Provider>
   )

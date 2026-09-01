@@ -4,7 +4,7 @@ import {
   createNavigationContainerRef,
   type ParamListBase,
 } from '@react-navigation/native'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import * as Linking from 'expo-linking'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -54,8 +54,9 @@ const navigationRef = createNavigationContainerRef<ParamListBase>()
 const Stack = createNativeStackNavigator()
 
 function AppContent() {
-  const { appState, session, completeSetup } = useAuthContext()
-  const [authScreen, setAuthScreen] = useState<'welcome' | 'login' | 'register'>('welcome')
+  // authScreen jest w AuthContext (nie w useState tutaj), bo flow usuwania konta
+  // musi go zresetować do 'welcome' — patrz komentarz w AuthContext.
+  const { appState, session, completeSetup, authScreen, setAuthScreen } = useAuthContext()
 
   useEffect(() => {
     setNavigateToFriendsTab(() => {

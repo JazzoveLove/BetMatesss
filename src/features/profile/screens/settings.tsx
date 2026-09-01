@@ -3,7 +3,7 @@ import { Alert, Linking, Pressable, ScrollView, Text, View } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import Constants from 'expo-constants'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useAuth } from '@/features/auth'
+import { useAuth, useAuthContext } from '@/features/auth'
 import { UsersService } from '@/shared/lib/users.service'
 import { styles } from './styles/settings.styles'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -17,6 +17,7 @@ type Nav = NativeStackNavigationProp<RootStackParamList>
 export default function SettingsScreen() {
   const navigation = useNavigation<Nav>()
   const { signOut } = useAuth()
+  const { setAuthScreen } = useAuthContext()
   const [deleting, setDeleting] = useState(false)
 
   function handleLogout() {
@@ -43,6 +44,14 @@ export default function SettingsScreen() {
               setDeleting(false)
               return
             }
+            // Konto skasowane — po wylogowaniu ekran auth ma pokazać powitanie,
+            // nie formularz logowania do konta, którego już nie ma. authScreen
+            // mógł zostać na 'login' po ostatnim logowaniu. Ustawiamy PRZED
+            // signOut, bo to onAuthStateChange(null) przełącza appState na
+            // 'auth' i wtedy AppContent czyta authScreen. Wyjście z appState
+            // 'auth' i tak odmontowuje cały NavigationContainer, więc stos
+            // ekranów znika w całości — "wstecz" nie wróci do usuniętego konta.
+            setAuthScreen('welcome')
             await signOut()
           },
         },
