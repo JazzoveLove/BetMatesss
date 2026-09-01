@@ -31,7 +31,9 @@ let cleanup: (() => void) | null = null
 
 beforeEach(() => {
   mockRecordPayment.mockReset()
-  jest.spyOn(Alert, 'alert').mockImplementation(() => {})
+  // mockReset() też czyści historię wywołań między testami — inaczej asercje
+  // "nie wołano Alert.alert('Zapisano')" łapałyby wywołanie z sąsiedniego testu.
+  jest.spyOn(Alert, 'alert').mockReset().mockImplementation(() => {})
 })
 
 afterEach(() => {
@@ -60,6 +62,38 @@ describe('useSettlePayment', () => {
     // hook własnoręcznie inwaliduje tylko dashboard i profile.
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: queryKeys.dashboard('user-1') })
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: queryKeys.profile('user-1') })
+  })
+
+  it('wpis dłużnika (status "pending"): feedback "Wysłano do potwierdzenia", nie "Zapisano"', async () => {
+    mockRecordPayment.mockResolvedValue({ status: 'pending' })
+    const onSettled = jest.fn().mockResolvedValue(undefined)
+    const { Wrapper } = createWrapper()
+    const { result, unmount } = renderHook(() => useSettlePayment('friend-1', onSettled), { wrapper: Wrapper })
+    cleanup = unmount
+
+    await act(async () => {
+      await result.current.settle(50, -30) // balance < 0 → to ja jestem dłużnikiem
+    })
+
+    expect(Alert.alert).toHaveBeenCalledWith(
+      'Wysłano do potwierdzenia',
+      expect.stringContaining('potwierdzić'),
+    )
+    expect(Alert.alert).not.toHaveBeenCalledWith('Zapisano', expect.anything())
+  })
+
+  it('wpis wierzyciela (status "confirmed"): feedback "Zapisano"', async () => {
+    mockRecordPayment.mockResolvedValue({ status: 'confirmed' })
+    const onSettled = jest.fn().mockResolvedValue(undefined)
+    const { Wrapper } = createWrapper()
+    const { result, unmount } = renderHook(() => useSettlePayment('friend-1', onSettled), { wrapper: Wrapper })
+    cleanup = unmount
+
+    await act(async () => {
+      await result.current.settle(50, 30)
+    })
+
+    expect(Alert.alert).toHaveBeenCalledWith('Zapisano', expect.any(String))
   })
 
   it('porażka: cache NIE jest inwalidowany, błąd trafia do UI przez Alert.alert (nie wyjątek, nie stan error)', async () => {

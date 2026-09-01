@@ -32,6 +32,7 @@ function action(kind: PendingAction['kind'], betId: string): PendingAction {
   return {
     kind,
     betId,
+    paymentId: null,
     otherId: 'user-2',
     otherNickname: 'Kuba',
     otherAvatarUrl: null,
@@ -61,7 +62,13 @@ describe('usePendingActions', () => {
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     expect(result.current.items).toEqual([])
-    expect(result.current.counts).toEqual({ total: 0, bet_invite: 0, result_confirm: 0, dispute: 0 })
+    expect(result.current.counts).toEqual({
+      total: 0,
+      bet_invite: 0,
+      result_confirm: 0,
+      dispute: 0,
+      payment_confirm: 0,
+    })
     expect(result.current.isError).toBe(false)
   })
 
@@ -71,14 +78,21 @@ describe('usePendingActions', () => {
       action('result_confirm', 'bet-2'),
       action('result_confirm', 'bet-3'),
       action('dispute', 'bet-4'),
+      { ...action('payment_confirm', 'ignored'), betId: null, paymentId: 'pay-1' },
     ])
     const { result, unmount } = renderHook(() => usePendingActions(), { wrapper: createWrapper() })
     cleanup = unmount
 
     await waitFor(() => expect(result.current.loading).toBe(false))
 
-    expect(result.current.items).toHaveLength(4)
-    expect(result.current.counts).toEqual({ total: 4, bet_invite: 1, result_confirm: 2, dispute: 1 })
+    expect(result.current.items).toHaveLength(5)
+    expect(result.current.counts).toEqual({
+      total: 5,
+      bet_invite: 1,
+      result_confirm: 2,
+      dispute: 1,
+      payment_confirm: 1,
+    })
   })
 
   it('błąd RPC → isError true, a NIE pusta lista udająca "wszystko ogarnięte"', async () => {
