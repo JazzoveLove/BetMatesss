@@ -47,6 +47,7 @@ describe('getPendingActions — mapowanie i wzbogacanie', () => {
       {
         kind: 'result_confirm',
         betId: 'bet-1',
+        paymentId: null,
         otherId: 'user-2',
         otherNickname: 'Kuba',
         otherAvatarUrl: 'https://x/kuba.png',
@@ -55,6 +56,57 @@ describe('getPendingActions — mapowanie i wzbogacanie', () => {
         createdAt: '2026-08-20T10:00:00.000Z',
       },
     ])
+  })
+
+  it('payment_confirm: bet_id NULL, payment_id ustawione, game_template NULL, stake = kwota spłaty', async () => {
+    mockRpc.mockResolvedValueOnce({
+      data: [
+        {
+          kind: 'payment_confirm',
+          bet_id: null,
+          payment_id: 'pay-1',
+          other_id: 'user-2',
+          game_template: null,
+          stake: 40,
+          created_at: '2026-08-25T09:00:00.000Z',
+        },
+      ],
+      error: null,
+    })
+    mockFrom.mockReturnValueOnce(chainResponse({ data: [profileRow('user-2', 'Kuba')], error: null }))
+
+    const result = await getPendingActions('user-1')
+
+    expect(result).toEqual([
+      {
+        kind: 'payment_confirm',
+        betId: null,
+        paymentId: 'pay-1',
+        otherId: 'user-2',
+        otherNickname: 'Kuba',
+        otherAvatarUrl: null,
+        gameTemplate: null,
+        stake: 40,
+        createdAt: '2026-08-25T09:00:00.000Z',
+      },
+    ])
+  })
+
+  it('dwie wiszące spłaty (bet_id NULL, różne payment_id) → NIE zwijają się w jeden wiersz', async () => {
+    mockRpc.mockResolvedValueOnce({
+      data: [
+        { kind: 'payment_confirm', bet_id: null, payment_id: 'pay-1', other_id: 'user-2', game_template: null, stake: 10, created_at: '2026-08-25T09:00:00.000Z' },
+        { kind: 'payment_confirm', bet_id: null, payment_id: 'pay-2', other_id: 'user-3', game_template: null, stake: 20, created_at: '2026-08-24T09:00:00.000Z' },
+      ],
+      error: null,
+    })
+    mockFrom.mockReturnValueOnce(
+      chainResponse({ data: [profileRow('user-2', 'Kuba'), profileRow('user-3', 'Ala')], error: null }),
+    )
+
+    const result = await getPendingActions('user-1')
+
+    expect(result.map(a => a.paymentId)).toEqual(['pay-1', 'pay-2'])
   })
 
   it('stake numeryczny jako string z RPC → number; null zostaje null (stake_mode=none)', async () => {
@@ -175,10 +227,15 @@ describe('migracja get_pending_actions — predykaty krytyczne w SQL', () => {
   // Nie zaszywamy nazwy pliku — migracje bywają konsolidowane do baseline
   // (patrz *_consolidated_into_baseline.sql). Szukamy pliku po zawartości.
   const migrationsDir = join(__dirname, '../../supabase/migrations')
+  // get_pending_actions definiują DWIE migracje (20260829120000 tworzy,
+  // 20260902120200 robi DROP + CREATE z payment_id). Sortujemy nazwy i bierzemy
+  // OSTATNIE trafienie — inaczej test mógłby pinować martwą, nieaktualną wersję.
   const sql = readdirSync(migrationsDir)
     .filter(f => f.endsWith('.sql'))
+    .sort()
     .map(f => readFileSync(join(migrationsDir, f), 'utf8'))
-    .find(content => content.includes('function public.get_pending_actions'))
+    .filter(content => content.includes('function public.get_pending_actions'))
+    .at(-1)
 
   if (!sql) throw new Error('Nie znaleziono migracji definiującej get_pending_actions')
 
@@ -204,9 +261,24 @@ describe('migracja get_pending_actions — predykaty krytyczne w SQL', () => {
     expect(sqlBody).toMatch(/b\.status\s*=\s*'disputed'/)
   })
 
-  it('dedup po bet_id (jedna sprawa = jeden wiersz) i sort z NULL na końcu', () => {
-    expect(sqlBody).toMatch(/distinct on \(u\.bet_id\)/)
+  it('dedup po kluczu sprawy coalesce(bet_id, payment_id) i sort z NULL na końcu', () => {
+    expect(sqlBody).toMatch(/distinct on \(coalesce\(u\.bet_id,\s*u\.payment_id\)\)/)
     expect(sqlBody).toMatch(/order by dedup\.created_at desc nulls last/)
+  })
+
+  it('czwarty typ sprawy: payment_confirm — wisząca spłata do wierzyciela (p_viewer = to_user)', () => {
+    expect(sqlBody).toMatch(/'payment_confirm'::text\s+as kind/)
+    expect(sqlBody).toMatch(/pay\.status\s*=\s*'pending'/)
+    expect(sqlBody).toMatch(/pay\.to_user\s*=\s*p_viewer/)
+    expect(sqlBody).toMatch(/pay\.deleted_at is null/)
+  })
+
+  it('nowa kolumna payment_id w typie zwracanym (bet_id NULL dla payment_confirm)', () => {
+    expect(sqlBody).toMatch(/payment_id uuid/)
+  })
+
+  it('zmiana typu zwracanego przez DROP + CREATE, nie CREATE OR REPLACE', () => {
+    expect(sqlBody).toMatch(/drop function if exists public\.get_pending_actions\(uuid\)/)
   })
 
   it('INVOKER — brak security definer; grant execute tylko dla authenticated', () => {

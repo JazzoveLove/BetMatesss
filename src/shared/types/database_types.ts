@@ -250,6 +250,7 @@ export type Database = {
           deleted_at: string | null
           from_user: string
           id: string
+          status: string
           to_user: string
         }
         Insert: {
@@ -259,6 +260,7 @@ export type Database = {
           deleted_at?: string | null
           from_user: string
           id?: string
+          status?: string
           to_user: string
         }
         Update: {
@@ -268,6 +270,7 @@ export type Database = {
           deleted_at?: string | null
           from_user?: string
           id?: string
+          status?: string
           to_user?: string
         }
         Relationships: [
@@ -432,6 +435,7 @@ export type Database = {
           game_template: string
           kind: string
           other_id: string
+          payment_id: string
           stake: number
         }[]
       }

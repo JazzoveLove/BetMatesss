@@ -1,4 +1,6 @@
 export { getPairDetail } from './friendDetail.queries'
 export type { PairDetail, PairDisciplineStat } from './friendDetail.queries'
 export { getHistoryForPair } from './friendDetail.History'
-export { recordPayment } from './friendDetail.settle'
+export { recordPayment, confirmPayment, rejectPayment, retractPayment } from './friendDetail.settle'
+export { getPairPendingPayments } from './friendDetail.pendingPayments'
+export type { PairPendingPayment } from './friendDetail.pendingPayments'

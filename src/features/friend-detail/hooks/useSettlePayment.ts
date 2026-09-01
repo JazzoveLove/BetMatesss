@@ -38,6 +38,16 @@ export function useSettlePayment(friendId: string, onSettled: () => void | Promi
         await onSettled()
         void queryClient.invalidateQueries({ queryKey: queryKeys.dashboard(userId) })
         void queryClient.invalidateQueries({ queryKey: queryKeys.profile(userId) })
+        // Feedback zależny od tego, kto wysłał: wpis wierzyciela wchodzi do
+        // bilansu od razu, wpis dłużnika czeka na potwierdzenie drugiej strony.
+        if (result.status === 'pending') {
+          Alert.alert(
+            'Wysłano do potwierdzenia',
+            'Druga strona musi potwierdzić tę spłatę, zanim wejdzie do bilansu.',
+          )
+        } else {
+          Alert.alert('Zapisano', 'Saldo zostało zaktualizowane.')
+        }
         return true
       } finally {
         settlingRef.current = false

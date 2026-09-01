@@ -5,9 +5,10 @@ import type { PendingAction, PendingActionKind } from '@/features/actions/types/
 
 type PendingActionRpcRow = {
   kind: PendingActionKind
-  bet_id: string
+  bet_id: string | null
+  payment_id: string | null
   other_id: string | null
-  game_template: string
+  game_template: string | null
   stake: number | string | null
   created_at: string | null
 }
@@ -49,21 +50,26 @@ export async function getPendingActions(viewerId: string): Promise<PendingAction
     rows.map(r => r.other_id).filter((id): id is string => !!id),
   )
 
-  const seenBetIds = new Set<string>()
+  const seenKeys = new Set<string>()
   const out: PendingAction[] = []
 
   for (const row of rows) {
-    // Jedna sprawa = jeden wiersz. RPC już to gwarantuje (distinct on bet_id),
-    // ale duplikat na tym poziomie objawiłby się licznikiem "(5)" przy 3
-    // realnych sprawach — taniej domknąć tu niż tropić potem w UI.
-    if (seenBetIds.has(row.bet_id)) continue
-    seenBetIds.add(row.bet_id)
+    // Klucz sprawy = bet_id ALBO payment_id (payment_confirm nie ma bet_id).
+    // To samo wyrażenie, po którym dedupuje SQL (coalesce(bet_id, payment_id)).
+    // Jedna sprawa = jeden wiersz; duplikat na tym poziomie objawiłby się
+    // licznikiem "(5)" przy 3 realnych sprawach — taniej domknąć tu niż w UI.
+    const key = row.bet_id ?? row.payment_id
+    if (key) {
+      if (seenKeys.has(key)) continue
+      seenKeys.add(key)
+    }
 
     const profile = row.other_id ? profiles.get(row.other_id) : undefined
 
     out.push({
       kind: row.kind,
       betId: row.bet_id,
+      paymentId: row.payment_id ?? null,
       otherId: row.other_id,
       // Ten sam fallback co getPairDetail (friendDetail.queries.ts) dla drugiej
       // strony, której profilu nie da się ustalić — spójna etykieta zamiast
