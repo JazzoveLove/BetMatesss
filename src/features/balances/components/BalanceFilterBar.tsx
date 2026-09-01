@@ -20,10 +20,21 @@ export function BalanceFilterBar({ filter, onFilterChange, counts }: BalanceFilt
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      style={{ marginBottom: 16, marginHorizontal: -16 }}
-      // paddingRight + wcięcie na start, żeby ostatni chip nie był ucinany
+      // flexGrow: 0 — pasek ma zajmować tylko wysokość swojej zawartości, nigdy
+      // nie rozlewać się na wolne miejsce rodzica (regres: zagnieżdżony w
+      // pionowym ScrollView robił z chipów pionowe słupki).
+      style={{ marginBottom: 16, marginHorizontal: -16, flexGrow: 0 }}
+      // alignItems: 'flex-start' — chipy trzymają swoją naturalną wysokość i nie
+      // rozciągają się w pionie, niezależnie od wysokości paska.
+      // paddingHorizontal + wcięcie na start, żeby ostatni chip nie był ucinany
       // przez krawędź ekranu (wcześniej czwarty chip wychodził poza widok).
-      contentContainerStyle={{ flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingBottom: 4 }}
+      contentContainerStyle={{
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: 8,
+        paddingHorizontal: 16,
+        paddingBottom: 4,
+      }}
       testID="balances-filter-bar"
     >
       {FILTERS.map(({ key, label }) => {
