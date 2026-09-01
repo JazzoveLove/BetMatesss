@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/lib/supabase'
-import { getAcceptedFriendsList } from '@/features/friends'
+import { getBalancesScreenData } from '@/features/balances/api/balances.queries'
 import { getDashboardData } from './bets.dashboard'
 import { getProfileStatsV2 } from './bets.profile'
 import { getUserBets } from './bets.userBets'
@@ -52,18 +52,16 @@ export async function getDisciplineStatsForUser(userId: string): Promise<Discipl
 }
 
 export async function getFriendsBalanceLeaderboard(userId: string): Promise<FriendRankRow[]> {
-  const friends = await getAcceptedFriendsList(userId)
-  if (friends.length === 0) return []
+  // To samo RPC co ekran Bilanse — jedno źródło kompletnych danych, zero
+  // duplikacji logiki łączenia (wcześniej ta funkcja miała skopiowany błąd z
+  // getBalancesScreenData: pętla po liście znajomych gubiła salda). Ranking to
+  // świadomie tylko aktywni znajomi, więc zawężamy KOMPLETNY wynik po fakcie
+  // (isFriend) — to nie to samo co gubienie danych przez wybór złej listy.
+  const rows = await getBalancesScreenData(userId)
 
-  const { data, error: balancesErr } = await supabase.rpc('get_balances_with_friends', { p_viewer: userId })
-  if (balancesErr) throw balancesErr
-
-  const balanceById = new Map<string, number>(
-    ((data ?? []) as { other_id: string; balance: number }[]).map(r => [r.other_id, Number(r.balance)]),
-  )
-
-  return friends
-    .map(f => ({ id: f.id, nick: f.nick, balance: balanceById.get(f.id) ?? 0 }))
+  return rows
+    .filter(row => row.isFriend)
+    .map(row => ({ id: row.id, nick: row.nick, balance: row.balance }))
     .sort((a, b) => b.balance - a.balance)
 }
 

@@ -13,6 +13,7 @@ import { BalanceEmptyState } from '@/features/balances/components/BalanceEmptySt
 import { BalancesSkeleton } from '@/features/balances/components/BalancesSkeleton'
 import { BalancesErrorState } from '@/features/balances/components/BalancesErrorState'
 import { BalancesAllSettledNote } from '@/features/balances/components/BalancesAllSettledNote'
+import type { BalanceRow } from '@/features/balances/types/balance.types'
 import { styles } from './styles/balances.styles'
 
 type Nav = NativeStackNavigationProp<RootStackParamList>
@@ -21,28 +22,47 @@ const BACK_HIT_SLOP = { top: 12, bottom: 12, left: 12, right: 12 }
 
 export default function BalancesScreen() {
   const navigation = useNavigation<Nav>()
-  const { loading, refreshing, isError, items, counts, summary, hasAnyFriends, filter, setFilter, onRefresh } =
-    useBalances()
+  const {
+    loading,
+    refreshing,
+    isError,
+    items,
+    activeItems,
+    inactiveItems,
+    counts,
+    summary,
+    friendCount,
+    hasAnyRows,
+    filter,
+    setFilter,
+    onRefresh,
+  } = useBalances()
 
   const goToFriends = () => navigation.navigate('Tabs', { screen: 'Znajomi' })
+  const openFriend = (friendId: string) => navigation.navigate('FriendDetail', { friendId })
   // STAN B vs STAN C: liczy się, czy jest jakiekolwiek NIEZEROWE saldo —
   // nie suma (netSum), bo +50 i −50 też daje 0.
   const hasNonZeroBalance = counts.positive > 0 || counts.negative > 0
+
+  const renderRows = (rows: BalanceRow[]) =>
+    rows.map((row, index) => (
+      <BalanceRowCard key={row.id} row={row} isLast={index === rows.length - 1} onPress={openFriend} />
+    ))
 
   function renderBody() {
     if (loading) return <BalancesSkeleton />
     if (isError) return <BalancesErrorState onRetry={onRefresh} />
 
-    // STAN A — brak jakichkolwiek znajomych: bez filtrów, bez karty RAZEM.
-    if (!hasAnyFriends) return <BalanceEmptyState variant="noFriends" onGoToFriends={goToFriends} />
+    // STAN A — nie ma czego pokazać: ani znajomych, ani sald z kimkolwiek.
+    if (!hasAnyRows) return <BalanceEmptyState variant="noFriends" onGoToFriends={goToFriends} />
 
-    // STAN B — są znajomi, ale wszystkie salda === 0: karta RAZEM zostaje
+    // STAN B — są wiersze, ale wszystkie salda === 0: karta RAZEM zostaje
     // (zero to tu prawdziwa informacja), filtrów nie ma czego filtrować.
     if (!hasNonZeroBalance) {
       return (
         <>
           <BalanceSummaryCard summary={summary} allSettled />
-          <BalancesAllSettledNote friendCount={counts.all} />
+          <BalancesAllSettledNote friendCount={friendCount} />
         </>
       )
     }
@@ -55,14 +75,20 @@ export default function BalancesScreen() {
         {items.length === 0 ? (
           <BalanceEmptyState variant="filterEmpty" onGoToFriends={goToFriends} />
         ) : (
-          items.map((row, index) => (
-            <BalanceRowCard
-              key={row.id}
-              row={row}
-              isLast={index === items.length - 1}
-              onPress={friendId => navigation.navigate('FriendDetail', { friendId })}
-            />
-          ))
+          <>
+            {renderRows(activeItems)}
+            {inactiveItems.length > 0 && (
+              <>
+                {/* Osoby spoza listy znajomych (usunięte konto / usunięcie ze
+                    znajomych), z którymi wciąż istnieje saldo. Sekcja renderuje
+                    się tylko gdy ma wiersze. */}
+                <Text style={styles.sectionHeader} testID="balances-inactive-header">
+                  Nieaktywni
+                </Text>
+                {renderRows(inactiveItems)}
+              </>
+            )}
+          </>
         )}
       </>
     )

@@ -39,21 +39,21 @@ afterEach(() => {
 })
 
 describe('useBalances', () => {
-  it('brak znajomych → hasAnyFriends false, items puste', async () => {
+  it('brak wierszy → hasAnyRows false, items puste', async () => {
     mockGetBalancesScreenData.mockResolvedValue([])
     const { result, unmount } = renderHook(() => useBalances(), { wrapper: createWrapper() })
     cleanup = unmount
 
     await waitFor(() => expect(result.current.loading).toBe(false))
 
-    expect(result.current.hasAnyFriends).toBe(false)
+    expect(result.current.hasAnyRows).toBe(false)
     expect(result.current.items).toEqual([])
   })
 
   it('zmiana filtra przelicza items i summary bez ponownego zapytania do API', async () => {
     mockGetBalancesScreenData.mockResolvedValue([
-      { id: '1', nick: 'Ola', avatarUrl: null, balance: 50, matchCount: 2 },
-      { id: '2', nick: 'Kuba', avatarUrl: null, balance: -20, matchCount: 1 },
+      { id: '1', nick: 'Ola', avatarUrl: null, balance: 50, matchCount: 2, isFriend: true },
+      { id: '2', nick: 'Kuba', avatarUrl: null, balance: -20, matchCount: 1, isFriend: true },
     ])
     const { result, unmount } = renderHook(() => useBalances(), { wrapper: createWrapper() })
     cleanup = unmount
@@ -68,5 +68,23 @@ describe('useBalances', () => {
     expect(result.current.items.map(r => r.id)).toEqual(['1'])
     expect(result.current.summary).toEqual({ filter: 'positive', totalCount: 2, filteredCount: 1, sum: 50 })
     expect(mockGetBalancesScreenData).toHaveBeenCalledTimes(1)
+  })
+
+  it('dzieli items na activeItems / inactiveItems po isFriend; liczniki i friendCount z pełnej listy', async () => {
+    mockGetBalancesScreenData.mockResolvedValue([
+      { id: 'f1', nick: 'Ola', avatarUrl: null, balance: 50, matchCount: 2, isFriend: true },
+      { id: 'x1', nick: 'Usunięty użytkownik', avatarUrl: null, balance: -20, matchCount: 1, isFriend: false },
+    ])
+    const { result, unmount } = renderHook(() => useBalances(), { wrapper: createWrapper() })
+    cleanup = unmount
+
+    await waitFor(() => expect(result.current.loading).toBe(false))
+
+    expect(result.current.activeItems.map(r => r.id)).toEqual(['f1'])
+    expect(result.current.inactiveItems.map(r => r.id)).toEqual(['x1'])
+    // filtr "Na minusie" ma widzieć również Nieaktywnych
+    expect(result.current.counts).toEqual({ all: 2, positive: 1, negative: 1, zero: 0 })
+    expect(result.current.friendCount).toBe(1)
+    expect(result.current.hasAnyRows).toBe(true)
   })
 })
