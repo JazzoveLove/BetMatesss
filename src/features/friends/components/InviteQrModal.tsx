@@ -15,7 +15,7 @@ export function InviteQrModal({ visible, onClose, userId }: InviteQrModalProps) 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <Pressable style={StyleSheet.absoluteFillObject} onPress={onClose} accessibilityRole="button" />
+        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} accessibilityRole="button" />
         <View style={styles.card}>
           <Text style={styles.title}>Zeskanuj, aby dodać</Text>
           {value ? (

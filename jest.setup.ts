@@ -40,7 +40,7 @@ jest.mock('@sentry/react-native', () => ({
 }))
 
 jest.mock('@/shared/lib/supabase', () => {
-  const channelBuilder = {
+  const channelBuilder: { on: jest.Mock; subscribe: jest.Mock } = {
     on: jest.fn(() => channelBuilder),
     subscribe: jest.fn(() => channelBuilder),
   }

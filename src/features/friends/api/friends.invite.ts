@@ -55,13 +55,13 @@ export async function lookupUserByCode(
 ): Promise<{ userId: string; nick: string } | { error: string; missingFunction?: boolean }> {
   const { data, error } = await supabase
   .rpc('lookup_user_by_invite_code', { p_code: code })
-  .overrideTypes<LookupRow[], { merge: false }>()
   if (error) {
     const missingFunction =
       error.message?.includes('lookup_user_by_invite_code') || error.code === 'PGRST202'
     return { error: error.message, missingFunction }
   }
-  const first = data?.[0]
+  const rows = data as LookupRow[] | null
+  const first = rows?.[0]
   if (!first) return { error: 'not_found' }
   return { userId: first.user_id, nick: first.user_nick }
 }
