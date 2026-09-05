@@ -70,3 +70,5 @@ poprawki.txt
 wizje.txt
 .wizje.txtsupabase/.branches/
 supabase/.temp/
+
+coverage/
