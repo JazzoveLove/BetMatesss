@@ -14,7 +14,10 @@ import { HistoryFilterBar } from '@/features/bets/components/history/HistoryFilt
 import { HistoryListItem } from '@/features/bets/components/history/HistoryListItem'
 import { useFriendHistory } from '@/features/friend-detail/hooks/useFriendHistory'
 import { SettleModal } from '@/features/friend-detail/components/SettleModal'
+import { PendingPaymentsSection } from '@/features/friend-detail/components/PendingPaymentsSection'
 import { useSettlePayment } from '@/features/friend-detail/hooks/useSettlePayment'
+import { usePairPendingPayments } from '@/features/friend-detail/hooks/usePairPendingPayments'
+import { useAuthContext } from '@/features/auth'
 
 type FriendDetailRouteProp = RouteProp<RootStackParamList, 'FriendDetail'>
 type Nav = NativeStackNavigationProp<RootStackParamList>
@@ -23,12 +26,20 @@ export default function FriendDetailScreen() {
   const navigation = useNavigation<Nav>()
   const route = useRoute<FriendDetailRouteProp>()
   const { friendId } = route.params
+  const { userId } = useAuthContext()
   const { loading, refreshing, friendNick, balance, stats, refresh } = useFriendDetail(friendId)
   const { items: historyItems, filter, setFilter } = useFriendHistory(friendId)
   const [settleOpen, setSettleOpen] = useState(false)
   const { settling, settle } = useSettlePayment(friendId, async () => {
     await refresh()
   })
+  const {
+    items: pendingPayments,
+    busyId: pendingBusyId,
+    confirm: confirmPending,
+    reject: rejectPending,
+    retract: retractPending,
+  } = usePairPendingPayments(friendId)
 
   function openNewBetWithFriend() {
     const preselectedFriend: UserProfile = {
@@ -78,10 +89,25 @@ export default function FriendDetailScreen() {
           <Text style={styles.playCtaText}>Zagraj ze znajomym</Text>
         </Pressable>
 
-        {balance !== 0 && (
+        {balance !== 0 && pendingPayments.length === 0 && (
+          // Gdy jakaś spłata już wisi, zamiast "Rozlicz" pokazujemy sekcję
+          // potwierdzania niżej — druga spłata do tej samej osoby i tak
+          // zostałaby odrzucona przez RLS (E24).
           <Pressable style={styles.settleCta} onPress={() => setSettleOpen(true)}>
             <Text style={styles.settleCtaText}>Rozlicz</Text>
           </Pressable>
+        )}
+
+        {userId && (
+          <PendingPaymentsSection
+            userId={userId}
+            friendNick={friendNick}
+            items={pendingPayments}
+            busyId={pendingBusyId}
+            onConfirm={confirmPending}
+            onReject={rejectPending}
+            onRetract={retractPending}
+          />
         )}
 
         <Text style={styles.sectionLabel}>STATYSTYKI WEDŁUG DYSCYPLINY</Text>

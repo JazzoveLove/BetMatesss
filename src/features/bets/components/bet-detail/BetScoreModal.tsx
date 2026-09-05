@@ -84,7 +84,7 @@ export function BetScoreModal({
     >
       <View style={styles.modalOverlay}>
         <Pressable
-          style={StyleSheet.absoluteFillObject}
+          style={StyleSheet.absoluteFill}
           onPress={onClose}
           accessibilityRole="button"
         />

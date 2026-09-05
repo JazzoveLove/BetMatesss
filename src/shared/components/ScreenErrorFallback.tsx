@@ -4,7 +4,7 @@ import { styles } from './styles/ScreenErrorFallback.styles'
 export function ScreenErrorFallback({
   resetErrorBoundary,
 }: {
-  error: Error
+  error: unknown
   resetErrorBoundary: () => void
 }) {
   return (

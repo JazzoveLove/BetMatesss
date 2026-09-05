@@ -56,7 +56,12 @@ export async function createBet(
 
   const creatorNick = params.participants.find(p => p.id === params.creatorId)?.nick ?? 'Znajomy'
   const toUserIds = rows.filter(r => r.user_id !== params.creatorId).map(r => r.user_id)
-  const stakeByUserId = Object.fromEntries(rows.map(r => [r.user_id, r.stake_amount]))
+  // stake_amount jest opcjonalny tylko w wygenerowanym typie Insert (bo kolumna ma
+  // default w bazie) — buildParticipantRows zawsze ustawia go jawnie jako liczbę,
+  // więc tu jest to gwarantowane i celowo nie dopuszczamy `undefined` w tym mapowaniu.
+  const stakeByUserId: Record<string, number> = Object.fromEntries(
+    rows.map(r => [r.user_id, r.stake_amount as number]),
+  )
   if (toUserIds.length > 0) {
     const notifResult = await NotificationsService.sendBetInvite({
       betId: bet.id,

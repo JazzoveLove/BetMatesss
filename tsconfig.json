@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "types": ["jest", "node"],
     "paths": {
       "@/*": ["./src/*"]
     }

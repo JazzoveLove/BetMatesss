@@ -6,7 +6,13 @@ import { queryKeys } from '@/shared/lib/queryKeys'
 import { getPendingActions } from '@/features/actions/api/actions.pending'
 import type { PendingAction, PendingActionCounts } from '@/features/actions/types/action.types'
 
-const EMPTY_COUNTS: PendingActionCounts = { total: 0, bet_invite: 0, result_confirm: 0, dispute: 0 }
+const EMPTY_COUNTS: PendingActionCounts = {
+  total: 0,
+  bet_invite: 0,
+  result_confirm: 0,
+  dispute: 0,
+  payment_confirm: 0,
+}
 
 export function usePendingActions() {
   const { userId } = useAuthContext()
@@ -35,7 +41,7 @@ export function usePendingActions() {
         acc[action.kind] += 1
         return acc
       },
-      { total: 0, bet_invite: 0, result_confirm: 0, dispute: 0 },
+      { total: 0, bet_invite: 0, result_confirm: 0, dispute: 0, payment_confirm: 0 },
     )
   }, [data])
 

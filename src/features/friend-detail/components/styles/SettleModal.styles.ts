@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
     backgroundColor: hexToRgba(Colors.background, 0.55),
   },
   overlayTap: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
   },
   sheet: {
     backgroundColor: Colors.card,

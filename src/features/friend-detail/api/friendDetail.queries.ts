@@ -27,7 +27,7 @@ export async function getPairDetail(viewerId: string, otherId: string): Promise<
   const friendRow = friendRes.data as { nick: string; deleted_at: string | null } | null
   const friendNick = friendRow?.deleted_at ? DELETED_USER_NICK : friendRow?.nick ?? 'Znajomy'
 
-  const stats: PairDisciplineStat[] = (statsRes.data ?? []).map(row => ({
+  const stats: PairDisciplineStat[] = (statsRes.data ?? []).map((row: { game_template: string; wins: number; losses: number }) => ({
     gameTemplate: row.game_template,
     wins: row.wins,
     losses: row.losses,
